@@ -8,6 +8,7 @@ export default function BuildBowl() {
   const push = useStore((s) => s.push);
   const pop = useStore((s) => s.pop);
   const addToCart = useStore((s) => s.addToCart);
+  const showToast = useStore((s) => s.showToast);
 
   const [protein, setProtein] = useState<string>('');
   const [base, setBase] = useState<string>('');
@@ -26,6 +27,7 @@ export default function BuildBowl() {
   const add = () => {
     if (!ready) return;
     addToCart({ name: 'Bowl a tu gusto', ingredients, price, img: '' });
+    showToast('Tu bowl se agregó al pedido');
     setAdded(true);
     setTimeout(() => push({ name: 'cart' }), 420);
   };

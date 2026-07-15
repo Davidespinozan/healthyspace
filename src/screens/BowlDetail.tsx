@@ -9,6 +9,7 @@ export default function BowlDetail({ param }: { param?: string }) {
   const push = useStore((s) => s.push);
   const pop = useStore((s) => s.pop);
   const addToCart = useStore((s) => s.addToCart);
+  const showToast = useStore((s) => s.showToast);
   const fav = useStore((s) => (param ? s.favorites.includes(param) : false));
   const toggleFavorite = useStore((s) => s.toggleFavorite);
   const [qty, setQty] = useState(1);
@@ -20,6 +21,7 @@ export default function BowlDetail({ param }: { param?: string }) {
 
   const add = () => {
     addToCart({ bowlId: b.id, name: b.name, ingredients: b.ingredients, price: b.price, img: b.img }, qty);
+    showToast(`${b.name} agregado a tu pedido`);
     setAdded(true);
     setTimeout(() => push({ name: 'cart' }), 420);
   };

@@ -77,6 +77,10 @@ interface State {
   leads: Lead[];
   leadDone: boolean;        // ya se registró en este dispositivo
   addLead: (l: Omit<Lead, 'at'>) => void;
+
+  // Toast global
+  toast: { id: number; msg: string } | null;
+  showToast: (msg: string) => void;
 }
 
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -157,6 +161,9 @@ export const useStore = create<State>()(
       leads: [],
       leadDone: false,
       addLead: (l) => set((st) => ({ leads: [{ ...l, at: Date.now() }, ...st.leads], leadDone: true })),
+
+      toast: null,
+      showToast: (msg) => set({ toast: { id: Date.now(), msg } }),
     }),
     {
       name: 'hs-store',

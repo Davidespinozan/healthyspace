@@ -246,6 +246,15 @@ input, textarea { font: inherit; }
 /* Cuando hay tab bar, las páginas raíz reservan espacio abajo */
 .page.has-tabs { padding-bottom: calc(84px + var(--safe-b)); }
 
+/* Toast global (confirmaciones) */
+.toast-anchor { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(104px + var(--safe-b)); z-index: 60; pointer-events: none; }
+.toast {
+  display: flex; align-items: center; gap: 9px; padding: 12px 18px; border-radius: var(--r-pill);
+  background: linear-gradient(180deg, var(--moss), var(--forest)); color: var(--on-dark);
+  box-shadow: var(--sh-lg), var(--edge-dark); font-weight: 700; font-size: 13.5px; white-space: nowrap;
+}
+.toast .toast-ic { width: 20px; height: 20px; border-radius: 999px; background: var(--amber); color: var(--forest); display: grid; place-items: center; flex: 0 0 auto; }
+
 /* Entrada escalonada (usada por el componente Reveal en JS, y como fallback CSS) */
 @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 @media (prefers-reduced-motion: reduce) {

@@ -15,11 +15,13 @@ export function ProductRail({ products }: { products: Product[] }) {
 
 function ProductCard({ p }: { p: Product }) {
   const addToCart = useStore((s) => s.addToCart);
+  const showToast = useStore((s) => s.showToast);
   const inCart = useStore((s) => s.cart.some((c) => c.productId === p.id));
   const [added, setAdded] = useState(false);
 
   const add = () => {
     addToCart({ productId: p.id, name: p.name, ingredients: [], price: p.price, img: p.img });
+    showToast(`Agregaste ${p.name}`);
     setAdded(true);
     setTimeout(() => setAdded(false), 1400);
   };
