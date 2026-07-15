@@ -72,11 +72,11 @@ export default function Cart() {
 
       {/* Checkout fijo */}
       <div style={{ position: 'fixed', left: '50%', transform: 'translateX(-50%)', bottom: 0, width: 'min(var(--maxw), 100vw)',
-        padding: '16px 20px calc(16px + var(--safe-b))', background: 'var(--surface)', boxShadow: '0 -8px 30px -12px rgba(14,37,33,.2)',
-        borderRadius: '26px 26px 0 0', display: 'grid', gap: 11, zIndex: 20 }}>
-        <div style={{ display: 'flex', alignItems: 'baseline' }}>
-          <span className="muted" style={{ flex: 1, fontSize: 14 }}>Total</span>
-          <b className="tabular h-1" style={{ fontSize: 24 }}>{money(total)}</b>
+        padding: '18px 20px calc(16px + var(--safe-b))', background: 'var(--surface)', boxShadow: '0 -10px 34px -14px rgba(14,37,33,.24), var(--edge)',
+        borderRadius: '28px 28px 0 0', display: 'grid', gap: 12, zIndex: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', paddingBottom: 4 }}>
+          <span className="muted" style={{ flex: 1, fontSize: 13.5, fontWeight: 600 }}>Total a pagar</span>
+          <b className="tabular" style={{ fontSize: 26, fontWeight: 900, letterSpacing: '-.03em' }}>{money(total)}</b>
         </div>
         <button className="btn" style={{ background: '#000' }} onClick={placeOrder}>
           <Apple size={18} strokeWidth={2.4} fill="currentColor" /> Pay

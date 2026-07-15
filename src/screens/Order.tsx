@@ -36,7 +36,7 @@ export default function Order() {
   const ready = order.status === 'listo' || order.status === 'recogido';
 
   return (
-    <div className="page" style={{ minHeight: '100vh', background: 'var(--forest)', color: 'var(--on-dark)' }}>
+    <div className="page dark-depth" style={{ minHeight: '100vh', background: 'var(--forest)', color: 'var(--on-dark)' }}>
       <div style={{ display: 'flex', alignItems: 'center', padding: 'calc(14px + env(safe-area-inset-top,0)) 20px 8px' }}>
         <div style={{ flex: 1 }}>
           <div className="eyebrow" style={{ color: 'var(--amber)' }}>Pedido {order.code}</div>

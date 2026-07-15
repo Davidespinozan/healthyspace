@@ -57,10 +57,10 @@ export default function BuildBowl() {
 
       {/* Barra con macros vivas + agregar */}
       <div style={{ position: 'fixed', left: '50%', transform: 'translateX(-50%)', bottom: 0, width: 'min(var(--maxw), 100vw)',
-        padding: '12px 20px calc(14px + var(--safe-b))', background: 'linear-gradient(transparent, var(--cream) 20%)', zIndex: 20 }}>
-        <div className="card" style={{ padding: '13px 16px', display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ flex: 1, opacity: ready ? 1 : .45 }}><MacroRow m={m} /></div>
-          <button className="btn" style={{ width: 'auto', padding: '13px 20px' }} onClick={add} disabled={!ready || added}>
+        padding: '12px 20px calc(14px + var(--safe-b))', background: 'linear-gradient(transparent, var(--cream) 22%)', zIndex: 20 }}>
+        <div className="card" style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: 'var(--sh-lg), var(--edge)' }}>
+          <div style={{ flex: 1, opacity: ready ? 1 : .4, transition: 'opacity .25s var(--ease)' }}><MacroRow m={m} /></div>
+          <button className="btn" style={{ width: 'auto', padding: '14px 20px' }} onClick={add} disabled={!ready || added}>
             {added ? <><Check size={17} strokeWidth={2.6} /> Listo</> : ready ? <>Agregar · {money(price)}</> : 'Elige proteína y base'}
           </button>
         </div>
@@ -93,9 +93,12 @@ function Opt({ id, on, onClick, priced, dim }: { id: string; on: boolean; onClic
       style={{
         display: 'flex', alignItems: 'center', gap: 9, padding: '13px 14px', borderRadius: 16, textAlign: 'left',
         background: on ? 'var(--forest)' : 'var(--surface)', color: on ? 'var(--on-dark)' : 'var(--ink)',
-        boxShadow: on ? 'var(--sh-md)' : 'var(--sh-sm)', opacity: dim ? .4 : 1,
-        transition: 'transform .12s var(--ease), background .18s',
-      }}>
+        boxShadow: on ? 'var(--sh-md), var(--edge-dark)' : 'var(--sh-sm), var(--edge)', opacity: dim ? .4 : 1,
+        transition: 'transform .12s var(--ease), background .18s, box-shadow .18s',
+      }}
+      onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(.97)')}
+      onMouseUp={(e) => (e.currentTarget.style.transform = '')}
+      onMouseLeave={(e) => (e.currentTarget.style.transform = '')}>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontWeight: 600, fontSize: 14, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{ing?.name}</div>
         {priced && <div className="tabular" style={{ fontSize: 12, color: on ? 'var(--amber)' : 'var(--amber-deep)', fontWeight: 700 }}>{money(PROTEIN_PRICE[id])}</div>}
