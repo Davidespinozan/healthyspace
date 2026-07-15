@@ -117,3 +117,27 @@ export const SIGNATURE_BOWLS: Bowl[] = [
 ];
 
 export const bowlById = (id: string) => SIGNATURE_BOWLS.find((b) => b.id === id);
+
+// ── Bebidas y extras (add-ons) ───────────────────────────────────────────────
+export interface Product {
+  id: string; name: string; desc?: string; price: number; kcal?: number; accent: string; img: string;
+}
+
+/** Aguas frescas y bebidas naturales — el upsell principal. */
+export const DRINKS: Product[] = [
+  { id: 'limonada',   name: 'Limonada natural',   desc: 'Recién exprimida',      price: 45, kcal: 90,  accent: '#C6D24E', img: '/drinks/limonada.jpg' },
+  { id: 'jamaica',    name: 'Agua de jamaica',    desc: 'Sin azúcar añadida',    price: 40, kcal: 55,  accent: '#9E2B4A', img: '/drinks/jamaica.jpg' },
+  { id: 'horchata',   name: 'Horchata de la casa',desc: 'Cremosa, natural',      price: 45, kcal: 150, accent: '#E4D6BC', img: '/drinks/horchata.jpg' },
+  { id: 'pepino',     name: 'Pepino · limón',     desc: 'Súper refrescante',     price: 40, kcal: 45,  accent: '#7FB77E', img: '/drinks/pepino.jpg' },
+  { id: 'te-verde',   name: 'Té verde frío',      desc: 'Antioxidante',          price: 42, kcal: 30,  accent: '#6FA03A', img: '/drinks/te-verde.jpg' },
+];
+
+/** Extras que se suman al bowl. */
+export const EXTRAS: Product[] = [
+  { id: 'x-aguacate', name: 'Extra aguacate',     desc: '+120 kcal',  price: 25, kcal: 120, accent: '#6B8E23', img: '' },
+  { id: 'x-proteina', name: 'Proteína extra',     desc: '+200 kcal',  price: 45, kcal: 200, accent: '#C75B3A', img: '' },
+  { id: 'x-totopos',  name: 'Totopos horneados',  desc: '+150 kcal',  price: 30, kcal: 150, accent: '#D9A441', img: '' },
+];
+
+export const productById = (id: string): Product | undefined =>
+  [...DRINKS, ...EXTRAS].find((p) => p.id === id);

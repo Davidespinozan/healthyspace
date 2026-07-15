@@ -12,12 +12,17 @@ export type OrderMode = 'pickup' | 'delivery';
 export interface CartItem {
   key: string;
   bowlId?: string;
+  productId?: string;       // bebida o extra (no-bowl)
   name: string;
   ingredients: string[];
   price: number;
   qty: number;
   img?: string;
 }
+
+/** Clave de identidad de una línea (para agrupar idénticos). */
+const lineKey = (i: Pick<CartItem, 'bowlId' | 'productId' | 'ingredients'>) =>
+  `${i.bowlId ?? ''}|${i.productId ?? ''}|${i.ingredients.join()}`;
 
 export type OrderStatus = 'recibido' | 'preparando' | 'listo' | 'camino' | 'entregado' | 'recogido';
 export interface Order {
@@ -90,9 +95,8 @@ export const useStore = create<State>()(
       cart: [],
       addToCart: (item, qty = 1) =>
         set((st) => {
-          const same = st.cart.find(
-            (c) => c.bowlId === item.bowlId && c.ingredients.join() === item.ingredients.join(),
-          );
+          const k = lineKey(item);
+          const same = st.cart.find((c) => lineKey(c) === k);
           if (same) return { cart: st.cart.map((c) => (c === same ? { ...c, qty: c.qty + qty } : c)) };
           return { cart: [...st.cart, { ...item, key: uid(), qty }] };
         }),

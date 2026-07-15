@@ -1,7 +1,8 @@
 import { ChevronLeft, Minus, Plus, Trash2, Tag, ArrowRight } from 'lucide-react';
 import { useStore } from '../state/store';
-import { ING, DELIVERY_FEE } from '../data/menu';
+import { ING, DELIVERY_FEE, DRINKS, EXTRAS } from '../data/menu';
 import { BowlPhoto, money } from '../components/ui';
+import { ProductRail } from '../components/ProductRail';
 
 export default function Cart() {
   const pop = useStore((s) => s.pop);
@@ -62,6 +63,18 @@ export default function Cart() {
             </div>
           </div>
         ))}
+
+        {/* Upsell: bebidas */}
+        <section style={{ marginTop: 6 }}>
+          <div className="section-label" style={{ marginBottom: 11 }}>Agrégale una bebida 🥤</div>
+          <ProductRail products={DRINKS} />
+        </section>
+
+        {/* Upsell: extras */}
+        <section>
+          <div className="section-label" style={{ marginBottom: 11 }}>¿Algo extra?</div>
+          <ProductRail products={EXTRAS} />
+        </section>
 
         {/* Código promocional */}
         <div className="card" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 8px 6px 14px', boxShadow: 'var(--sh-sm), var(--edge)' }}>

@@ -74,6 +74,29 @@ export function MacroRow({ m, dark }: { m: Macro; dark?: boolean }) {
   );
 }
 
+/** Foto de bebida/extra con placeholder elegante (vaso) hasta subir la real. */
+export function ProductPhoto({ src, accent, alt, radius = 16, ratio = '1/1' }: {
+  src: string; accent: string; alt: string; radius?: number; ratio?: string;
+}) {
+  const [ok, setOk] = useState(true);
+  return (
+    <div style={{
+      position: 'relative', width: '100%', aspectRatio: ratio, borderRadius: radius, overflow: 'hidden',
+      background: `radial-gradient(120% 120% at 30% 20%, ${accent}33, transparent 60%), linear-gradient(160deg, #1B3A33, #0C201B)`,
+      display: 'grid', placeItems: 'center',
+    }}>
+      {src && ok ? (
+        <img src={src} alt={alt} onError={() => setOk(false)} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+      ) : (
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden style={{ color: accent, opacity: .92 }}>
+          <path d="M6 3h12l-1.2 16.2a2 2 0 0 1-2 1.8H9.2a2 2 0 0 1-2-1.8L6 3Z" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M6.5 9h11" stroke="currentColor" strokeWidth="1.3" opacity=".6" />
+        </svg>
+      )}
+    </div>
+  );
+}
+
 export function SpiceTag() {
   return (
     <span className="chip" style={{ background: 'rgba(199,91,58,.12)', color: 'var(--terra)' }}>

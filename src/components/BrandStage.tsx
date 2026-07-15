@@ -16,8 +16,8 @@ export function BrandStage() {
           <Logo size={40} />
           <span style={{ fontWeight: 800, fontSize: 15, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--on-dark-2)' }}>Culiacán</span>
         </div>
-        <div className="brand-wordmark">Real Food.<br />Designed For<br />Your Goals.</div>
-        <p className="brand-tagline">No vendemos bowls. Vendemos una experiencia — comida real, hecha para tus objetivos.</p>
+        <div className="brand-wordmark">Comida real,<br />hecha para<br />tus objetivos.</div>
+        <p className="brand-tagline">No vendemos bowls. Vendemos una experiencia — comida real, todos los días.</p>
       </div>
 
       <div className="brand-side brand-right">

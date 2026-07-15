@@ -1,8 +1,9 @@
 import { Heart, Plus, ArrowRight } from 'lucide-react';
 import { useStore } from '../state/store';
-import { SIGNATURE_BOWLS, sumMacros } from '../data/menu';
+import { SIGNATURE_BOWLS, DRINKS, EXTRAS, sumMacros } from '../data/menu';
 import { BowlPhoto, MacroRow, money } from '../components/ui';
 import { RevealGroup, RevealItem } from '../components/Reveal';
+import { ProductRail } from '../components/ProductRail';
 
 export default function Menu() {
   const push = useStore((s) => s.push);
@@ -30,8 +31,8 @@ export default function Menu() {
         </button>
 
         <div style={{ marginTop: 8 }}>
-          <div className="section-label">Nuestros favoritos</div>
-          <h2 className="h-1" style={{ fontSize: 22, marginTop: 4 }}>Signature Bowls</h2>
+          <div className="section-label">Lo mejor de la casa</div>
+          <h2 className="h-1" style={{ fontSize: 22, marginTop: 4 }}>Bowls de la casa</h2>
           <div className="section-line" />
         </div>
 
@@ -65,6 +66,22 @@ export default function Menu() {
             );
           })}
         </RevealGroup>
+
+        {/* Bebidas */}
+        <div style={{ marginTop: 10 }}>
+          <div className="section-label">Aguas frescas</div>
+          <h2 className="h-1" style={{ fontSize: 22, marginTop: 4 }}>Bebidas naturales</h2>
+          <div className="section-line" />
+        </div>
+        <ProductRail products={DRINKS} />
+
+        {/* Extras */}
+        <div style={{ marginTop: 6 }}>
+          <div className="section-label">Para acompañar</div>
+          <h2 className="h-1" style={{ fontSize: 22, marginTop: 4 }}>Extras</h2>
+          <div className="section-line" />
+        </div>
+        <ProductRail products={EXTRAS} />
       </div>
     </div>
   );
