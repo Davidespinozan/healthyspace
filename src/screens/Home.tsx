@@ -4,6 +4,8 @@ import { SIGNATURE_BOWLS, bowlById, sumMacros } from '../data/menu';
 import { BowlPhoto, MacroRow, money } from '../components/ui';
 import { Logo } from '../components/Logo';
 import { Reveal } from '../components/Reveal';
+import { LeadCapture } from '../components/LeadCapture';
+import { openDirections } from '../data/location';
 
 export default function Home() {
   const push = useStore((s) => s.push);
@@ -29,18 +31,19 @@ export default function Home() {
       <div style={{ padding: '10px 20px 8px', display: 'grid', gap: 26 }}>
         {/* Tarjeta de estado / ubicación */}
         <Reveal delay={0.02}>
-          <div className="card" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 15px', boxShadow: 'var(--sh-sm), var(--edge)' }}>
+          <button className="card pressable" onClick={openDirections}
+            style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 15px', boxShadow: 'var(--sh-sm), var(--edge)', width: '100%', textAlign: 'left' }}>
             <div style={{ width: 38, height: 38, borderRadius: 999, background: 'rgba(20,48,41,.06)', display: 'grid', placeItems: 'center', flex: '0 0 auto' }}>
               <MapPin size={18} strokeWidth={2.2} />
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 700, fontSize: 14 }}>Healthy Space · Culiacán</div>
-              <div className="muted" style={{ fontSize: 12.5 }}>Recoge en 12 min · o entrega a domicilio</div>
+              <div style={{ fontWeight: 700, fontSize: 14 }}>Healthy Space · Las Quintas</div>
+              <div className="muted" style={{ fontSize: 12.5 }}>Toca para ver cómo llegar</div>
             </div>
             <span className="chip" style={{ background: 'rgba(78,122,69,.14)', color: '#3F6B39', fontWeight: 700 }}>
               <span style={{ width: 7, height: 7, borderRadius: 999, background: '#4E7A45' }} /> Abierto
             </span>
-          </div>
+          </button>
         </Reveal>
 
         {/* HERO card con profundidad */}
@@ -113,6 +116,9 @@ export default function Home() {
             {SIGNATURE_BOWLS.slice(0, 3).map((b) => <MenuRow key={b.id} id={b.id} />)}
           </div>
         </Section>
+
+        {/* Captación de leads (promos) */}
+        <LeadCapture />
 
         {/* Conecta tu plan (integración futura HSC) */}
         <button className="card pressable" onClick={() => goTab('perfil')}

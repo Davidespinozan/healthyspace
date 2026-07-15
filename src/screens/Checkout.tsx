@@ -2,6 +2,7 @@ import { ChevronLeft, Store, Bike, Check, Apple, CreditCard, ShieldCheck } from 
 import { useStore, type OrderMode } from '../state/store';
 import { DELIVERY_FEE } from '../data/menu';
 import { money } from '../components/ui';
+import { LocationCard } from '../components/LocationCard';
 
 export default function Checkout() {
   const pop = useStore((s) => s.pop);
@@ -39,6 +40,14 @@ export default function Checkout() {
               Icon={Bike} title="Entrega" sub="A tu ubicación · 30 min" note={money(DELIVERY_FEE)} />
           </div>
         </section>
+
+        {/* Ubicación (solo pickup) */}
+        {mode === 'pickup' && (
+          <section style={{ display: 'grid', gap: 10 }}>
+            <div className="section-label">Recoges aquí</div>
+            <LocationCard />
+          </section>
+        )}
 
         {/* Dirección (solo delivery) */}
         {mode === 'delivery' && (

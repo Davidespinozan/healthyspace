@@ -39,6 +39,7 @@ export interface Order {
 }
 
 export interface Customer { name: string; phone: string; notes: string }
+export interface Lead { name: string; phone: string; email?: string; source?: string; at: number }
 
 interface State {
   // Navegación
@@ -71,6 +72,11 @@ interface State {
   order: Order | null;      // pedido activo en curso
   placeOrder: () => void;
   advanceOrder: () => void;
+
+  // Captación de leads (promos)
+  leads: Lead[];
+  leadDone: boolean;        // ya se registró en este dispositivo
+  addLead: (l: Omit<Lead, 'at'>) => void;
 }
 
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -147,10 +153,14 @@ export const useStore = create<State>()(
           const orders = st.orders.map((o) => (o.code === order.code ? order : o));
           return { order, orders };
         }),
+
+      leads: [],
+      leadDone: false,
+      addLead: (l) => set((st) => ({ leads: [{ ...l, at: Date.now() }, ...st.leads], leadDone: true })),
     }),
     {
       name: 'hs-store',
-      partialize: (s) => ({ favorites: s.favorites, orders: s.orders, customer: s.customer, mode: s.mode, address: s.address }),
+      partialize: (s) => ({ favorites: s.favorites, orders: s.orders, customer: s.customer, mode: s.mode, address: s.address, leads: s.leads, leadDone: s.leadDone }),
     },
   ),
 );

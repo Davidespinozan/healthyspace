@@ -3,6 +3,8 @@ import QRCode from 'qrcode';
 import { Check, Clock, ChefHat, PackageCheck, PartyPopper, Bike, MapPin, X, MessageCircle } from 'lucide-react';
 import { useStore, flowFor, type OrderStatus } from '../state/store';
 import { Logo } from '../components/Logo';
+import { LocationCard } from '../components/LocationCard';
+import { LeadCapture } from '../components/LeadCapture';
 import { money } from '../components/ui';
 
 const LABELS: Record<OrderStatus, { label: string; sub: string; Icon: typeof Check }> = {
@@ -98,6 +100,13 @@ export default function Order() {
         </div>
       )}
 
+      {/* Ubicación para recoger (pickup) */}
+      {!isDelivery && (
+        <div style={{ padding: '16px 20px 4px' }}>
+          <LocationCard title="Recoge aquí" />
+        </div>
+      )}
+
       {/* Stepper */}
       <div style={{ padding: '22px 24px 24px' }}>
         {steps.map((s, i) => {
@@ -122,6 +131,10 @@ export default function Order() {
             </div>
           );
         })}
+      </div>
+
+      <div style={{ padding: '0 20px 20px' }}>
+        <LeadCapture variant="dark" />
       </div>
 
       <div style={{ padding: '0 20px calc(28px + var(--safe-b))', display: 'grid', gap: 10 }}>
