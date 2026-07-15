@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ChevronLeft, Check } from 'lucide-react';
 import { useStore } from '../state/store';
-import { PROTEINS, BASES, COMPLEMENTS, SALSAS, MAX_COMPLEMENTS, PROTEIN_PRICE, ING, sumMacros } from '../data/menu';
+import { PROTEINS, BASES, COMPLEMENTS, SALSAS, SALSA_META, MAX_COMPLEMENTS, PROTEIN_PRICE, ING, sumMacros } from '../data/menu';
 import { MacroRow, money } from '../components/ui';
 
 export default function BuildBowl() {
@@ -51,7 +51,9 @@ export default function BuildBowl() {
           })}</Grid>
         </Step>
         <Step n={4} title="Salsa" hint="Elige 1">
-          <Grid>{SALSAS.map((id) => <Opt key={id} id={id} on={salsa === id} onClick={() => setSalsa(id)} />)}</Grid>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+            {SALSAS.map((id) => <SalsaOpt key={id} id={id} on={salsa === id} onClick={() => setSalsa(salsa === id ? '' : id)} />)}
+          </div>
         </Step>
       </div>
 
@@ -85,6 +87,29 @@ function Step({ n, title, hint, children }: { n: number; title: string; hint: st
 const Grid = ({ children }: { children: React.ReactNode }) => (
   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>{children}</div>
 );
+
+function SalsaOpt({ id, on, onClick }: { id: string; on: boolean; onClick: () => void }) {
+  const ing = ING[id];
+  const meta = SALSA_META[id];
+  const name = (ing?.name ?? '').replace(/^Salsa\s+/i, '');
+  return (
+    <button onClick={onClick} style={{ display: 'grid', justifyItems: 'center', gap: 6, padding: '4px 0' }}>
+      <span style={{
+        width: 58, height: 58, borderRadius: 999, position: 'relative',
+        background: `radial-gradient(120% 120% at 32% 26%, ${meta.accent}, ${meta.accent}CC 55%, ${meta.accent}99)`,
+        boxShadow: on ? `0 0 0 3px var(--cream), 0 0 0 5px ${meta.accent}` : 'var(--sh-sm), inset 0 2px 4px rgba(255,255,255,.35)',
+        transition: 'box-shadow .18s var(--ease), transform .12s var(--ease)',
+        transform: on ? 'scale(1.02)' : 'none',
+      }}>
+        {on && <span style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}>
+          <Check size={20} strokeWidth={3} color="#fff" />
+        </span>}
+      </span>
+      <span style={{ fontWeight: 700, fontSize: 12, textAlign: 'center', lineHeight: 1.1 }}>{name}</span>
+      <span style={{ fontSize: 9, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase', color: meta.accent }}>{meta.tag}</span>
+    </button>
+  );
+}
 
 function Opt({ id, on, onClick, priced, dim }: { id: string; on: boolean; onClick: () => void; priced?: boolean; dim?: boolean }) {
   const ing = ING[id];

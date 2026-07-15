@@ -1,13 +1,17 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { sumMacros, type Macro } from '../data/menu';
+import { sumMacros, DELIVERY_FEE, type Macro } from '../data/menu';
 
-export type ScreenName = 'home' | 'menu' | 'bowl' | 'build' | 'cart' | 'checkout' | 'order';
+// Pantallas raíz (tabs) + pantallas apiladas encima.
+export type ScreenName = 'home' | 'menu' | 'pedidos' | 'perfil' | 'bowl' | 'build' | 'cart' | 'checkout' | 'order';
+export const ROOT_TABS: ScreenName[] = ['home', 'menu', 'pedidos', 'perfil'];
 export interface Screen { name: ScreenName; param?: string }
 
+export type OrderMode = 'pickup' | 'delivery';
+
 export interface CartItem {
-  key: string;            // único por línea
-  bowlId?: string;        // signature (si aplica)
+  key: string;
+  bowlId?: string;
   name: string;
   ingredients: string[];
   price: number;
@@ -15,22 +19,29 @@ export interface CartItem {
   img?: string;
 }
 
-export type OrderStatus = 'recibido' | 'preparando' | 'listo' | 'recogido';
+export type OrderStatus = 'recibido' | 'preparando' | 'listo' | 'camino' | 'entregado' | 'recogido';
 export interface Order {
-  code: string;           // código corto para el QR (ej. HS-4821)
+  code: string;
   items: CartItem[];
+  mode: OrderMode;
+  subtotal: number;
+  fee: number;
   total: number;
-  pickupMin: number;      // minutos estimados
+  address?: string;
+  etaMin: number;
   status: OrderStatus;
   createdAt: number;
 }
 
+export interface Customer { name: string; phone: string; notes: string }
+
 interface State {
-  // Navegación (stack para transiciones + botón atrás)
+  // Navegación
   stack: Screen[];
   push: (s: Screen) => void;
   pop: () => void;
   reset: (s: Screen) => void;
+  goTab: (name: ScreenName) => void;
 
   cart: CartItem[];
   addToCart: (item: Omit<CartItem, 'key' | 'qty'>, qty?: number) => void;
@@ -38,16 +49,33 @@ interface State {
   removeFromCart: (key: string) => void;
   clearCart: () => void;
 
-  favorites: string[];    // bowlIds
+  // Pedido
+  mode: OrderMode;
+  setMode: (m: OrderMode) => void;
+  address: string;
+  setAddress: (a: string) => void;
+  customer: Customer;
+  setCustomer: (c: Partial<Customer>) => void;
+  promo: string;
+  setPromo: (p: string) => void;
+
+  favorites: string[];
   toggleFavorite: (bowlId: string) => void;
-  lastOrder: Order | null;
-  order: Order | null;
+
+  orders: Order[];          // historial (persistido)
+  order: Order | null;      // pedido activo en curso
   placeOrder: () => void;
   advanceOrder: () => void;
 }
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 const orderCode = () => 'HS-' + Math.floor(1000 + Math.random() * 9000);
+
+/** Flujo de estados según el modo. */
+export const flowFor = (mode: OrderMode): OrderStatus[] =>
+  mode === 'delivery'
+    ? ['recibido', 'preparando', 'camino', 'entregado']
+    : ['recibido', 'preparando', 'listo', 'recogido'];
 
 export const useStore = create<State>()(
   persist(
@@ -56,11 +84,12 @@ export const useStore = create<State>()(
       push: (s) => set((st) => ({ stack: [...st.stack, s] })),
       pop: () => set((st) => ({ stack: st.stack.length > 1 ? st.stack.slice(0, -1) : st.stack })),
       reset: (s) => set({ stack: [s] }),
+      // Tab: si ya estás en esa raíz no hagas nada; si no, resetea el stack a esa raíz.
+      goTab: (name) => set((st) => (st.stack[st.stack.length - 1].name === name ? {} : { stack: [{ name }] })),
 
       cart: [],
       addToCart: (item, qty = 1) =>
         set((st) => {
-          // Mismo bowl idéntico → sube cantidad en vez de duplicar línea.
           const same = st.cart.find(
             (c) => c.bowlId === item.bowlId && c.ingredients.join() === item.ingredients.join(),
           );
@@ -74,36 +103,50 @@ export const useStore = create<State>()(
       removeFromCart: (key) => set((st) => ({ cart: st.cart.filter((c) => c.key !== key) })),
       clearCart: () => set({ cart: [] }),
 
+      mode: 'pickup',
+      setMode: (m) => set({ mode: m }),
+      address: '',
+      setAddress: (a) => set({ address: a }),
+      customer: { name: '', phone: '', notes: '' },
+      setCustomer: (c) => set((st) => ({ customer: { ...st.customer, ...c } })),
+      promo: '',
+      setPromo: (p) => set({ promo: p }),
+
       favorites: [],
       toggleFavorite: (id) =>
         set((st) => ({
           favorites: st.favorites.includes(id) ? st.favorites.filter((f) => f !== id) : [...st.favorites, id],
         })),
 
-      lastOrder: null,
+      orders: [],
       order: null,
       placeOrder: () => {
-        const { cart } = get();
+        const { cart, mode, address } = get();
         if (!cart.length) return;
-        const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
+        const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
+        const fee = mode === 'delivery' ? DELIVERY_FEE : 0;
         const order: Order = {
-          code: orderCode(), items: cart, total, pickupMin: 12,
+          code: orderCode(), items: cart, mode, subtotal, fee, total: subtotal + fee,
+          address: mode === 'delivery' ? address : undefined,
+          etaMin: mode === 'delivery' ? 32 : 12,
           status: 'recibido', createdAt: Date.now(),
         };
-        set({ order, lastOrder: order, cart: [], stack: [{ name: 'order' }] });
+        set((st) => ({ order, orders: [order, ...st.orders], cart: [], stack: [{ name: 'order' }] }));
       },
       advanceOrder: () =>
         set((st) => {
           if (!st.order) return {};
-          const flow: OrderStatus[] = ['recibido', 'preparando', 'listo', 'recogido'];
+          const flow = flowFor(st.order.mode);
           const next = flow[Math.min(flow.indexOf(st.order.status) + 1, flow.length - 1)];
           const order = { ...st.order, status: next };
-          return { order, lastOrder: order };
+          // reflejar en el historial
+          const orders = st.orders.map((o) => (o.code === order.code ? order : o));
+          return { order, orders };
         }),
     }),
     {
       name: 'hs-store',
-      partialize: (s) => ({ favorites: s.favorites, lastOrder: s.lastOrder }),
+      partialize: (s) => ({ favorites: s.favorites, orders: s.orders, customer: s.customer, mode: s.mode, address: s.address }),
     },
   ),
 );

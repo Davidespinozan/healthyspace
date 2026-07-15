@@ -55,6 +55,18 @@ export const COMPLEMENTS = ['frijoles', 'elote', 'pico', 'aguacate', 'verduras',
 export const SALSAS = ['s-chipotle', 's-verde', 's-cilantro', 's-habanero', 's-garlic'];
 export const MAX_COMPLEMENTS = 5;
 
+/** Metadata visual de salsas — para las "salsas con foto" (círculo de color + descriptor). */
+export const SALSA_META: Record<string, { tag: string; accent: string }> = {
+  's-chipotle': { tag: 'Ahumada',  accent: '#C75B3A' },
+  's-verde':    { tag: 'Fresca',   accent: '#4E7A45' },
+  's-cilantro': { tag: 'Cítrica',  accent: '#6FA03A' },
+  's-habanero': { tag: 'Picante',  accent: '#D2691E' },
+  's-garlic':   { tag: 'Cremosa',  accent: '#BFA065' },
+};
+
+/** Costo de envío a domicilio (MXN). Plano, como Anastacio. Pickup = sin costo. */
+export const DELIVERY_FEE = 45;
+
 /** Precio según proteína (MXN). Camarón/salmón premium. Complementos y salsa incluidos. */
 export const PROTEIN_PRICE: Record<string, number> = {
   'pollo-asado': 145, 'carne-asada': 155, 'salmon': 185, 'camaron': 175,

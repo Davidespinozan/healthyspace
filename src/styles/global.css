@@ -189,6 +189,31 @@ input, textarea { font: inherit; }
   transition: transform var(--dur-fast) var(--ease); }
 .iconbtn:active { transform: scale(.92); }
 
+/* ── Barra de pestañas inferior (Inicio · Menú · Pedidos · Perfil) ── */
+.tabbar {
+  position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; z-index: 45;
+  width: min(var(--maxw), 100vw);
+  display: flex; align-items: stretch;
+  background: rgba(255,255,255,.86); backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  box-shadow: 0 -1px 0 var(--sand), 0 -8px 24px -14px rgba(14,37,33,.18);
+  padding: 8px 6px calc(8px + var(--safe-b));
+}
+.tab {
+  flex: 1; display: grid; justify-items: center; gap: 3px; padding: 6px 2px;
+  color: var(--ink-3); font-size: 10.5px; font-weight: 700; letter-spacing: .01em;
+  transition: color var(--dur) var(--ease);
+}
+.tab.active { color: var(--forest); }
+.tab .tab-ic { position: relative; transition: transform var(--dur) var(--ease); }
+.tab.active .tab-ic { transform: translateY(-1px); }
+.tab .tab-dot { position: absolute; top: -3px; right: -6px; min-width: 15px; height: 15px; padding: 0 4px;
+  border-radius: 999px; background: var(--terra); color: #fff; font-size: 9.5px; font-weight: 800;
+  display: grid; place-items: center; box-shadow: 0 0 0 2px var(--surface); }
+.tab:active .tab-ic { transform: scale(.9); }
+
+/* Cuando hay tab bar, las páginas raíz reservan espacio abajo */
+.page.has-tabs { padding-bottom: calc(84px + var(--safe-b)); }
+
 /* Entrada escalonada (usada por el componente Reveal en JS, y como fallback CSS) */
 @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 @media (prefers-reduced-motion: reduce) {

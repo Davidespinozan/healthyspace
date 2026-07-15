@@ -1,4 +1,4 @@
-import { ChevronLeft, Heart, Plus, ArrowRight } from 'lucide-react';
+import { Heart, Plus, ArrowRight } from 'lucide-react';
 import { useStore } from '../state/store';
 import { SIGNATURE_BOWLS, sumMacros } from '../data/menu';
 import { BowlPhoto, MacroRow, money } from '../components/ui';
@@ -6,18 +6,14 @@ import { RevealGroup, RevealItem } from '../components/Reveal';
 
 export default function Menu() {
   const push = useStore((s) => s.push);
-  const pop = useStore((s) => s.pop);
   const favorites = useStore((s) => s.favorites);
   const toggleFavorite = useStore((s) => s.toggleFavorite);
 
   return (
-    <div className="page">
-      <div className="topbar">
-        <button className="iconbtn" onClick={pop}><ChevronLeft size={22} /></button>
-        <div>
-          <div className="section-label">Healthy Space</div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-.02em' }}>Menú</h1>
-        </div>
+    <div className="page has-tabs">
+      <div className="topbar" style={{ display: 'block' }}>
+        <div className="section-label">Healthy Space · Culiacán</div>
+        <h1 style={{ fontSize: 26, fontWeight: 900, letterSpacing: '-.03em', marginTop: 2 }}>Menú</h1>
       </div>
 
       <div style={{ padding: '4px 20px', display: 'grid', gap: 18 }}>

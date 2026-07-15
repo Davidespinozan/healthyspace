@@ -1,4 +1,4 @@
-import { ArrowRight, Heart, Plus, Star } from 'lucide-react';
+import { ArrowRight, Heart, Plus, Star, Bell, MapPin, Sparkles } from 'lucide-react';
 import { useStore } from '../state/store';
 import { SIGNATURE_BOWLS, bowlById, sumMacros } from '../data/menu';
 import { BowlPhoto, MacroRow, money } from '../components/ui';
@@ -7,44 +7,62 @@ import { Reveal } from '../components/Reveal';
 
 export default function Home() {
   const push = useStore((s) => s.push);
+  const goTab = useStore((s) => s.goTab);
   const favorites = useStore((s) => s.favorites);
-  const lastOrder = useStore((s) => s.lastOrder);
+  const orders = useStore((s) => s.orders);
   const rec = SIGNATURE_BOWLS[0];
   const favBowls = favorites.map(bowlById).filter(Boolean).slice(0, 6);
+  const lastOrder = orders[0];
 
   return (
-    <div className="page">
-      {/* HERO cinematográfico con profundidad ambiental */}
-      <div className="dark-depth" style={{ position: 'relative', height: '74vh', minHeight: 500, background: 'var(--forest)' }}>
-        <BowlPhoto src="/hero.jpg" accent="#C79A5A" alt="Healthy Space" radius={0} ratio="auto" />
-        <div style={{ position: 'absolute', inset: 0, zIndex: 2, background: 'linear-gradient(180deg, rgba(8,26,22,.45) 0%, rgba(8,26,22,.12) 38%, rgba(8,26,22,.78) 80%, var(--forest-deep) 100%)' }} />
-
-        <div style={{ position: 'absolute', zIndex: 3, left: 22, right: 22, top: 'calc(20px + var(--safe-t))', display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Logo size={34} />
-          <span style={{ color: 'var(--on-dark)', fontWeight: 800, fontSize: 15, letterSpacing: '.01em' }}>Healthy Space</span>
+    <div className="page has-tabs">
+      {/* Header: marca + saludo + campana */}
+      <header style={{ padding: 'calc(14px + var(--safe-t)) 20px 6px', display: 'flex', alignItems: 'center', gap: 11 }}>
+        <Logo size={34} />
+        <div style={{ flex: 1, lineHeight: 1.1 }}>
+          <div style={{ fontWeight: 800, fontSize: 16, letterSpacing: '-.02em' }}>Hola 👋</div>
+          <div className="muted" style={{ fontSize: 12.5 }}>¿Qué vas a comer hoy?</div>
         </div>
+        <button className="iconbtn" aria-label="Notificaciones"><Bell size={19} strokeWidth={2.1} /></button>
+      </header>
 
-        <div style={{ position: 'absolute', zIndex: 3, left: 22, right: 22, bottom: 28 }}>
-          <Reveal delay={0.05}>
-            <div className="eyebrow" style={{ color: 'var(--amber-l)', marginBottom: 14 }}>Culiacán · Comida real</div>
-          </Reveal>
-          <Reveal delay={0.14}>
-            <h1 className="h-hero" style={{ color: 'var(--on-dark)' }}>
-              Real Food.<br />Designed For<br />Your Goals.
-            </h1>
-          </Reveal>
-          <Reveal delay={0.26}>
-            <button className="btn btn--gold" style={{ marginTop: 22, width: 'auto', padding: '15px 26px' }} onClick={() => push({ name: 'menu' })}>
-              Ordenar ahora <ArrowRight size={17} strokeWidth={2.6} />
-            </button>
-          </Reveal>
-        </div>
-      </div>
+      <div style={{ padding: '10px 20px 8px', display: 'grid', gap: 26 }}>
+        {/* Tarjeta de estado / ubicación */}
+        <Reveal delay={0.02}>
+          <div className="card" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 15px', boxShadow: 'var(--sh-sm), var(--edge)' }}>
+            <div style={{ width: 38, height: 38, borderRadius: 999, background: 'rgba(20,48,41,.06)', display: 'grid', placeItems: 'center', flex: '0 0 auto' }}>
+              <MapPin size={18} strokeWidth={2.2} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 700, fontSize: 14 }}>Healthy Space · Culiacán</div>
+              <div className="muted" style={{ fontSize: 12.5 }}>Recoge en 12 min · o entrega a domicilio</div>
+            </div>
+            <span className="chip" style={{ background: 'rgba(78,122,69,.14)', color: '#3F6B39', fontWeight: 700 }}>
+              <span style={{ width: 7, height: 7, borderRadius: 999, background: '#4E7A45' }} /> Abierto
+            </span>
+          </div>
+        </Reveal>
 
-      <div style={{ padding: '28px 20px 8px', display: 'grid', gap: 32 }}>
+        {/* HERO card con profundidad */}
+        <Reveal delay={0.08}>
+          <div className="card dark-depth" style={{ position: 'relative', background: 'var(--forest)', minHeight: 300, boxShadow: 'var(--sh-lg), var(--edge-dark)' }}>
+            <div style={{ position: 'absolute', inset: 0 }}>
+              <BowlPhoto src="/hero.jpg" accent="#C79A5A" alt="" radius={0} ratio="auto" />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(8,26,22,.30) 0%, rgba(8,26,22,.35) 45%, rgba(8,26,22,.92) 100%)' }} />
+            </div>
+            <div style={{ position: 'relative', padding: '26px 22px 24px', minHeight: 300, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+              <div className="eyebrow" style={{ color: 'var(--amber-l)', marginBottom: 12 }}>Comida real</div>
+              <h1 className="h-hero" style={{ color: 'var(--on-dark)', fontSize: 'clamp(30px,8.4vw,38px)' }}>Real Food.<br />Designed For<br />Your Goals.</h1>
+              <button className="btn btn--gold" style={{ marginTop: 18, width: 'auto', padding: '14px 24px' }} onClick={() => goTab('menu')}>
+                Ver menú <ArrowRight size={17} strokeWidth={2.6} />
+              </button>
+            </div>
+          </div>
+        </Reveal>
+
         {/* Último pedido */}
         {lastOrder && (
-          <Section title="Tu último pedido" onAll={() => push({ name: 'menu' })} allLabel="Menú">
+          <Section title="Tu último pedido" onAll={() => goTab('pedidos')} allLabel="Ver todos">
             <button className="card pressable" style={{ display: 'flex', alignItems: 'center', gap: 14, padding: 12, textAlign: 'left' }}
               onClick={() => push({ name: 'cart' })}>
               <div className="zoomwrap" style={{ width: 62, height: 62, flex: '0 0 auto', borderRadius: 16 }}>
@@ -89,12 +107,25 @@ export default function Home() {
           </Section>
         )}
 
-        {/* Menú */}
-        <Section title="Signature Bowls" onAll={() => push({ name: 'menu' })} allLabel="Ver todo">
+        {/* Signature Bowls */}
+        <Section title="Signature Bowls" onAll={() => goTab('menu')} allLabel="Ver todo">
           <div style={{ display: 'grid', gap: 12 }}>
             {SIGNATURE_BOWLS.slice(0, 3).map((b) => <MenuRow key={b.id} id={b.id} />)}
           </div>
         </Section>
+
+        {/* Conecta tu plan (integración futura HSC) */}
+        <button className="card pressable" onClick={() => goTab('perfil')}
+          style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '16px 16px', background: 'var(--cream-2)', boxShadow: 'var(--sh-sm), var(--edge)' }}>
+          <div style={{ width: 44, height: 44, borderRadius: 14, background: 'var(--surface)', color: 'var(--amber-deep)', display: 'grid', placeItems: 'center', flex: '0 0 auto', boxShadow: 'var(--sh-sm)' }}>
+            <Sparkles size={22} strokeWidth={2.2} />
+          </div>
+          <div style={{ textAlign: 'left', flex: 1 }}>
+            <div style={{ fontWeight: 800, fontSize: 15 }}>Conecta tu plan Healthy Space Club</div>
+            <div className="muted" style={{ fontSize: 12.5, marginTop: 1 }}>Registra las macros de tu bowl automáticamente</div>
+          </div>
+          <ArrowRight size={19} strokeWidth={2.4} color="var(--ink-3)" />
+        </button>
 
         {/* Build your bowl CTA */}
         <button className="card pressable dark-depth" onClick={() => push({ name: 'build' })}
@@ -138,7 +169,7 @@ function FavCard({ id }: { id: string }) {
         <BowlPhoto src={b.img} accent={b.accent} alt={b.name} ratio="1/1" />
       </div>
       <div style={{ fontWeight: 700, fontSize: 14, marginTop: 8 }}>{b.name}</div>
-      <div className="price muted" style={{ fontSize: 13, color: 'var(--amber-deep)' }}>{money(b.price)}</div>
+      <div className="price" style={{ fontSize: 13 }}>{money(b.price)}</div>
     </button>
   );
 }
