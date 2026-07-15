@@ -76,8 +76,40 @@ input, textarea { font: inherit; }
 /* App shell centrado (móvil-first) */
 .app {
   max-width: var(--maxw); margin: 0 auto; min-height: 100%;
-  position: relative; background: var(--cream); overflow-x: hidden;
+  position: relative; z-index: 1; background: var(--cream); overflow-x: hidden;
   box-shadow: 0 0 80px rgba(0,0,0,.3);   /* separa el shell del marco en desktop */
+}
+
+/* ── Escenario de marca (solo escritorio) ──
+   Fondo forest ambiental + marca en los márgenes; la app queda enmarcada al centro. */
+.brand-stage { display: none; }
+@media (min-width: 1120px) {
+  body { background: var(--forest-deep); }
+  .brand-stage {
+    display: block; position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+    background:
+      radial-gradient(60% 50% at 50% -8%, rgba(191,160,101,.14), transparent 60%),
+      radial-gradient(50% 45% at 12% 105%, rgba(191,160,101,.10), transparent 60%),
+      radial-gradient(50% 45% at 90% 100%, rgba(199,91,58,.08), transparent 62%);
+  }
+  .brand-stage::after {
+    content: ""; position: absolute; inset: 0; opacity: .05; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size: 200px 200px;
+  }
+  .brand-side { position: fixed; top: 50%; transform: translateY(-50%); color: var(--on-dark); }
+  .brand-left { left: max(40px, calc(50vw - 620px)); width: min(360px, calc(50vw - 285px)); }
+  .brand-right { right: max(40px, calc(50vw - 620px)); width: min(320px, calc(50vw - 285px)); text-align: left; }
+  .brand-wordmark { font-weight: 900; font-size: clamp(40px, 4.6vw, 72px); line-height: .92; letter-spacing: -.04em; }
+  .brand-tagline { color: var(--on-dark-2); font-size: 16px; line-height: 1.55; margin-top: 20px; max-width: 300px; }
+  .brand-step { display: flex; align-items: center; gap: 14px; padding: 14px 0; }
+  .brand-step + .brand-step { border-top: 1px solid rgba(244,241,233,.09); }
+  .brand-step-num { width: 30px; height: 30px; border-radius: 999px; flex: 0 0 auto; display: grid; place-items: center;
+    background: rgba(191,160,101,.14); color: var(--amber-l); font-weight: 800; font-size: 13px; }
+  .brand-step-t { font-weight: 700; font-size: 15px; }
+  .brand-step-s { font-size: 12.5px; color: var(--on-dark-3); margin-top: 1px; }
+
+  .app { box-shadow: 0 0 0 1px rgba(191,160,101,.1), 0 50px 130px -24px rgba(0,0,0,.65); }
 }
 
 /* ── Profundidad ambiental para superficies oscuras (forest) ──

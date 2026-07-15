@@ -3,6 +3,7 @@ import { ShoppingBag } from 'lucide-react';
 import { useStore, ROOT_TABS } from './state/store';
 import { money } from './components/ui';
 import { TabBar } from './components/TabBar';
+import { BrandStage } from './components/BrandStage';
 import Home from './screens/Home';
 import Menu from './screens/Menu';
 import Pedidos from './screens/Pedidos';
@@ -32,7 +33,9 @@ export default function App() {
   const showBar = count > 0 && !['cart', 'checkout', 'order'].includes(top.name);
 
   return (
-    <div className="app">
+    <>
+      <BrandStage />
+      <div className="app">
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.div
           key={depth + top.name + (top.param ?? '')}
@@ -63,6 +66,7 @@ export default function App() {
       </AnimatePresence>
 
       {onTab && <TabBar />}
-    </div>
+      </div>
+    </>
   );
 }
