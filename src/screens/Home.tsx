@@ -158,7 +158,10 @@ export default function Home() {
             <Logo variant="h" size={22} />
             <span className="muted" style={{ fontSize: 12, fontWeight: 600, letterSpacing: '.02em' }}>Parte de Healthy Space</span>
           </div>
-          <div className="muted" style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.18em', textTransform: 'uppercase', opacity: .55 }}>Powered by STRYV</div>
+          <a href="https://stryvstudio.com" target="_blank" rel="noopener noreferrer"
+            className="muted" style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.18em', textTransform: 'uppercase', opacity: .55, textDecoration: 'none' }}>
+            Powered by <span style={{ fontWeight: 800, color: 'var(--amber-deep)' }}>STRYV</span>
+          </a>
         </div>
       </div>
     </div>
