@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { ChevronLeft, Heart, Minus, Plus, Check } from 'lucide-react';
 import { useStore } from '../state/store';
-import { bowlById, sumMacros, ING } from '../data/menu';
+import { bowlById, sumMacros, ING, proteinOf } from '../data/menu';
 import { BowlPhoto, MacroRow, money } from '../components/ui';
 import { Reveal } from '../components/Reveal';
+import { CraftCard } from '../components/CraftCard';
 
 export default function BowlDetail({ param }: { param?: string }) {
   const push = useStore((s) => s.push);
@@ -18,6 +19,7 @@ export default function BowlDetail({ param }: { param?: string }) {
   const b = param ? bowlById(param) : undefined;
   if (!b) return null;
   const m = sumMacros(b.ingredients);
+  const prot = proteinOf(b.ingredients);
 
   const add = () => {
     addToCart({ bowlId: b.id, name: b.name, ingredients: b.ingredients, price: b.price, img: b.img }, qty);
@@ -47,6 +49,13 @@ export default function BowlDetail({ param }: { param?: string }) {
             <p className="muted" style={{ fontSize: 14.5, marginTop: 7, lineHeight: 1.5 }}>{b.tagline}</p>
           </div>
         </Reveal>
+
+        {/* El oficio detrás de la proteína — la razón de la textura */}
+        {prot && (
+          <Reveal delay={0.06}>
+            <CraftCard proteinId={prot} />
+          </Reveal>
+        )}
 
         <Reveal delay={0.08}>
           <div className="card" style={{ padding: '17px 20px', boxShadow: 'var(--sh-sm), var(--edge)' }}>

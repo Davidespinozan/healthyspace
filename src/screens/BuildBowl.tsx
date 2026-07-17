@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ChevronLeft, Check } from 'lucide-react';
 import { useStore } from '../state/store';
-import { PROTEINS, BASES, COMPLEMENTS, SALSAS, SALSA_META, MAX_COMPLEMENTS, PROTEIN_PRICE, ING, sumMacros } from '../data/menu';
+import { PROTEINS, BASES, COMPLEMENTS, SALSAS, SALSA_META, MAX_COMPLEMENTS, PROTEIN_PRICE, PROTEIN_CRAFT, ING, sumMacros } from '../data/menu';
 import { MacroRow, money } from '../components/ui';
 
 export default function BuildBowl() {
@@ -129,8 +129,19 @@ function Opt({ id, on, onClick, priced, dim }: { id: string; on: boolean; onClic
       onMouseUp={(e) => (e.currentTarget.style.transform = '')}
       onMouseLeave={(e) => (e.currentTarget.style.transform = '')}>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontWeight: 600, fontSize: 14, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{ing?.name}</div>
-        {priced && <div className="tabular" style={{ fontSize: 12, color: on ? 'var(--amber)' : 'var(--amber-deep)', fontWeight: 700 }}>{money(PROTEIN_PRICE[id])}</div>}
+        <div style={{ fontWeight: 600, fontSize: 14, lineHeight: 1.2 }}>{ing?.name}</div>
+        {priced && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 3 }}>
+            <span className="tabular" style={{ fontSize: 12, color: on ? 'var(--amber)' : 'var(--amber-deep)', fontWeight: 700 }}>{money(PROTEIN_PRICE[id])}</span>
+            {PROTEIN_CRAFT[id] && (
+              <span className="tabular" style={{
+                fontSize: 10, fontWeight: 800, padding: '2px 6px', borderRadius: 999,
+                background: on ? 'rgba(191,160,101,.22)' : 'rgba(20,48,41,.06)',
+                color: on ? 'var(--amber-l)' : 'var(--ink-2)',
+              }}>{PROTEIN_CRAFT[id].hours}</span>
+            )}
+          </div>
+        )}
       </div>
       <span style={{ width: 20, height: 20, borderRadius: 999, flex: '0 0 auto', display: 'grid', placeItems: 'center',
         background: on ? 'var(--amber)' : 'transparent', boxShadow: on ? 'none' : 'inset 0 0 0 1.5px var(--sand)' }}>

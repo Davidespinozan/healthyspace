@@ -5,6 +5,7 @@ import { BowlPhoto, MacroRow, money } from '../components/ui';
 import { Logo } from '../components/Logo';
 import { Reveal } from '../components/Reveal';
 import { LeadCapture } from '../components/LeadCapture';
+import { CraftRail } from '../components/CraftCard';
 import { openDirections } from '../data/location';
 
 export default function Home() {
@@ -79,6 +80,11 @@ export default function Home() {
             </button>
           </Section>
         )}
+
+        {/* La tesis: proteínas de cocción lenta */}
+        <Section title="La diferencia está en la cocción">
+          <CraftRail />
+        </Section>
 
         {/* Recomendado */}
         <Section title="Recomendado para ti">

@@ -79,6 +79,26 @@ export const PROTEIN_PRICE: Record<string, number> = {
   'pollo-lento': 149, 'cerdo-lento': 159, 'chamberete': 179,
 };
 
+/** El oficio detrás de cada proteína — es LA diferencia de la casa, así que se muestra
+ *  en la app (no se esconde). ⚠️ Ajusta horas/procesos a la receta real de cocina. */
+export const PROTEIN_CRAFT: Record<string, { hours: string; method: string; story: string }> = {
+  'pollo-lento': {
+    hours: '6 h', method: 'Cocción lenta',
+    story: 'Seis horas a baja temperatura en su propio jugo. Se termina en plancha al momento de tu pedido, para el dorado.',
+  },
+  'chamberete': {
+    hours: '8 h', method: 'Braseado',
+    story: 'Ocho horas braseado hasta que se deshace solo. Se guarda en su jugo de cocción y se regenera cuando ordenas.',
+  },
+  'cerdo-lento': {
+    hours: '7 h', method: 'Cocción lenta',
+    story: 'Siete horas de cocción lenta. Acabado rápido en parrilla para el contraste entre lo jugoso y lo crujiente.',
+  },
+};
+
+/** La proteína (de cocción lenta) que lleva un bowl. */
+export const proteinOf = (ingredients: string[]) => ingredients.find((i) => PROTEINS.includes(i));
+
 // ── Bowls Signature ──────────────────────────────────────────────────────────
 export interface Bowl {
   id: string;
