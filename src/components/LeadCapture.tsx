@@ -57,7 +57,7 @@ export function LeadCapture({ variant = 'light' }: { variant?: 'light' | 'dark' 
           <div style={{ display: 'grid', gap: 9 }}>
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Tu nombre" style={field} />
             <input value={phone} onChange={(e) => setPhone(e.target.value.replace(/[^\d ]/g, ''))} placeholder="WhatsApp" type="tel" style={field} />
-            <button className="btn btn--gold" onClick={submit} disabled={!ready} style={{ marginTop: 3 }}>
+            <button className="btn btn--gold" onClick={submit} style={{ marginTop: 3 }}>
               Quiero promos <ArrowRight size={16} strokeWidth={2.6} />
             </button>
           </div>

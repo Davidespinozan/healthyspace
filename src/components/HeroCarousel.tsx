@@ -39,9 +39,9 @@ export function HeroCarousel({ images, intervalMs = 5000 }: { images: string[]; 
       {/* Degradado para legibilidad del texto */}
       <div style={{ position: 'absolute', inset: 0, background: GRADIENT }} />
 
-      {/* Puntitos (el activo se alarga) */}
+      {/* Puntitos centrados abajo (el activo se alarga) */}
       {n > 1 && (
-        <div style={{ position: 'absolute', right: 18, bottom: 18, display: 'flex', gap: 6 }}>
+        <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', bottom: 14, display: 'flex', gap: 6 }}>
           {images.map((_, i) => (
             <button key={i} onClick={() => setIdx(i)} aria-label={`Imagen ${i + 1} de ${n}`} aria-current={i === idx}
               style={{
