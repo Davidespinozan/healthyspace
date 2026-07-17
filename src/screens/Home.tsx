@@ -9,6 +9,7 @@ import { CraftRail } from '../components/CraftCard';
 import { Pillars, SocialProof } from '../components/MarketingSections';
 import { LoyaltyCard } from '../components/LoyaltyCard';
 import { ClubConnectCard } from '../components/ClubConnectCard';
+import { HeroCarousel } from '../components/HeroCarousel';
 import { PromosSection } from '../components/PromosSection';
 
 export default function Home() {
@@ -37,10 +38,7 @@ export default function Home() {
         {/* HERO card con profundidad */}
         <Reveal delay={0.08}>
           <div className="card dark-depth" style={{ position: 'relative', background: 'var(--forest)', minHeight: 300, boxShadow: 'var(--sh-lg), var(--edge-dark)' }}>
-            <div style={{ position: 'absolute', inset: 0 }}>
-              <BowlPhoto src={bowlById('oro')?.img ?? ''} accent="#C79A5A" alt="" radius={0} ratio="auto" />
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(8,26,22,.30) 0%, rgba(8,26,22,.35) 45%, rgba(8,26,22,.92) 100%)' }} />
-            </div>
+            <HeroCarousel images={SIGNATURE_BOWLS.map((b) => b.img)} />
             <div style={{ position: 'relative', padding: '26px 22px 24px', minHeight: 300, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
               <div className="eyebrow" style={{ color: 'var(--amber-l)', marginBottom: 12 }}>Culiacán</div>
               <h1 className="h-hero" style={{ color: 'var(--on-dark)', fontSize: 'clamp(22px,6.2vw,29px)' }}>Proteínas de<br />cocción lenta.<br />Ingredientes frescos.</h1>

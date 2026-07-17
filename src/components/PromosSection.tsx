@@ -36,25 +36,25 @@ function PromoCard({ p }: { p: Promo }) {
   };
 
   return (
-    <div className="dark-depth" style={{
+    <div style={{
       flex: '0 0 auto', width: 268, scrollSnapAlign: 'start', borderRadius: 'var(--r-xl)', overflow: 'hidden',
-      color: 'var(--on-dark)', boxShadow: 'var(--sh-md), var(--edge-dark)',
-      background: `radial-gradient(120% 100% at 15% 0%, ${p.accent}44, transparent 60%), var(--forest)`,
+      color: 'var(--forest)', boxShadow: 'var(--glow-gold), var(--edge)',
+      background: 'linear-gradient(150deg, var(--amber-l), var(--amber))',
     }}>
       <div style={{ padding: '16px 16px 14px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 11 }}>
-          <div style={{ width: 34, height: 34, borderRadius: 999, background: 'rgba(255,255,255,.1)', display: 'grid', placeItems: 'center' }}>
-            <Ticket size={17} strokeWidth={2.2} color="var(--amber-l)" />
+          <div style={{ width: 34, height: 34, borderRadius: 999, background: 'rgba(14,37,33,.12)', display: 'grid', placeItems: 'center' }}>
+            <Ticket size={17} strokeWidth={2.2} color="var(--forest)" />
           </div>
-          <span className="chip" style={{ background: 'rgba(255,255,255,.12)', color: 'var(--on-dark)', fontWeight: 700, fontSize: 11 }}>{p.tag}</span>
+          <span className="chip" style={{ background: 'var(--forest)', color: 'var(--amber-l)', fontWeight: 800, fontSize: 11 }}>{p.tag}</span>
         </div>
         <div style={{ fontWeight: 800, fontSize: 16, lineHeight: 1.15 }}>{p.title}</div>
-        <p style={{ fontSize: 12.5, color: 'var(--on-dark-2)', lineHeight: 1.45, margin: '6px 0 0' }}>{p.desc}</p>
+        <p style={{ fontSize: 12.5, color: 'rgba(14,37,33,.72)', lineHeight: 1.45, margin: '6px 0 0' }}>{p.desc}</p>
       </div>
       {p.code && (
         <button onClick={use} style={{
           width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-          padding: '12px', borderTop: '1px dashed rgba(255,255,255,.16)', background: 'rgba(0,0,0,.14)',
+          padding: '12px', borderTop: '1px dashed rgba(14,37,33,.28)', background: 'var(--forest)',
           color: copied ? 'var(--amber-l)' : 'var(--on-dark)', fontWeight: 800, fontSize: 13,
         }}>
           {copied ? <><Check size={15} strokeWidth={3} /> ¡Código copiado!</> : <><Copy size={14} strokeWidth={2.4} /> Usar {p.code}</>}
