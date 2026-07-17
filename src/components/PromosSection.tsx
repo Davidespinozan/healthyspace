@@ -3,15 +3,14 @@ import { useState } from 'react';
 import { useStore } from '../state/store';
 import { PROMOS, type Promo } from '../data/promos';
 
-/** Promos LOCALES — solo se muestran a usuarios en Culiacán (no a internacionales). */
+/** Promos del negocio (Culiacán). La app es local, así que se muestran a todos. */
 export function PromosSection() {
-  const inCuliacan = useStore((s) => s.geo.inCuliacan);
-  if (inCuliacan !== true || PROMOS.length === 0) return null;
+  if (PROMOS.length === 0) return null;
 
   return (
     <section style={{ display: 'grid', gap: 15 }}>
       <div>
-        <div className="section-label">Solo en Culiacán</div>
+        <div className="section-label">Ofertas</div>
         <h2 className="h-1" style={{ fontSize: 21, marginTop: 3 }}>Promos de la semana</h2>
         <div className="section-line" />
       </div>
