@@ -123,8 +123,8 @@ export default function Home() {
             <CalendarCheck size={23} strokeWidth={2.1} />
           </div>
           <div style={{ textAlign: 'left', flex: 1 }}>
-            <div style={{ fontWeight: 800, fontSize: 16 }}>Reserva tu semana</div>
-            <div style={{ fontSize: 12.5, color: 'var(--on-dark-2)', marginTop: 1 }}>5 o 10 bowls con descuento, sellados al vacío</div>
+            <div style={{ fontWeight: 800, fontSize: 16 }}>Paquetes 5 o 10 bowls</div>
+            <div style={{ fontSize: 12.5, color: 'var(--on-dark-2)', marginTop: 1 }}>Con descuento · para compartir o tu semana</div>
           </div>
           <ArrowRight size={20} strokeWidth={2.4} color="var(--amber-l)" />
         </button>
@@ -152,10 +152,13 @@ export default function Home() {
         {/* Club HSC — solo si la ubicación es Culiacán */}
         <ClubConnectCard compact />
 
-        {/* Familia Healthy Space (la H = marca madre, compartida) */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9, padding: '10px 0 2px', opacity: .75 }}>
-          <Logo variant="h" size={22} />
-          <span className="muted" style={{ fontSize: 12, fontWeight: 600, letterSpacing: '.02em' }}>Parte de Healthy Space</span>
+        {/* Familia Healthy Space (la H = marca madre, compartida) + crédito */}
+        <div style={{ display: 'grid', justifyItems: 'center', gap: 7, padding: '12px 0 2px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9, opacity: .75 }}>
+            <Logo variant="h" size={22} />
+            <span className="muted" style={{ fontSize: 12, fontWeight: 600, letterSpacing: '.02em' }}>Parte de Healthy Space</span>
+          </div>
+          <div className="muted" style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.18em', textTransform: 'uppercase', opacity: .55 }}>Powered by STRYV</div>
         </div>
       </div>
     </div>

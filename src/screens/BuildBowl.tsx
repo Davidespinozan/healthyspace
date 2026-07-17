@@ -5,7 +5,6 @@ import { PROTEINS, BASES, COMPLEMENTS, SALSAS, HUMMUS, SALSA_META, MAX_COMPLEMEN
 import { MacroRow, money } from '../components/ui';
 
 export default function BuildBowl({ param }: { param?: string }) {
-  const push = useStore((s) => s.push);
   const pop = useStore((s) => s.pop);
   const addToCart = useStore((s) => s.addToCart);
   const showToast = useStore((s) => s.showToast);
@@ -39,7 +38,8 @@ export default function BuildBowl({ param }: { param?: string }) {
     addToCart({ name: seed ? `${seed.name} · a tu gusto` : 'Bowl a tu gusto', ingredients, price, img: seed?.img ?? '' });
     showToast(seed ? `${seed.name} personalizado agregado` : 'Tu bowl se agregó al pedido');
     setAdded(true);
-    setTimeout(() => push({ name: 'cart' }), 420);
+    // Regresa (al menú/detalle) para seguir agregando; la barra flotante lleva al pedido.
+    setTimeout(() => pop(), 420);
   };
 
   return (

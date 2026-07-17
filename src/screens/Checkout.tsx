@@ -1,5 +1,5 @@
 import { ChevronLeft, Store, Bike, Check, Apple, CreditCard, ShieldCheck } from 'lucide-react';
-import { useStore, type OrderMode } from '../state/store';
+import { useStore, cartTotals, type OrderMode } from '../state/store';
 import { DELIVERY_FEE } from '../data/menu';
 import { money } from '../components/ui';
 import { LocationCard } from '../components/LocationCard';
@@ -18,9 +18,7 @@ export default function Checkout() {
   const setCustomer = useStore((s) => s.setCustomer);
   const placeOrder = useStore((s) => s.placeOrder);
 
-  const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
-  const fee = mode === 'delivery' ? DELIVERY_FEE : 0;
-  const total = subtotal + fee;
+  const t = cartTotals(cart, mode);
 
   const canDeliver = mode !== 'delivery' || address.trim().length > 4;
   const ready = customer.name.trim().length > 1 && customer.phone.trim().length >= 8 && canDeliver;
@@ -77,12 +75,13 @@ export default function Checkout() {
         <section style={{ display: 'grid', gap: 8 }}>
           <div className="section-label">Resumen</div>
           <div className="card" style={{ padding: '15px 16px', display: 'grid', gap: 8, boxShadow: 'var(--sh-sm), var(--edge)' }}>
-            <Row label="Subtotal" value={money(subtotal)} />
-            <Row label={mode === 'delivery' ? 'Envío' : 'Pickup'} value={mode === 'delivery' ? money(fee) : 'Gratis'} muted={mode !== 'delivery'} />
+            <Row label="Subtotal" value={money(t.subtotal)} />
+            {t.discount > 0 && <Row label={`Paquete ${t.bowls} bowls · −${Math.round(t.pct * 100)}%`} value={`−${money(t.discount)}`} accent />}
+            <Row label={mode === 'delivery' ? 'Envío' : 'Pickup'} value={mode === 'delivery' ? money(t.fee) : 'Gratis'} muted={mode !== 'delivery'} />
             <hr className="hair" style={{ margin: '2px 0' }} />
             <div style={{ display: 'flex', alignItems: 'baseline' }}>
               <span style={{ flex: 1, fontSize: 15, fontWeight: 700 }}>Total</span>
-              <b className="tabular" style={{ fontSize: 22, fontWeight: 900, letterSpacing: '-.03em' }}>{money(total)}</b>
+              <b className="tabular" style={{ fontSize: 22, fontWeight: 900, letterSpacing: '-.03em' }}>{money(t.total)}</b>
             </div>
           </div>
         </section>
@@ -93,7 +92,7 @@ export default function Checkout() {
         padding: '16px 20px calc(16px + var(--safe-b))', background: 'var(--surface)', boxShadow: '0 -10px 34px -14px rgba(14,37,33,.24), var(--edge)',
         borderRadius: '28px 28px 0 0', display: 'grid', gap: 10, zIndex: 20 }}>
         <button className="btn" style={{ background: ready ? '#000' : undefined }} onClick={placeOrder} disabled={!ready}>
-          <Apple size={18} strokeWidth={2.4} fill="currentColor" /> Pay · {money(total)}
+          <Apple size={18} strokeWidth={2.4} fill="currentColor" /> Pay · {money(t.total)}
         </button>
         <div style={{ display: 'flex', gap: 10 }}>
           <button className="btn btn--ghost" style={{ flex: 1 }} onClick={placeOrder} disabled={!ready}>
@@ -170,11 +169,11 @@ function Field({ value, onChange, placeholder, type = 'text', multiline }: {
   );
 }
 
-function Row({ label, value, muted }: { label: string; value: string; muted?: boolean }) {
+function Row({ label, value, muted, accent }: { label: string; value: string; muted?: boolean; accent?: boolean }) {
   return (
     <div style={{ display: 'flex', alignItems: 'baseline', fontSize: 13.5 }}>
-      <span className="muted" style={{ flex: 1, fontWeight: 600 }}>{label}</span>
-      <span className="tabular" style={{ fontWeight: 700, color: muted ? 'var(--ink-2)' : 'var(--ink)' }}>{value}</span>
+      <span style={{ flex: 1, fontWeight: accent ? 700 : 600, color: accent ? '#3F6B39' : 'var(--ink-2)' }}>{label}</span>
+      <span className="tabular" style={{ fontWeight: 700, color: accent ? '#3F6B39' : muted ? 'var(--ink-2)' : 'var(--ink)' }}>{value}</span>
     </div>
   );
 }

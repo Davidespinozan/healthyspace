@@ -1,6 +1,6 @@
 import { ChevronLeft, Minus, Plus, Trash2, Tag, ArrowRight } from 'lucide-react';
-import { useStore } from '../state/store';
-import { ING, DELIVERY_FEE, DRINKS, EXTRAS } from '../data/menu';
+import { useStore, cartTotals } from '../state/store';
+import { ING, DRINKS, EXTRAS } from '../data/menu';
 import { BowlPhoto, money } from '../components/ui';
 import { ProductRail } from '../components/ProductRail';
 
@@ -15,9 +15,7 @@ export default function Cart() {
   const promo = useStore((s) => s.promo);
   const setPromo = useStore((s) => s.setPromo);
 
-  const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
-  const fee = mode === 'delivery' ? DELIVERY_FEE : 0;
-  const total = subtotal + fee;
+  const t = cartTotals(cart, mode);
 
   if (!cart.length) {
     return (
@@ -92,12 +90,15 @@ export default function Cart() {
       <div style={{ position: 'fixed', left: '50%', transform: 'translateX(-50%)', bottom: 0, width: 'min(var(--maxw), 100vw)',
         padding: '18px 20px calc(16px + var(--safe-b))', background: 'var(--surface)', boxShadow: '0 -10px 34px -14px rgba(14,37,33,.24), var(--edge)',
         borderRadius: '28px 28px 0 0', display: 'grid', gap: 9, zIndex: 20 }}>
-        <Row label="Subtotal" value={money(subtotal)} />
-        <Row label={mode === 'delivery' ? 'Envío a domicilio' : 'Recoger en el truck'} value={mode === 'delivery' ? money(fee) : 'Gratis'} muted={mode !== 'delivery'} />
+        <Row label="Subtotal" value={money(t.subtotal)} />
+        {t.discount > 0 && (
+          <Row label={`Paquete ${t.bowls} bowls · −${Math.round(t.pct * 100)}%`} value={`−${money(t.discount)}`} accent />
+        )}
+        <Row label={mode === 'delivery' ? 'Envío a domicilio' : 'Recoger en el truck'} value={mode === 'delivery' ? money(t.fee) : 'Gratis'} muted={mode !== 'delivery'} />
         <hr className="hair" style={{ margin: '3px 0' }} />
         <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: 2 }}>
           <span style={{ flex: 1, fontSize: 15, fontWeight: 700 }}>Total</span>
-          <b className="tabular" style={{ fontSize: 24, fontWeight: 900, letterSpacing: '-.03em' }}>{money(total)}</b>
+          <b className="tabular" style={{ fontSize: 24, fontWeight: 900, letterSpacing: '-.03em' }}>{money(t.total)}</b>
         </div>
         <button className="btn" onClick={() => push({ name: 'checkout' })}>
           Continuar al pago <ArrowRight size={17} strokeWidth={2.6} />
@@ -107,11 +108,12 @@ export default function Cart() {
   );
 }
 
-function Row({ label, value, muted }: { label: string; value: string; muted?: boolean }) {
+function Row({ label, value, muted, accent }: { label: string; value: string; muted?: boolean; accent?: boolean }) {
+  const color = accent ? '#3F6B39' : muted ? 'var(--ink-2)' : 'var(--ink)';
   return (
     <div style={{ display: 'flex', alignItems: 'baseline', fontSize: 13.5 }}>
-      <span className="muted" style={{ flex: 1, fontWeight: 600 }}>{label}</span>
-      <span className="tabular" style={{ fontWeight: 700, color: muted ? 'var(--ink-2)' : 'var(--ink)' }}>{value}</span>
+      <span style={{ flex: 1, fontWeight: accent ? 700 : 600, color: accent ? '#3F6B39' : 'var(--ink-2)' }}>{label}</span>
+      <span className="tabular" style={{ fontWeight: 700, color }}>{value}</span>
     </div>
   );
 }

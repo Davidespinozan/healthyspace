@@ -32,6 +32,7 @@ export interface Order {
   items: CartItem[];
   mode: OrderMode;
   subtotal: number;
+  discount: number;     // descuento por paquete (5/10 bowls)
   fee: number;
   total: number;
   address?: string;
@@ -96,6 +97,23 @@ interface State {
 /** Sellos para un bowl gratis. */
 export const LOYALTY_GOAL = 10;
 
+// ── Paquetes: descuento por cantidad de BOWLS (para compartir o meal prep) ──
+/** % de descuento según cuántos bowls lleva el pedido. */
+export function packagePct(bowls: number): number {
+  return bowls >= 10 ? 0.19 : bowls >= 5 ? 0.12 : 0;
+}
+export interface CartTotals { subtotal: number; bowls: number; pct: number; discount: number; fee: number; total: number }
+/** Totales del carrito con el descuento de paquete aplicado (solo a los bowls). */
+export function cartTotals(cart: CartItem[], mode: OrderMode): CartTotals {
+  const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
+  const bowlsSubtotal = cart.reduce((s, c) => s + (c.productId ? 0 : c.price * c.qty), 0);
+  const bowls = cart.reduce((n, c) => n + (c.productId ? 0 : c.qty), 0);
+  const pct = packagePct(bowls);
+  const discount = Math.round(bowlsSubtotal * pct);
+  const fee = mode === 'delivery' ? DELIVERY_FEE : 0;
+  return { subtotal, bowls, pct, discount, fee, total: subtotal - discount + fee };
+}
+
 const uid = () => Math.random().toString(36).slice(2, 9);
 const orderCode = () => 'HS-' + Math.floor(1000 + Math.random() * 9000);
 
@@ -152,10 +170,9 @@ export const useStore = create<State>()(
       placeOrder: () => {
         const { cart, mode, address, customer, branch } = get();
         if (!cart.length) return;
-        const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
-        const fee = mode === 'delivery' ? DELIVERY_FEE : 0;
+        const t = cartTotals(cart, mode);
         const order: Order = {
-          code: orderCode(), items: cart, mode, subtotal, fee, total: subtotal + fee,
+          code: orderCode(), items: cart, mode, subtotal: t.subtotal, discount: t.discount, fee: t.fee, total: t.total,
           address: mode === 'delivery' ? address : undefined,
           branch: mode === 'pickup' ? branch : undefined,
           etaMin: mode === 'delivery' ? 32 : 12,

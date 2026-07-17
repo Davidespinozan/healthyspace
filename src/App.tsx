@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { ShoppingBag } from 'lucide-react';
-import { useStore, ROOT_TABS } from './state/store';
+import { useStore, ROOT_TABS, cartTotals } from './state/store';
 import { money } from './components/ui';
 import { TabBar } from './components/TabBar';
 import { BrandStage } from './components/BrandStage';
@@ -32,7 +32,7 @@ export default function App() {
 
   const onTab = ROOT_TABS.includes(top.name);
   const count = cart.reduce((n, c) => n + c.qty, 0);
-  const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
+  const total = cartTotals(cart, 'pickup').total; // preview con descuento de paquete (sin envío)
   const showBar = count > 0 && !['cart', 'checkout', 'order'].includes(top.name);
 
   return (

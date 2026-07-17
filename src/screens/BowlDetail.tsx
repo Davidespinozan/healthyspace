@@ -25,7 +25,8 @@ export default function BowlDetail({ param }: { param?: string }) {
     addToCart({ bowlId: b.id, name: b.name, ingredients: b.ingredients, price: b.price, img: b.img }, qty);
     showToast(`${b.name} agregado a tu pedido`);
     setAdded(true);
-    setTimeout(() => push({ name: 'cart' }), 420);
+    // Regresa al menú para seguir agregando; la barra flotante lleva al pedido.
+    setTimeout(() => pop(), 420);
   };
 
   return (
