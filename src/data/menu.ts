@@ -72,10 +72,16 @@ const ING_IMG_FILE: Record<string, string> = {
   'hummus-elote': 'hummus-especial-de-elote.webp',
   'hummus-jalapeno': 'hummus-especial-jalapeNo.webp',
   'hummus-chiles': 'hummus-especial-de-chiles-arbolguajillo.webp',
+  // Salsas con foto real
+  's-chipotle': 'chipotle.webp',
+  's-cilantro': 'cilantro.webp',
 };
 
 /** URL de la foto real del ingrediente, o '' si aún no hay (usa placeholder). */
 export const ingImg = (id: string): string => (ING_IMG_FILE[id] ? ING_IMG_BASE + ING_IMG_FILE[id] : '');
+
+/** Foto compuesta de un bowl armado (carpeta BOWLS/). */
+const bowlImg = (file: string): string => ING_IMG_BASE + 'BOWLS/' + file;
 
 export function sumMacros(ids: string[]): Macro {
   return ids.reduce<Macro>((m, id) => {
@@ -157,36 +163,33 @@ export interface Bowl {
   accent: string;          // color de acento del bowl (para el hero/detalle)
 }
 
+// ⚠️ Los 5 bowls de la casa (fotografía real). Composición inferida de las fotos —
+// David confirma/ajusta ingredientes y precios reales.
 export const SIGNATURE_BOWLS: Bowl[] = [
   {
-    id: 'fire-chicken', name: 'Fire Chicken', tagline: 'Pollo de cocción lenta, chipotle cremoso y elote rostizado.',
-    ingredients: ['pollo-lento', 'arroz-blanco', 'frijoles', 'elote', 'pico', 'aguacate', 's-chipotle'],
-    price: 149, img: ingImg('pollo-lento'), accent: '#C75B3A',
+    id: 'fuego', name: 'Fuego', tagline: 'Pollo a las brasas, chipotle ahumado y elote rostizado.',
+    ingredients: ['pollo-lento', 'arroz-blanco', 'elote', 'pico', 'aguacate', 's-chipotle'],
+    price: 149, img: bowlImg('fuego-bowl.webp'), accent: '#C75B3A',
   },
   {
-    id: 'steak-power', name: 'Steak Power', tagline: 'Chamberete braseado 8 horas. Se deshace solo.',
-    ingredients: ['chamberete', 'arroz-integral', 'verduras', 'elote', 'cebolla', 'aguacate', 's-cilantro'],
-    price: 179, img: ingImg('chamberete'), accent: '#8A5A2B',
+    id: 'brasa', name: 'Brasa', tagline: 'Chamberete braseado, quinoa y frescura de pepino.',
+    ingredients: ['chamberete', 'quinoa', 'pepino', 'cebolla', 'aguacate', 's-cilantro'],
+    price: 179, img: bowlImg('brasa-bowl.webp'), accent: '#8A5A2B',
   },
   {
-    id: 'carnitas-bowl', name: 'Carnitas Bowl', tagline: 'Cerdo de cocción lenta, terminado en plancha.',
-    ingredients: ['cerdo-lento', 'arroz-blanco', 'cebolla', 'pico', 'aguacate', 'frijoles', 's-verde'],
-    price: 159, img: ingImg('cerdo-lento'), accent: '#B5651D',
+    id: 'humo', name: 'Humo', tagline: 'Res deshebrada braseada, ahumada y jugosa.',
+    ingredients: ['chamberete', 'arroz-integral', 'aguacate', 'cebolla', 'pico', 's-chipotle'],
+    price: 175, img: bowlImg('humo-bowl.webp'), accent: '#7A4A2E',
   },
   {
-    id: 'mexican-signature', name: 'Mexican Signature', tagline: 'Chamberete, frijoles y salsa verde asada. La de la casa.',
-    ingredients: ['chamberete', 'arroz-blanco', 'frijoles', 'elote', 'pico', 'aguacate', 's-verde'],
-    price: 179, img: ingImg('chamberete'), accent: '#B24A34',
+    id: 'oro', name: 'Oro', tagline: 'Res, camote y hummus de elote. Dulce y dorado.',
+    ingredients: ['chamberete', 'arroz-blanco', 'camote', 'pico', 'aguacate', 'hummus-elote'],
+    price: 179, img: bowlImg('oro-bowl.webp'), accent: '#BFA065',
   },
   {
-    id: 'green-balance', name: 'Green Balance', tagline: 'Pollo lento sobre greens y quinoa. Ligero, nunca poco.',
-    ingredients: ['pollo-lento', 'mix-greens', 'quinoa', 'brocoli', 'pepino', 'aguacate', 's-avocado'],
-    price: 155, img: ingImg('mix-greens'), accent: '#4E7A45',
-  },
-  {
-    id: 'huerto-bowl', name: 'Huerto Bowl', tagline: 'Betabel, camote y feta. Dulce, terroso y salado.',
-    ingredients: ['pollo-lento', 'quinoa', 'betabel', 'camote', 'feta', 'pepino', 's-garlic'],
-    price: 159, img: ingImg('feta'), accent: '#9E2B4A',
+    id: 'verde', name: 'Verde', tagline: 'Pollo, brócoli y quinoa. Ligero, nunca poco.',
+    ingredients: ['pollo-lento', 'quinoa', 'brocoli', 'pepino', 'aguacate', 's-cilantro'],
+    price: 155, img: bowlImg('verde-bowl.webp'), accent: '#4E7A45',
   },
 ];
 

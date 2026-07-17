@@ -119,13 +119,14 @@ function SalsaOpt({ id, on, onClick }: { id: string; on: boolean; onClick: () =>
   return (
     <button onClick={onClick} style={{ display: 'grid', justifyItems: 'center', gap: 6, padding: '4px 0' }}>
       <span style={{
-        width: 58, height: 58, borderRadius: 999, position: 'relative',
+        width: 58, height: 58, borderRadius: 999, position: 'relative', overflow: 'hidden',
         background: `radial-gradient(120% 120% at 32% 26%, ${meta.accent}, ${meta.accent}CC 55%, ${meta.accent}99)`,
         boxShadow: on ? `0 0 0 3px var(--cream), 0 0 0 5px ${meta.accent}` : 'var(--sh-sm), inset 0 2px 4px rgba(255,255,255,.35)',
         transition: 'box-shadow .18s var(--ease), transform .12s var(--ease)',
         transform: on ? 'scale(1.02)' : 'none',
       }}>
-        {on && <span style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}>
+        {ingImg(id) && <img src={ingImg(id)} alt={ing?.name} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />}
+        {on && <span style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', background: 'rgba(14,37,33,.25)' }}>
           <Check size={20} strokeWidth={3} color="#fff" />
         </span>}
       </span>
