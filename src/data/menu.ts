@@ -7,17 +7,17 @@ export interface Ingredient extends Macro { id: string; name: string }
 
 /** Tabla única de ingredientes (macros por porción servida en el bowl). */
 export const ING: Record<string, Ingredient> = mk({
-  // Proteínas
-  'pollo-asado':     ['Pollo asado', 230, 43, 0, 5],
-  'carne-asada':     ['Carne asada', 290, 36, 0, 16],
-  'salmon':          ['Salmón', 280, 34, 0, 15],
-  'camaron':         ['Camarón', 180, 34, 2, 3],
+  // Proteínas — TODAS de cocción lenta. Es la diferencia de la casa: textura que no se
+  // replica en casa. Sin salmón ni camarón (delicados, no toleran el regenerado).
+  'pollo-lento':     ['Pollo de cocción lenta', 240, 42, 0, 8],
+  'chamberete':      ['Chamberete braseado', 285, 38, 1, 14],
+  'cerdo-lento':     ['Cerdo de cocción lenta', 300, 34, 1, 18],
   // Bases
   'arroz-blanco':    ['Arroz blanco', 205, 4, 45, 0],
   'arroz-integral':  ['Arroz integral', 215, 5, 45, 2],
   'quinoa':          ['Quinoa', 220, 8, 39, 4],
-  'mix-greens':      ['Mix greens', 30, 2, 5, 0],
-  // Complementos
+  'mix-greens':      ['Mix de greens', 30, 2, 5, 0],
+  // Complementos frescos
   'frijoles':        ['Frijoles negros', 115, 8, 20, 1],
   'elote':           ['Elote rostizado', 90, 3, 19, 1],
   'pico':            ['Pico de gallo', 20, 1, 4, 0],
@@ -25,14 +25,18 @@ export const ING: Record<string, Ingredient> = mk({
   'verduras':        ['Verduras asadas', 60, 2, 10, 2],
   'brocoli':         ['Brócoli', 35, 3, 7, 0],
   'pepino':          ['Pepino', 12, 1, 3, 0],
-  'cherry':          ['Tomate cherry', 20, 1, 4, 0],
   'cebolla':         ['Cebolla morada', 15, 0, 4, 0],
-  // Salsas
-  's-chipotle':      ['Salsa chipotle', 45, 0, 3, 4],
-  's-verde':         ['Salsa verde', 20, 0, 3, 1],
-  's-cilantro':      ['Salsa cilantro limón', 40, 0, 2, 4],
-  's-habanero':      ['Salsa habanero', 15, 0, 3, 0],
-  's-garlic':        ['Salsa garlic herb', 60, 0, 2, 6],
+  'betabel':         ['Betabel rostizado', 45, 2, 10, 0],
+  'camote':          ['Camote al horno', 90, 2, 21, 0],
+  'feta':            ['Queso feta', 75, 4, 1, 6],
+  'cherry':          ['Tomate cherry', 20, 1, 4, 0],
+  // Salsas — servidas en recipiente de acero
+  's-chipotle':      ['Chipotle cremoso', 50, 1, 3, 4],
+  's-verde':         ['Salsa verde asada', 20, 0, 3, 1],
+  's-ranch':         ['Jalapeño ranch', 60, 1, 2, 6],
+  's-avocado':       ['Avocado lime', 55, 0, 2, 5],
+  's-garlic':        ['Garlic herb', 60, 0, 2, 6],
+  's-cilantro':      ['Cilantro limón', 40, 0, 2, 4],
 });
 
 function mk(rows: Record<string, [string, number, number, number, number]>): Record<string, Ingredient> {
@@ -49,27 +53,30 @@ export function sumMacros(ids: string[]): Macro {
 }
 
 // ── Opciones de "Build Your Bowl" ────────────────────────────────────────────
-export const PROTEINS = ['pollo-asado', 'carne-asada', 'salmon', 'camaron'];
+// Pocas proteínas, pero inolvidables. Todas de cocción lenta.
+export const PROTEINS = ['pollo-lento', 'chamberete', 'cerdo-lento'];
 export const BASES = ['arroz-blanco', 'arroz-integral', 'quinoa', 'mix-greens'];
-export const COMPLEMENTS = ['frijoles', 'elote', 'pico', 'aguacate', 'verduras', 'brocoli', 'pepino', 'cherry', 'cebolla'];
-export const SALSAS = ['s-chipotle', 's-verde', 's-cilantro', 's-habanero', 's-garlic'];
+export const COMPLEMENTS = ['elote', 'aguacate', 'pico', 'cebolla', 'verduras', 'brocoli', 'betabel', 'camote', 'feta', 'frijoles', 'pepino', 'cherry'];
+export const SALSAS = ['s-chipotle', 's-verde', 's-ranch', 's-avocado', 's-garlic', 's-cilantro'];
 export const MAX_COMPLEMENTS = 5;
 
 /** Metadata visual de salsas — para las "salsas con foto" (círculo de color + descriptor). */
 export const SALSA_META: Record<string, { tag: string; accent: string }> = {
   's-chipotle': { tag: 'Ahumada',  accent: '#C75B3A' },
-  's-verde':    { tag: 'Fresca',   accent: '#4E7A45' },
+  's-verde':    { tag: 'Asada',    accent: '#4E7A45' },
+  's-ranch':    { tag: 'Picante',  accent: '#8FBF5A' },
+  's-avocado':  { tag: 'Cremosa',  accent: '#6B8E23' },
+  's-garlic':   { tag: 'Herbal',   accent: '#BFA065' },
   's-cilantro': { tag: 'Cítrica',  accent: '#6FA03A' },
-  's-habanero': { tag: 'Picante',  accent: '#D2691E' },
-  's-garlic':   { tag: 'Cremosa',  accent: '#BFA065' },
 };
 
 /** Costo de envío a domicilio (MXN). Plano, como Anastacio. Pickup = sin costo. */
 export const DELIVERY_FEE = 45;
 
-/** Precio según proteína (MXN). Camarón/salmón premium. Complementos y salsa incluidos. */
+/** Precio según proteína (MXN). El chamberete braseado es el premium (8 h de cocción).
+ *  Base, complementos y salsa incluidos. */
 export const PROTEIN_PRICE: Record<string, number> = {
-  'pollo-asado': 145, 'carne-asada': 155, 'salmon': 185, 'camaron': 175,
+  'pollo-lento': 149, 'cerdo-lento': 159, 'chamberete': 179,
 };
 
 // ── Bowls Signature ──────────────────────────────────────────────────────────
@@ -85,34 +92,34 @@ export interface Bowl {
 
 export const SIGNATURE_BOWLS: Bowl[] = [
   {
-    id: 'fire-chicken', name: 'Fire Chicken', tagline: 'Pollo asado, chipotle ahumado y elote rostizado.',
-    ingredients: ['pollo-asado', 'arroz-blanco', 'frijoles', 'elote', 'pico', 'aguacate', 's-chipotle'],
+    id: 'fire-chicken', name: 'Fire Chicken', tagline: 'Pollo de cocción lenta, chipotle cremoso y elote rostizado.',
+    ingredients: ['pollo-lento', 'arroz-blanco', 'frijoles', 'elote', 'pico', 'aguacate', 's-chipotle'],
     price: 149, img: '/bowls/fire-chicken.jpg', accent: '#C75B3A',
   },
   {
-    id: 'steak-power', name: 'Steak Power', tagline: 'Carne asada, integral y verduras al carbón.',
-    ingredients: ['carne-asada', 'arroz-integral', 'verduras', 'elote', 'cebolla', 'aguacate', 's-cilantro'],
-    price: 169, img: '/bowls/steak-power.jpg', accent: '#8A5A2B',
+    id: 'steak-power', name: 'Steak Power', tagline: 'Chamberete braseado 8 horas. Se deshace solo.',
+    ingredients: ['chamberete', 'arroz-integral', 'verduras', 'elote', 'cebolla', 'aguacate', 's-cilantro'],
+    price: 179, img: '/bowls/steak-power.jpg', accent: '#8A5A2B',
   },
   {
-    id: 'salmon-boost', name: 'Salmon Boost', tagline: 'Salmón, quinoa y garlic herb.',
-    ingredients: ['salmon', 'quinoa', 'brocoli', 'pepino', 'cherry', 'aguacate', 's-garlic'],
-    price: 189, img: '/bowls/salmon-boost.jpg', accent: '#C4703E',
+    id: 'carnitas-bowl', name: 'Carnitas Bowl', tagline: 'Cerdo de cocción lenta, terminado en plancha.',
+    ingredients: ['cerdo-lento', 'arroz-blanco', 'cebolla', 'pico', 'aguacate', 'frijoles', 's-verde'],
+    price: 159, img: '/bowls/carnitas-bowl.jpg', accent: '#B5651D',
   },
   {
-    id: 'pacific-bowl', name: 'Pacific Bowl', tagline: 'Camarón, cilantro limón y frescura del Pacífico.',
-    ingredients: ['camaron', 'arroz-blanco', 'elote', 'pepino', 'pico', 'aguacate', 's-cilantro'],
-    price: 179, img: '/bowls/pacific-bowl.jpg', accent: '#3E7E8C',
+    id: 'mexican-signature', name: 'Mexican Signature', tagline: 'Chamberete, frijoles y salsa verde asada. La de la casa.',
+    ingredients: ['chamberete', 'arroz-blanco', 'frijoles', 'elote', 'pico', 'aguacate', 's-verde'],
+    price: 179, img: '/bowls/mexican-signature.jpg', accent: '#B24A34',
   },
   {
-    id: 'green-balance', name: 'Green Balance', tagline: 'Pollo, mix greens y quinoa. Ligero y lleno.',
-    ingredients: ['pollo-asado', 'mix-greens', 'quinoa', 'brocoli', 'pepino', 'aguacate', 's-verde'],
-    price: 149, img: '/bowls/green-balance.jpg', accent: '#4E7A45',
+    id: 'green-balance', name: 'Green Balance', tagline: 'Pollo lento sobre greens y quinoa. Ligero, nunca poco.',
+    ingredients: ['pollo-lento', 'mix-greens', 'quinoa', 'brocoli', 'pepino', 'aguacate', 's-avocado'],
+    price: 155, img: '/bowls/green-balance.jpg', accent: '#4E7A45',
   },
   {
-    id: 'mexican-signature', name: 'Mexican Signature', tagline: 'Carne asada, frijoles y salsa verde. Casa.',
-    ingredients: ['carne-asada', 'arroz-blanco', 'frijoles', 'elote', 'pico', 'aguacate', 's-verde'],
-    price: 159, img: '/bowls/mexican-signature.jpg', accent: '#B24A34',
+    id: 'huerto-bowl', name: 'Huerto Bowl', tagline: 'Betabel, camote y feta. Dulce, terroso y salado.',
+    ingredients: ['pollo-lento', 'quinoa', 'betabel', 'camote', 'feta', 'pepino', 's-garlic'],
+    price: 159, img: '/bowls/huerto-bowl.jpg', accent: '#9E2B4A',
   },
 ];
 

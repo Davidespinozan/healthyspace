@@ -93,7 +93,9 @@ const Grid = ({ children }: { children: React.ReactNode }) => (
 function SalsaOpt({ id, on, onClick }: { id: string; on: boolean; onClick: () => void }) {
   const ing = ING[id];
   const meta = SALSA_META[id];
-  const name = (ing?.name ?? '').replace(/^Salsa\s+/i, '');
+  // Quita el prefijo "Salsa " y recapitaliza ("Salsa verde asada" → "Verde asada").
+  const raw = (ing?.name ?? '').replace(/^Salsa\s+/i, '');
+  const name = raw.charAt(0).toUpperCase() + raw.slice(1);
   return (
     <button onClick={onClick} style={{ display: 'grid', justifyItems: 'center', gap: 6, padding: '4px 0' }}>
       <span style={{
