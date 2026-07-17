@@ -26,10 +26,8 @@ export const ING: Record<string, Ingredient> = mk({
   'brocoli':         ['Brócoli', 35, 3, 7, 0],
   'pepino':          ['Pepino', 12, 1, 3, 0],
   'cebolla':         ['Cebolla morada', 15, 0, 4, 0],
-  'betabel':         ['Betabel rostizado', 45, 2, 10, 0],
   'camote':          ['Camote al horno', 90, 2, 21, 0],
   'feta':            ['Queso feta', 75, 4, 1, 6],
-  'cherry':          ['Tomate cherry', 20, 1, 4, 0],
   // Hummus especiales de la casa (dips premium)
   'hummus-elote':    ['Hummus especial de elote', 75, 3, 9, 3],
   'hummus-jalapeno': ['Hummus especial de jalapeño', 70, 3, 7, 4],
@@ -40,9 +38,6 @@ export const ING: Record<string, Ingredient> = mk({
   'x-totopos':       ['Totopos horneados', 150, 3, 22, 6],
   // Salsas — servidas en recipiente de acero
   's-chipotle':      ['Chipotle cremoso', 50, 1, 3, 4],
-  's-verde':         ['Salsa verde asada', 20, 0, 3, 1],
-  's-ranch':         ['Jalapeño ranch', 60, 1, 2, 6],
-  's-avocado':       ['Avocado lime', 55, 0, 2, 5],
   's-garlic':        ['Garlic herb', 60, 0, 2, 6],
   's-cilantro':      ['Cilantro limón', 40, 0, 2, 4],
 });
@@ -94,8 +89,8 @@ export function sumMacros(ids: string[]): Macro {
 // Pocas proteínas, pero inolvidables. Todas de cocción lenta.
 export const PROTEINS = ['pollo-lento', 'chamberete', 'cerdo-lento'];
 export const BASES = ['arroz-blanco', 'arroz-integral', 'quinoa', 'mix-greens'];
-export const COMPLEMENTS = ['elote', 'aguacate', 'pico', 'cebolla', 'verduras', 'brocoli', 'betabel', 'camote', 'feta', 'frijoles', 'pepino', 'cherry'];
-export const SALSAS = ['s-chipotle', 's-verde', 's-ranch', 's-avocado', 's-garlic', 's-cilantro'];
+export const COMPLEMENTS = ['elote', 'aguacate', 'pico', 'cebolla', 'verduras', 'brocoli', 'camote', 'feta', 'frijoles', 'pepino'];
+export const SALSAS = ['s-chipotle', 's-garlic', 's-cilantro'];
 /** Hummus especiales de la casa — su propio segmento (dips premium con foto real). */
 export const HUMMUS = ['hummus-elote', 'hummus-jalapeno', 'hummus-chiles'];
 export const MAX_COMPLEMENTS = 5;
@@ -103,9 +98,6 @@ export const MAX_COMPLEMENTS = 5;
 /** Metadata visual de salsas — para las "salsas con foto" (círculo de color + descriptor). */
 export const SALSA_META: Record<string, { tag: string; accent: string }> = {
   's-chipotle': { tag: 'Ahumada',  accent: '#C75B3A' },
-  's-verde':    { tag: 'Asada',    accent: '#4E7A45' },
-  's-ranch':    { tag: 'Picante',  accent: '#8FBF5A' },
-  's-avocado':  { tag: 'Cremosa',  accent: '#6B8E23' },
   's-garlic':   { tag: 'Herbal',   accent: '#BFA065' },
   's-cilantro': { tag: 'Cítrica',  accent: '#6FA03A' },
 };
