@@ -1,33 +1,42 @@
 import { useState } from 'react';
 import { ChevronLeft, Check } from 'lucide-react';
 import { useStore } from '../state/store';
-import { PROTEINS, BASES, COMPLEMENTS, SALSAS, SALSA_META, MAX_COMPLEMENTS, PROTEIN_PRICE, PROTEIN_CRAFT, ING, sumMacros } from '../data/menu';
+import { PROTEINS, BASES, COMPLEMENTS, SALSAS, SALSA_META, MAX_COMPLEMENTS, PROTEIN_PRICE, PROTEIN_CRAFT, EXTRA_IDS, EXTRA_PRICE, ING, sumMacros, bowlById } from '../data/menu';
 import { MacroRow, money } from '../components/ui';
 
-export default function BuildBowl() {
+export default function BuildBowl({ param }: { param?: string }) {
   const push = useStore((s) => s.push);
   const pop = useStore((s) => s.pop);
   const addToCart = useStore((s) => s.addToCart);
   const showToast = useStore((s) => s.showToast);
 
-  const [protein, setProtein] = useState<string>('');
-  const [base, setBase] = useState<string>('');
-  const [comps, setComps] = useState<string[]>([]);
-  const [salsa, setSalsa] = useState<string>('');
+  // Si viene un bowl (param), se PERSONALIZA: se siembran sus componentes.
+  const seed = param ? bowlById(param) : undefined;
+  const seedIds = seed?.ingredients ?? [];
+
+  const [protein, setProtein] = useState<string>(seedIds.find((i) => PROTEINS.includes(i)) ?? '');
+  const [base, setBase] = useState<string>(seedIds.find((i) => BASES.includes(i)) ?? '');
+  const [comps, setComps] = useState<string[]>(seedIds.filter((i) => COMPLEMENTS.includes(i)));
+  const [salsa, setSalsa] = useState<string>(seedIds.find((i) => SALSAS.includes(i)) ?? '');
+  const [extras, setExtras] = useState<string[]>([]);
   const [added, setAdded] = useState(false);
 
-  const ingredients = [protein, base, ...comps, salsa].filter(Boolean);
+  const ingredients = [protein, base, ...comps, salsa, ...extras].filter(Boolean);
   const m = sumMacros(ingredients);
-  const price = protein ? PROTEIN_PRICE[protein] : 0;
+  const extrasCost = extras.reduce((s, id) => s + (EXTRA_PRICE[id] ?? 0), 0);
+  // Personalizar mantiene el precio del signature; armar desde cero cobra por proteína.
+  const price = (seed ? seed.price : (protein ? PROTEIN_PRICE[protein] : 0)) + extrasCost;
   const ready = !!protein && !!base;
 
   const toggleComp = (id: string) =>
     setComps((c) => (c.includes(id) ? c.filter((x) => x !== id) : c.length < MAX_COMPLEMENTS ? [...c, id] : c));
+  const toggleExtra = (id: string) =>
+    setExtras((e) => (e.includes(id) ? e.filter((x) => x !== id) : [...e, id]));
 
   const add = () => {
     if (!ready) return;
-    addToCart({ name: 'Bowl a tu gusto', ingredients, price, img: '' });
-    showToast('Tu bowl se agregó al pedido');
+    addToCart({ name: seed ? `${seed.name} · a tu gusto` : 'Bowl a tu gusto', ingredients, price, img: seed?.img ?? '' });
+    showToast(seed ? `${seed.name} personalizado agregado` : 'Tu bowl se agregó al pedido');
     setAdded(true);
     setTimeout(() => push({ name: 'cart' }), 420);
   };
@@ -36,7 +45,7 @@ export default function BuildBowl() {
     <div className="page" style={{ paddingBottom: 'calc(120px + var(--safe-b))' }}>
       <div className="topbar">
         <button className="iconbtn" onClick={pop}><ChevronLeft size={22} /></button>
-        <h1 className="h-1" style={{ fontSize: 22 }}>Arma tu bowl</h1>
+        <h1 className="h-1" style={{ fontSize: 22 }}>{seed ? 'Personaliza tu bowl' : 'Arma tu bowl'}</h1>
       </div>
 
       <div style={{ padding: '4px 20px', display: 'grid', gap: 26 }}>
@@ -56,6 +65,11 @@ export default function BuildBowl() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
             {SALSAS.map((id) => <SalsaOpt key={id} id={id} on={salsa === id} onClick={() => setSalsa(salsa === id ? '' : id)} />)}
           </div>
+        </Step>
+        <Step n={5} title="Extras" hint="Opcional">
+          <Grid>{EXTRA_IDS.map((id) => (
+            <Opt key={id} id={id} on={extras.includes(id)} onClick={() => toggleExtra(id)} extra />
+          ))}</Grid>
         </Step>
       </div>
 
@@ -115,7 +129,7 @@ function SalsaOpt({ id, on, onClick }: { id: string; on: boolean; onClick: () =>
   );
 }
 
-function Opt({ id, on, onClick, priced, dim }: { id: string; on: boolean; onClick: () => void; priced?: boolean; dim?: boolean }) {
+function Opt({ id, on, onClick, priced, extra, dim }: { id: string; on: boolean; onClick: () => void; priced?: boolean; extra?: boolean; dim?: boolean }) {
   const ing = ING[id];
   return (
     <button onClick={onClick} disabled={dim}
@@ -130,6 +144,11 @@ function Opt({ id, on, onClick, priced, dim }: { id: string; on: boolean; onClic
       onMouseLeave={(e) => (e.currentTarget.style.transform = '')}>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontWeight: 600, fontSize: 14, lineHeight: 1.2 }}>{ing?.name}</div>
+        {extra && (
+          <div className="tabular" style={{ fontSize: 12, marginTop: 3, fontWeight: 700, color: on ? 'var(--amber)' : 'var(--amber-deep)' }}>
+            +{money(EXTRA_PRICE[id])}
+          </div>
+        )}
         {priced && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 3 }}>
             <span className="tabular" style={{ fontSize: 12, color: on ? 'var(--amber)' : 'var(--amber-deep)', fontWeight: 700 }}>{money(PROTEIN_PRICE[id])}</span>

@@ -30,6 +30,10 @@ export const ING: Record<string, Ingredient> = mk({
   'camote':          ['Camote al horno', 90, 2, 21, 0],
   'feta':            ['Queso feta', 75, 4, 1, 6],
   'cherry':          ['Tomate cherry', 20, 1, 4, 0],
+  // Extras (con costo) — también en la tabla para sumar macros al personalizar
+  'x-aguacate':      ['Extra aguacate', 120, 2, 6, 11],
+  'x-proteina':      ['Proteína extra', 200, 35, 0, 6],
+  'x-totopos':       ['Totopos horneados', 150, 3, 22, 6],
   // Salsas — servidas en recipiente de acero
   's-chipotle':      ['Chipotle cremoso', 50, 1, 3, 4],
   's-verde':         ['Salsa verde asada', 20, 0, 3, 1],
@@ -168,3 +172,7 @@ export const EXTRAS: Product[] = [
 
 export const productById = (id: string): Product | undefined =>
   [...DRINKS, ...EXTRAS].find((p) => p.id === id);
+
+/** Ids de extras (para personalizar) y su precio. */
+export const EXTRA_IDS = EXTRAS.map((e) => e.id);
+export const EXTRA_PRICE: Record<string, number> = Object.fromEntries(EXTRAS.map((e) => [e.id, e.price]));

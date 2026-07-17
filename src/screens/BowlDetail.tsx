@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronLeft, Heart, Minus, Plus, Check } from 'lucide-react';
+import { ChevronLeft, Heart, Minus, Plus, Check, Pencil } from 'lucide-react';
 import { useStore } from '../state/store';
 import { bowlById, sumMacros, ING, proteinOf } from '../data/menu';
 import { BowlPhoto, MacroRow, money } from '../components/ui';
@@ -89,6 +89,9 @@ export default function BowlDetail({ param }: { param?: string }) {
           <b className="tabular" style={{ minWidth: 20, textAlign: 'center', fontSize: 16 }}>{qty}</b>
           <button className="iconbtn" style={{ boxShadow: 'none', width: 40 }} onClick={() => setQty(qty + 1)}><Plus size={18} /></button>
         </div>
+        <button className="iconbtn" onClick={() => push({ name: 'build', param: b.id })} aria-label="Personalizar" style={{ width: 48, flex: '0 0 auto' }}>
+          <Pencil size={18} strokeWidth={2.2} />
+        </button>
         <button className="btn" style={{ flex: 1 }} onClick={add} disabled={added}>
           {added ? <><Check size={18} strokeWidth={2.6} /> Agregado</> : <>Agregar · {money(b.price * qty)}</>}
         </button>
