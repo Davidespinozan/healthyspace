@@ -25,10 +25,13 @@ export default function Home() {
 
   return (
     <div className="page has-tabs">
-      {/* Header: flama en la esquina · wordmark centrado · campana */}
+      {/* Header: flama en la esquina · wordmark + descriptor centrados · campana */}
       <header style={{ padding: 'calc(16px + var(--safe-t)) 20px 10px', display: 'flex', alignItems: 'center', gap: 10 }}>
         <Logo size={40} />
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}><Wordmark height={46} /></div>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+          <Wordmark height={42} />
+          <span style={{ fontSize: 9, fontWeight: 800, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--amber-deep)' }}>Mexican Grill &amp; Bowls</span>
+        </div>
         <button className="iconbtn" aria-label="Notificaciones"><Bell size={19} strokeWidth={2.1} /></button>
       </header>
 
@@ -64,7 +67,7 @@ export default function Home() {
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(8,26,22,.30) 0%, rgba(8,26,22,.35) 45%, rgba(8,26,22,.92) 100%)' }} />
             </div>
             <div style={{ position: 'relative', padding: '26px 22px 24px', minHeight: 300, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
-              <div className="eyebrow" style={{ color: 'var(--amber-l)', marginBottom: 12 }}>Mexican Grill &amp; Bowls · Culiacán</div>
+              <div className="eyebrow" style={{ color: 'var(--amber-l)', marginBottom: 12 }}>Comida real · Culiacán</div>
               <h1 className="h-hero" style={{ color: 'var(--on-dark)', fontSize: 'clamp(30px,8.4vw,38px)' }}>Cocción lenta.<br />Sabor que no<br />se replica.</h1>
               <button className="btn btn--gold" style={{ marginTop: 18, width: 'auto', padding: '14px 24px' }} onClick={() => goTab('menu')}>
                 Ver menú <ArrowRight size={17} strokeWidth={2.6} />
