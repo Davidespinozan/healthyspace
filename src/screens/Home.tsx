@@ -2,7 +2,7 @@ import { ArrowRight, Heart, Plus, Star, Bell, MapPin, CalendarCheck } from 'luci
 import { useStore } from '../state/store';
 import { SIGNATURE_BOWLS, bowlById, sumMacros, ingImg } from '../data/menu';
 import { BowlPhoto, MacroRow, money } from '../components/ui';
-import { Logo } from '../components/Logo';
+import { Logo, Wordmark } from '../components/Logo';
 import { Reveal } from '../components/Reveal';
 import { LeadCapture } from '../components/LeadCapture';
 import { CraftRail } from '../components/CraftCard';
@@ -25,13 +25,11 @@ export default function Home() {
 
   return (
     <div className="page has-tabs">
-      {/* Header: marca + saludo + campana */}
+      {/* Header: marca (flama + wordmark) + campana */}
       <header style={{ padding: 'calc(14px + var(--safe-t)) 20px 6px', display: 'flex', alignItems: 'center', gap: 11 }}>
         <Logo size={34} />
-        <div style={{ flex: 1, lineHeight: 1.1 }}>
-          <div style={{ fontWeight: 800, fontSize: 16, letterSpacing: '-.02em' }}>Hola 👋</div>
-          <div className="muted" style={{ fontSize: 12.5 }}>¿Qué vas a comer hoy?</div>
-        </div>
+        <Wordmark height={19} />
+        <div style={{ flex: 1 }} />
         <button className="iconbtn" aria-label="Notificaciones"><Bell size={19} strokeWidth={2.1} /></button>
       </header>
 
@@ -76,27 +74,6 @@ export default function Home() {
           </div>
         </Reveal>
 
-        {/* Lealtad (teaser) */}
-        <Reveal delay={0.12}>
-          <LoyaltyCard compact />
-        </Reveal>
-
-        {/* Promos locales (solo Culiacán) */}
-        <PromosSection />
-
-        {/* Reserva tu semana (paquetes meal prep) */}
-        <button className="card pressable dark-depth" onClick={() => push({ name: 'paquetes' })}
-          style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '17px 17px', background: 'var(--forest)', color: 'var(--on-dark)', boxShadow: 'var(--sh-lg), var(--edge-dark)' }}>
-          <div style={{ width: 46, height: 46, borderRadius: 14, background: 'rgba(191,160,101,.16)', color: 'var(--amber-l)', display: 'grid', placeItems: 'center', flex: '0 0 auto' }}>
-            <CalendarCheck size={23} strokeWidth={2.1} />
-          </div>
-          <div style={{ textAlign: 'left', flex: 1 }}>
-            <div style={{ fontWeight: 800, fontSize: 16 }}>Reserva tu semana</div>
-            <div style={{ fontSize: 12.5, color: 'var(--on-dark-2)', marginTop: 1 }}>5 o 10 bowls con descuento, sellados al vacío</div>
-          </div>
-          <ArrowRight size={20} strokeWidth={2.4} color="var(--amber-l)" />
-        </button>
-
         {/* Último pedido */}
         {lastOrder && (
           <Section title="Tu último pedido" onAll={() => goTab('pedidos')} allLabel="Ver todos">
@@ -113,14 +90,6 @@ export default function Home() {
             </button>
           </Section>
         )}
-
-        {/* La tesis: proteínas de cocción lenta */}
-        <Section title="La diferencia está en la cocción">
-          <CraftRail />
-        </Section>
-
-        {/* Filosofía: rico primero, sano siempre */}
-        <Pillars />
 
         {/* Recomendado */}
         <Section title="Recomendado para ti">
@@ -159,16 +128,7 @@ export default function Home() {
           </div>
         </Section>
 
-        {/* Prueba social */}
-        <SocialProof />
-
-        {/* Captación de leads (promos) */}
-        <LeadCapture />
-
-        {/* Club HSC — solo si la ubicación es Culiacán */}
-        <ClubConnectCard compact />
-
-        {/* Build your bowl CTA */}
+        {/* Arma tu bowl CTA */}
         <button className="card pressable dark-depth" onClick={() => push({ name: 'build' })}
           style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '18px 18px', background: 'var(--forest)', color: 'var(--on-dark)', boxShadow: 'var(--sh-lg), var(--edge-dark)' }}>
           <div style={{ width: 44, height: 44, borderRadius: 999, background: 'var(--amber)', color: 'var(--forest)', display: 'grid', placeItems: 'center', flex: '0 0 auto' }}>
@@ -180,6 +140,42 @@ export default function Home() {
           </div>
           <ArrowRight size={20} strokeWidth={2.4} />
         </button>
+
+        {/* Reserva tu semana (paquetes meal prep) */}
+        <button className="card pressable dark-depth" onClick={() => push({ name: 'paquetes' })}
+          style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '17px 17px', background: 'var(--forest)', color: 'var(--on-dark)', boxShadow: 'var(--sh-lg), var(--edge-dark)' }}>
+          <div style={{ width: 46, height: 46, borderRadius: 14, background: 'rgba(191,160,101,.16)', color: 'var(--amber-l)', display: 'grid', placeItems: 'center', flex: '0 0 auto' }}>
+            <CalendarCheck size={23} strokeWidth={2.1} />
+          </div>
+          <div style={{ textAlign: 'left', flex: 1 }}>
+            <div style={{ fontWeight: 800, fontSize: 16 }}>Reserva tu semana</div>
+            <div style={{ fontSize: 12.5, color: 'var(--on-dark-2)', marginTop: 1 }}>5 o 10 bowls con descuento, sellados al vacío</div>
+          </div>
+          <ArrowRight size={20} strokeWidth={2.4} color="var(--amber-l)" />
+        </button>
+
+        {/* Promos locales */}
+        <PromosSection />
+
+        {/* Lealtad (teaser) */}
+        <LoyaltyCard compact />
+
+        {/* La tesis: proteínas de cocción lenta */}
+        <Section title="La diferencia está en la cocción">
+          <CraftRail />
+        </Section>
+
+        {/* Filosofía: rico primero, sano siempre */}
+        <Pillars />
+
+        {/* Prueba social */}
+        <SocialProof />
+
+        {/* Captación de leads (promos) */}
+        <LeadCapture />
+
+        {/* Club HSC — solo si la ubicación es Culiacán */}
+        <ClubConnectCard compact />
       </div>
     </div>
   );
