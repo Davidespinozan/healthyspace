@@ -1,4 +1,5 @@
-import { Sparkles, LogIn } from 'lucide-react';
+import { LogIn } from 'lucide-react';
+import { Logo } from './Logo';
 
 const HSC_URL = 'https://healthyspaceclub.com';
 
@@ -12,12 +13,16 @@ export function ClubConnectCard({ compact = false }: { compact?: boolean }) {
       background: 'var(--forest)', color: 'var(--on-dark)',
       padding: compact ? '16px 16px' : '20px 18px', boxShadow: 'var(--sh-lg), var(--edge-dark)',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 7 }}>
-        <Sparkles size={20} strokeWidth={2.2} color="var(--amber-l)" />
-        <div style={{ fontWeight: 800, fontSize: 16, flex: 1 }}>Healthy Space Club</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 11, marginBottom: 8 }}>
+        <Logo variant="h" size={38} />
+        <div style={{ flex: 1 }}>
+          <div className="eyebrow" style={{ color: 'var(--amber-l)', marginBottom: 2 }}>La app de fitness</div>
+          <div style={{ fontWeight: 800, fontSize: 16 }}>Healthy Space Club</div>
+        </div>
       </div>
       <p style={{ fontSize: 13, color: 'var(--on-dark-2)', lineHeight: 1.5 }}>
-        Conéctalo y registra las macros de tu bowl automáticamente en tu plan.
+        ¿Entrenas con nosotros? Conecta tu cuenta y registra las macros de tu bowl
+        automáticamente en tu plan. Y si aún no la conoces, descúbrela.
       </p>
       <button className="btn btn--gold" style={{ width: 'auto', padding: '12px 20px', marginTop: 13 }}
         onClick={() => window.open(HSC_URL, '_blank', 'noopener')}>
