@@ -15,10 +15,11 @@ import BuildBowl from './screens/BuildBowl';
 import Cart from './screens/Cart';
 import Checkout from './screens/Checkout';
 import Order from './screens/Order';
+import Paquetes from './screens/Paquetes';
 
 const SCREENS = {
   home: Home, menu: Menu, pedidos: Pedidos, perfil: Perfil,
-  bowl: BowlDetail, build: BuildBowl, cart: Cart, checkout: Checkout, order: Order,
+  bowl: BowlDetail, build: BuildBowl, cart: Cart, checkout: Checkout, order: Order, paquetes: Paquetes,
 };
 
 export default function App() {

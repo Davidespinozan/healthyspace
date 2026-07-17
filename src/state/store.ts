@@ -4,7 +4,7 @@ import { sumMacros, DELIVERY_FEE, type Macro } from '../data/menu';
 import { pushOrder, pushLead } from '../data/backend';
 
 // Pantallas raíz (tabs) + pantallas apiladas encima.
-export type ScreenName = 'home' | 'menu' | 'pedidos' | 'perfil' | 'bowl' | 'build' | 'cart' | 'checkout' | 'order';
+export type ScreenName = 'home' | 'menu' | 'pedidos' | 'perfil' | 'bowl' | 'build' | 'cart' | 'checkout' | 'order' | 'paquetes';
 export const ROOT_TABS: ScreenName[] = ['home', 'menu', 'pedidos', 'perfil'];
 export interface Screen { name: ScreenName; param?: string }
 

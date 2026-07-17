@@ -107,6 +107,19 @@ export const SALSA_META: Record<string, { tag: string; accent: string }> = {
 /** Costo de envío a domicilio (MXN). Plano, como Anastacio. Pickup = sin costo. */
 export const DELIVERY_FEE = 45;
 
+// ── Paquetes semanales (meal prep, sellados al vacío) — validación de demanda ──
+export interface WeeklyPackage {
+  size: number;        // bowls
+  price: number;       // precio del paquete (MXN)
+  base: number;        // precio de referencia à la carte (para mostrar el ahorro)
+  off: number;         // % de descuento (para el badge)
+}
+export const PACKAGES: WeeklyPackage[] = [
+  { size: 5,  price: 699,  base: 795,  off: 12 },   // ~$140/bowl
+  { size: 10, price: 1290, base: 1590, off: 19 },   // ~$129/bowl
+];
+export const perBowl = (p: WeeklyPackage) => Math.round(p.price / p.size);
+
 /** Precio según proteína (MXN). El chamberete braseado es el premium (8 h de cocción).
  *  Base, complementos y salsa incluidos. */
 export const PROTEIN_PRICE: Record<string, number> = {

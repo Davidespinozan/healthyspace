@@ -1,4 +1,4 @@
-import { ArrowRight, Heart, Plus, Star, Bell, MapPin } from 'lucide-react';
+import { ArrowRight, Heart, Plus, Star, Bell, MapPin, CalendarCheck } from 'lucide-react';
 import { useStore } from '../state/store';
 import { SIGNATURE_BOWLS, bowlById, sumMacros, ingImg } from '../data/menu';
 import { BowlPhoto, MacroRow, money } from '../components/ui';
@@ -83,6 +83,19 @@ export default function Home() {
 
         {/* Promos locales (solo Culiacán) */}
         <PromosSection />
+
+        {/* Reserva tu semana (paquetes meal prep) */}
+        <button className="card pressable dark-depth" onClick={() => push({ name: 'paquetes' })}
+          style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '17px 17px', background: 'var(--forest)', color: 'var(--on-dark)', boxShadow: 'var(--sh-lg), var(--edge-dark)' }}>
+          <div style={{ width: 46, height: 46, borderRadius: 14, background: 'rgba(191,160,101,.16)', color: 'var(--amber-l)', display: 'grid', placeItems: 'center', flex: '0 0 auto' }}>
+            <CalendarCheck size={23} strokeWidth={2.1} />
+          </div>
+          <div style={{ textAlign: 'left', flex: 1 }}>
+            <div style={{ fontWeight: 800, fontSize: 16 }}>Reserva tu semana</div>
+            <div style={{ fontSize: 12.5, color: 'var(--on-dark-2)', marginTop: 1 }}>5 o 10 bowls con descuento, sellados al vacío</div>
+          </div>
+          <ArrowRight size={20} strokeWidth={2.4} color="var(--amber-l)" />
+        </button>
 
         {/* Último pedido */}
         {lastOrder && (

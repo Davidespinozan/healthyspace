@@ -36,3 +36,15 @@ export async function pushLead(l: Lead): Promise<void> {
     console.warn('[backend] pushLead fallo (se guardó local):', e);
   }
 }
+
+/** Guarda la reserva de paquete semanal en truck_reservations. */
+export async function pushReservation(r: { package: number; sealed: boolean; name: string; phone: string; notes?: string }): Promise<boolean> {
+  try {
+    const { error } = await supabase.from('truck_reservations').insert(r);
+    if (error) { console.warn('[backend] pushReservation:', error.message); return false; }
+    return true;
+  } catch (e) {
+    console.warn('[backend] pushReservation fallo:', e);
+    return false;
+  }
+}
