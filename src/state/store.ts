@@ -37,6 +37,7 @@ export interface Order {
   total: number;
   address?: string;
   branch?: string;      // sucursal de recogida (pickup)
+  sealed?: boolean;     // sellado al vacío (meal prep)
   etaMin: number;
   status: OrderStatus;
   createdAt: number;
@@ -64,6 +65,8 @@ interface State {
   setMode: (m: OrderMode) => void;
   branch: string;                 // sucursal seleccionada (id) para pickup
   setBranch: (id: string) => void;
+  sealed: boolean;                // sellado al vacío (meal prep)
+  setSealed: (v: boolean) => void;
   address: string;
   setAddress: (a: string) => void;
   customer: Customer;
@@ -152,6 +155,8 @@ export const useStore = create<State>()(
       setMode: (m) => set({ mode: m }),
       branch: BRANCHES[0].id,
       setBranch: (id) => set({ branch: id }),
+      sealed: false,
+      setSealed: (v) => set({ sealed: v }),
       address: '',
       setAddress: (a) => set({ address: a }),
       customer: { name: '', phone: '', notes: '' },
@@ -168,13 +173,14 @@ export const useStore = create<State>()(
       orders: [],
       order: null,
       placeOrder: () => {
-        const { cart, mode, address, customer, branch } = get();
+        const { cart, mode, address, customer, branch, sealed } = get();
         if (!cart.length) return;
         const t = cartTotals(cart, mode);
         const order: Order = {
           code: orderCode(), items: cart, mode, subtotal: t.subtotal, discount: t.discount, fee: t.fee, total: t.total,
           address: mode === 'delivery' ? address : undefined,
           branch: mode === 'pickup' ? branch : undefined,
+          sealed,
           etaMin: mode === 'delivery' ? 32 : 12,
           status: 'recibido', createdAt: Date.now(),
         };

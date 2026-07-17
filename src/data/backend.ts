@@ -18,6 +18,7 @@ export async function pushOrder(o: Order, customer?: { name: string; phone: stri
       discount: o.discount ?? 0,
       address: o.address ?? null,
       branch: o.branch ?? null,
+      sealed: o.sealed ?? false,
       customer: customer ?? null,
       status: o.status,
     });

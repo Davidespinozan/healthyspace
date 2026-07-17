@@ -1,4 +1,4 @@
-import { ChevronLeft, Store, Bike, Check, Apple, CreditCard, ShieldCheck } from 'lucide-react';
+import { ChevronLeft, Store, Bike, Check, Apple, CreditCard, ShieldCheck, Snowflake } from 'lucide-react';
 import { useStore, cartTotals, type OrderMode } from '../state/store';
 import { DELIVERY_FEE } from '../data/menu';
 import { money } from '../components/ui';
@@ -12,6 +12,8 @@ export default function Checkout() {
   const setMode = useStore((s) => s.setMode);
   const branch = useStore((s) => s.branch);
   const setBranch = useStore((s) => s.setBranch);
+  const sealed = useStore((s) => s.sealed);
+  const setSealed = useStore((s) => s.setSealed);
   const address = useStore((s) => s.address);
   const setAddress = useStore((s) => s.setAddress);
   const customer = useStore((s) => s.customer);
@@ -70,6 +72,29 @@ export default function Checkout() {
           <Field value={customer.phone} onChange={(v) => setCustomer({ phone: v.replace(/[^\d ]/g, '') })} placeholder="Teléfono" type="tel" />
           <Field value={customer.notes} onChange={(v) => setCustomer({ notes: v })} placeholder="Notas del pedido (opcional)" />
         </section>
+
+        {/* Meal prep: sellado al vacío (opcional) */}
+        <button onClick={() => setSealed(!sealed)} className="card" style={{
+          display: 'flex', alignItems: 'center', gap: 12, padding: '14px 15px', textAlign: 'left',
+          boxShadow: sealed ? 'var(--sh-md), 0 0 0 1.6px var(--amber)' : 'var(--sh-sm), var(--edge)',
+        }}>
+          <div style={{ width: 40, height: 40, borderRadius: 12, background: 'var(--cream-2)', color: 'var(--amber-deep)', display: 'grid', placeItems: 'center', flex: '0 0 auto' }}>
+            <Snowflake size={20} strokeWidth={2.1} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 800, fontSize: 14.5 }}>Sellado al vacío</div>
+            <div className="muted" style={{ fontSize: 12.5, lineHeight: 1.35, marginTop: 1 }}>Para meal prep — llévatelo y cómelo durante la semana.</div>
+          </div>
+          <span style={{
+            width: 44, height: 26, borderRadius: 999, flex: '0 0 auto', position: 'relative',
+            background: sealed ? 'var(--forest)' : 'var(--sand)', transition: 'background .2s var(--ease)',
+          }}>
+            <span style={{
+              position: 'absolute', top: 3, left: sealed ? 21 : 3, width: 20, height: 20, borderRadius: 999,
+              background: '#fff', boxShadow: 'var(--sh-sm)', transition: 'left .2s var(--ease)',
+            }} />
+          </span>
+        </button>
 
         {/* Resumen */}
         <section style={{ display: 'grid', gap: 8 }}>
