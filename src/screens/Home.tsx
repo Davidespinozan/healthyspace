@@ -1,4 +1,4 @@
-import { ArrowRight, Heart, Plus, Star, Bell, MapPin, CalendarCheck } from 'lucide-react';
+import { ArrowRight, Heart, Plus, Star, Bell, CalendarCheck } from 'lucide-react';
 import { useStore } from '../state/store';
 import { SIGNATURE_BOWLS, bowlById, sumMacros } from '../data/menu';
 import { BowlPhoto, MacroRow, money } from '../components/ui';
@@ -10,8 +10,6 @@ import { Pillars, SocialProof } from '../components/MarketingSections';
 import { LoyaltyCard } from '../components/LoyaltyCard';
 import { ClubConnectCard } from '../components/ClubConnectCard';
 import { PromosSection } from '../components/PromosSection';
-import { openDirections } from '../data/location';
-import { openNow, opensInLabel } from '../data/business';
 
 export default function Home() {
   const push = useStore((s) => s.push);
@@ -21,43 +19,20 @@ export default function Home() {
   const rec = SIGNATURE_BOWLS[0];
   const favBowls = favorites.map(bowlById).filter(Boolean).slice(0, 6);
   const lastOrder = orders[0];
-  const open = openNow();
 
   return (
     <div className="page has-tabs">
       {/* Header: flama en la esquina · wordmark + descriptor centrados · campana */}
       <header style={{ padding: 'calc(16px + var(--safe-t)) 20px 10px', display: 'flex', alignItems: 'center', gap: 10 }}>
         <Logo size={40} />
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-          <Wordmark height={42} />
-          <span style={{ fontSize: 9, fontWeight: 800, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--amber-deep)' }}>Mexican Grill &amp; Bowls</span>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+          <Wordmark height={52} />
+          <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--amber-deep)' }}>Mexican Grill &amp; Bowls</span>
         </div>
         <button className="iconbtn" aria-label="Notificaciones"><Bell size={19} strokeWidth={2.1} /></button>
       </header>
 
       <div style={{ padding: '10px 20px 8px', display: 'grid', gap: 26 }}>
-        {/* Tarjeta de estado / ubicación */}
-        <Reveal delay={0.02}>
-          <button className="card pressable" onClick={openDirections}
-            style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 15px', boxShadow: 'var(--sh-sm), var(--edge)', width: '100%', textAlign: 'left' }}>
-            <div style={{ width: 38, height: 38, borderRadius: 999, background: 'rgba(20,48,41,.06)', display: 'grid', placeItems: 'center', flex: '0 0 auto' }}>
-              <MapPin size={18} strokeWidth={2.2} />
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 700, fontSize: 14 }}>Healthy Space · Las Quintas</div>
-              <div className="muted" style={{ fontSize: 12.5 }}>{open ? 'Toca para ver cómo llegar' : opensInLabel()}</div>
-            </div>
-            {open ? (
-              <span className="chip" style={{ background: 'rgba(78,122,69,.14)', color: '#3F6B39', fontWeight: 700 }}>
-                <span style={{ width: 7, height: 7, borderRadius: 999, background: '#4E7A45' }} /> Abierto
-              </span>
-            ) : (
-              <span className="chip" style={{ background: 'rgba(199,91,58,.12)', color: 'var(--terra)', fontWeight: 700 }}>
-                <span style={{ width: 7, height: 7, borderRadius: 999, background: 'var(--terra)' }} /> Cerrado
-              </span>
-            )}
-          </button>
-        </Reveal>
 
         {/* HERO card con profundidad */}
         <Reveal delay={0.08}>
@@ -68,7 +43,7 @@ export default function Home() {
             </div>
             <div style={{ position: 'relative', padding: '26px 22px 24px', minHeight: 300, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
               <div className="eyebrow" style={{ color: 'var(--amber-l)', marginBottom: 12 }}>Culiacán</div>
-              <h1 className="h-hero" style={{ color: 'var(--on-dark)', fontSize: 'clamp(26px,7.4vw,34px)' }}>Proteínas de<br />cocción lenta.<br />Ingredientes frescos.</h1>
+              <h1 className="h-hero" style={{ color: 'var(--on-dark)', fontSize: 'clamp(22px,6.2vw,29px)' }}>Proteínas de<br />cocción lenta.<br />Ingredientes frescos.</h1>
               <button className="btn btn--gold" style={{ marginTop: 18, width: 'auto', padding: '14px 24px' }} onClick={() => goTab('menu')}>
                 Ver menú <ArrowRight size={17} strokeWidth={2.6} />
               </button>
