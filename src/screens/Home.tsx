@@ -67,8 +67,8 @@ export default function Home() {
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(8,26,22,.30) 0%, rgba(8,26,22,.35) 45%, rgba(8,26,22,.92) 100%)' }} />
             </div>
             <div style={{ position: 'relative', padding: '26px 22px 24px', minHeight: 300, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
-              <div style={{ color: 'var(--amber-l)', marginBottom: 12, fontSize: 12.5, fontWeight: 700, letterSpacing: '.02em' }}>Proteínas de cocción lenta. Ingredientes frescos.</div>
-              <h1 className="h-hero" style={{ color: 'var(--on-dark)', fontSize: 'clamp(30px,8.4vw,38px)' }}>Cocción lenta.<br />Sabor que no<br />se replica.</h1>
+              <div className="eyebrow" style={{ color: 'var(--amber-l)', marginBottom: 12 }}>Culiacán</div>
+              <h1 className="h-hero" style={{ color: 'var(--on-dark)', fontSize: 'clamp(26px,7.4vw,34px)' }}>Proteínas de<br />cocción lenta.<br />Ingredientes frescos.</h1>
               <button className="btn btn--gold" style={{ marginTop: 18, width: 'auto', padding: '14px 24px' }} onClick={() => goTab('menu')}>
                 Ver menú <ArrowRight size={17} strokeWidth={2.6} />
               </button>
