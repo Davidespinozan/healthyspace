@@ -1,7 +1,8 @@
-import { Sparkles, Store, Bike, Bell, FileText, ChevronRight, LogIn, Instagram, MessageCircle, Clock, Star } from 'lucide-react';
+import { Store, Bike, Bell, FileText, ChevronRight, Instagram, MessageCircle, Clock, Star } from 'lucide-react';
 import { useStore } from '../state/store';
 import { BUSINESS, openNow, opensInLabel, openInstagram, openWhatsApp } from '../data/business';
 import { LoyaltyCard } from '../components/LoyaltyCard';
+import { ClubConnectCard } from '../components/ClubConnectCard';
 
 export default function Perfil() {
   const customer = useStore((s) => s.customer);
@@ -31,19 +32,8 @@ export default function Perfil() {
         {/* Lealtad */}
         <LoyaltyCard />
 
-        {/* Conecta tu plan HSC */}
-        <div className="card dark-depth" style={{ background: 'var(--forest)', color: 'var(--on-dark)', padding: '20px 18px', boxShadow: 'var(--sh-lg), var(--edge-dark)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-            <Sparkles size={20} strokeWidth={2.2} color="var(--amber-l)" />
-            <div style={{ fontWeight: 800, fontSize: 16 }}>Healthy Space Club</div>
-          </div>
-          <p style={{ fontSize: 13.5, color: 'var(--on-dark-2)', lineHeight: 1.5, marginBottom: 15 }}>
-            Conecta tu cuenta y registra las macros de cada bowl automáticamente en tu plan.
-          </p>
-          <button className="btn btn--gold" style={{ width: 'auto', padding: '13px 22px' }}>
-            <LogIn size={17} strokeWidth={2.4} /> Conectar mi cuenta
-          </button>
-        </div>
+        {/* Conecta tu Club HSC — solo si la ubicación es Culiacán */}
+        <ClubConnectCard />
 
         {/* Preferencia de entrega */}
         <section style={{ display: 'grid', gap: 11 }}>

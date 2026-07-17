@@ -1,4 +1,4 @@
-import { ArrowRight, Heart, Plus, Star, Bell, MapPin, Sparkles } from 'lucide-react';
+import { ArrowRight, Heart, Plus, Star, Bell, MapPin } from 'lucide-react';
 import { useStore } from '../state/store';
 import { SIGNATURE_BOWLS, bowlById, sumMacros } from '../data/menu';
 import { BowlPhoto, MacroRow, money } from '../components/ui';
@@ -8,6 +8,7 @@ import { LeadCapture } from '../components/LeadCapture';
 import { CraftRail } from '../components/CraftCard';
 import { Pillars, SocialProof } from '../components/MarketingSections';
 import { LoyaltyCard } from '../components/LoyaltyCard';
+import { ClubConnectCard } from '../components/ClubConnectCard';
 import { openDirections } from '../data/location';
 import { openNow, opensInLabel } from '../data/business';
 
@@ -147,18 +148,8 @@ export default function Home() {
         {/* Captación de leads (promos) */}
         <LeadCapture />
 
-        {/* Conecta tu plan (integración futura HSC) */}
-        <button className="card pressable" onClick={() => goTab('perfil')}
-          style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '16px 16px', background: 'var(--cream-2)', boxShadow: 'var(--sh-sm), var(--edge)' }}>
-          <div style={{ width: 44, height: 44, borderRadius: 14, background: 'var(--surface)', color: 'var(--amber-deep)', display: 'grid', placeItems: 'center', flex: '0 0 auto', boxShadow: 'var(--sh-sm)' }}>
-            <Sparkles size={22} strokeWidth={2.2} />
-          </div>
-          <div style={{ textAlign: 'left', flex: 1 }}>
-            <div style={{ fontWeight: 800, fontSize: 15 }}>Conecta tu plan Healthy Space Club</div>
-            <div className="muted" style={{ fontSize: 12.5, marginTop: 1 }}>Registra las macros de tu bowl automáticamente</div>
-          </div>
-          <ArrowRight size={19} strokeWidth={2.4} color="var(--ink-3)" />
-        </button>
+        {/* Club HSC — solo si la ubicación es Culiacán */}
+        <ClubConnectCard compact />
 
         {/* Build your bowl CTA */}
         <button className="card pressable dark-depth" onClick={() => push({ name: 'build' })}

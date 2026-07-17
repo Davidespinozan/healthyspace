@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { sumMacros, DELIVERY_FEE, type Macro } from '../data/menu';
 import { pushOrder, pushLead } from '../data/backend';
+import { getPosition, isInCuliacan } from '../data/geo';
 
 // Pantallas raíz (tabs) + pantallas apiladas encima.
 export type ScreenName = 'home' | 'menu' | 'pedidos' | 'perfil' | 'bowl' | 'build' | 'cart' | 'checkout' | 'order';
@@ -78,6 +79,10 @@ interface State {
   leads: Lead[];
   leadDone: boolean;        // ya se registró en este dispositivo
   addLead: (l: Omit<Lead, 'at'>) => void;
+
+  // Ubicación (sin login): habilita Club + promos SOLO para Culiacán.
+  geo: { asked: boolean; inCuliacan: boolean | null };
+  detectCuliacan: () => Promise<void>;
 
   // Lealtad (tarjeta de sellos)
   stamps: number;           // sellos en el ciclo actual (0..LOYALTY_GOAL)
@@ -184,6 +189,12 @@ export const useStore = create<State>()(
         void pushLead(lead); // backend (no bloqueante)
       },
 
+      geo: { asked: false, inCuliacan: null },
+      detectCuliacan: async () => {
+        const pos = await getPosition();
+        set({ geo: { asked: true, inCuliacan: pos ? isInCuliacan(pos) : null } });
+      },
+
       stamps: 0,
       freeBowls: 0,
       redeemFreeBowl: () => set((st) => ({ freeBowls: Math.max(0, st.freeBowls - 1) })),
@@ -193,7 +204,7 @@ export const useStore = create<State>()(
     }),
     {
       name: 'hs-store',
-      partialize: (s) => ({ favorites: s.favorites, orders: s.orders, customer: s.customer, mode: s.mode, address: s.address, leads: s.leads, leadDone: s.leadDone, stamps: s.stamps, freeBowls: s.freeBowls }),
+      partialize: (s) => ({ favorites: s.favorites, orders: s.orders, customer: s.customer, mode: s.mode, address: s.address, leads: s.leads, leadDone: s.leadDone, stamps: s.stamps, freeBowls: s.freeBowls, geo: s.geo }),
     },
   ),
 );
