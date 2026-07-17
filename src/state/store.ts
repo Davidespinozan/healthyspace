@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { sumMacros, DELIVERY_FEE, type Macro } from '../data/menu';
+import { pushOrder, pushLead } from '../data/backend';
 
 // Pantallas raíz (tabs) + pantallas apiladas encima.
 export type ScreenName = 'home' | 'menu' | 'pedidos' | 'perfil' | 'bowl' | 'build' | 'cart' | 'checkout' | 'order';
@@ -135,7 +136,7 @@ export const useStore = create<State>()(
       orders: [],
       order: null,
       placeOrder: () => {
-        const { cart, mode, address } = get();
+        const { cart, mode, address, customer } = get();
         if (!cart.length) return;
         const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
         const fee = mode === 'delivery' ? DELIVERY_FEE : 0;
@@ -146,6 +147,7 @@ export const useStore = create<State>()(
           status: 'recibido', createdAt: Date.now(),
         };
         set((st) => ({ order, orders: [order, ...st.orders], cart: [], stack: [{ name: 'order' }] }));
+        void pushOrder(order, customer); // backend (no bloqueante)
       },
       advanceOrder: () =>
         set((st) => {
@@ -160,7 +162,11 @@ export const useStore = create<State>()(
 
       leads: [],
       leadDone: false,
-      addLead: (l) => set((st) => ({ leads: [{ ...l, at: Date.now() }, ...st.leads], leadDone: true })),
+      addLead: (l) => {
+        const lead: Lead = { ...l, at: Date.now() };
+        set((st) => ({ leads: [lead, ...st.leads], leadDone: true }));
+        void pushLead(lead); // backend (no bloqueante)
+      },
 
       toast: null,
       showToast: (msg) => set({ toast: { id: Date.now(), msg } }),
