@@ -88,8 +88,10 @@ export function sumMacros(ids: string[]): Macro {
 // Pocas proteínas, pero inolvidables. Todas de cocción lenta.
 export const PROTEINS = ['pollo-lento', 'chamberete', 'cerdo-lento'];
 export const BASES = ['arroz-blanco', 'arroz-integral', 'quinoa', 'mix-greens'];
-export const COMPLEMENTS = ['elote', 'aguacate', 'pico', 'cebolla', 'verduras', 'brocoli', 'betabel', 'camote', 'feta', 'frijoles', 'pepino', 'cherry', 'hummus-elote', 'hummus-jalapeno', 'hummus-chiles'];
+export const COMPLEMENTS = ['elote', 'aguacate', 'pico', 'cebolla', 'verduras', 'brocoli', 'betabel', 'camote', 'feta', 'frijoles', 'pepino', 'cherry'];
 export const SALSAS = ['s-chipotle', 's-verde', 's-ranch', 's-avocado', 's-garlic', 's-cilantro'];
+/** Hummus especiales de la casa — su propio segmento (dips premium con foto real). */
+export const HUMMUS = ['hummus-elote', 'hummus-jalapeno', 'hummus-chiles'];
 export const MAX_COMPLEMENTS = 5;
 
 /** Metadata visual de salsas — para las "salsas con foto" (círculo de color + descriptor). */

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ChevronLeft, Check } from 'lucide-react';
 import { useStore } from '../state/store';
-import { PROTEINS, BASES, COMPLEMENTS, SALSAS, SALSA_META, MAX_COMPLEMENTS, PROTEIN_PRICE, PROTEIN_CRAFT, EXTRA_IDS, EXTRA_PRICE, ING, sumMacros, bowlById, ingImg } from '../data/menu';
+import { PROTEINS, BASES, COMPLEMENTS, SALSAS, HUMMUS, SALSA_META, MAX_COMPLEMENTS, PROTEIN_PRICE, PROTEIN_CRAFT, EXTRA_IDS, EXTRA_PRICE, ING, sumMacros, bowlById, ingImg } from '../data/menu';
 import { MacroRow, money } from '../components/ui';
 
 export default function BuildBowl({ param }: { param?: string }) {
@@ -18,10 +18,11 @@ export default function BuildBowl({ param }: { param?: string }) {
   const [base, setBase] = useState<string>(seedIds.find((i) => BASES.includes(i)) ?? '');
   const [comps, setComps] = useState<string[]>(seedIds.filter((i) => COMPLEMENTS.includes(i)));
   const [salsa, setSalsa] = useState<string>(seedIds.find((i) => SALSAS.includes(i)) ?? '');
+  const [hummus, setHummus] = useState<string>(seedIds.find((i) => HUMMUS.includes(i)) ?? '');
   const [extras, setExtras] = useState<string[]>([]);
   const [added, setAdded] = useState(false);
 
-  const ingredients = [protein, base, ...comps, salsa, ...extras].filter(Boolean);
+  const ingredients = [protein, base, ...comps, salsa, hummus, ...extras].filter(Boolean);
   const m = sumMacros(ingredients);
   const extrasCost = extras.reduce((s, id) => s + (EXTRA_PRICE[id] ?? 0), 0);
   // Personalizar mantiene el precio del signature; armar desde cero cobra por proteína.
@@ -66,7 +67,12 @@ export default function BuildBowl({ param }: { param?: string }) {
             {SALSAS.map((id) => <SalsaOpt key={id} id={id} on={salsa === id} onClick={() => setSalsa(salsa === id ? '' : id)} />)}
           </div>
         </Step>
-        <Step n={5} title="Extras" hint="Opcional">
+        <Step n={5} title="Hummus de la casa" hint="Opcional · elige 1">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+            {HUMMUS.map((id) => <HummusOpt key={id} id={id} on={hummus === id} onClick={() => setHummus(hummus === id ? '' : id)} />)}
+          </div>
+        </Step>
+        <Step n={6} title="Extras" hint="Opcional">
           <Grid>{EXTRA_IDS.map((id) => (
             <Opt key={id} id={id} on={extras.includes(id)} onClick={() => toggleExtra(id)} extra />
           ))}</Grid>
@@ -125,6 +131,26 @@ function SalsaOpt({ id, on, onClick }: { id: string; on: boolean; onClick: () =>
       </span>
       <span style={{ fontWeight: 700, fontSize: 12, textAlign: 'center', lineHeight: 1.1 }}>{name}</span>
       <span style={{ fontSize: 9, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase', color: meta.accent }}>{meta.tag}</span>
+    </button>
+  );
+}
+
+function HummusOpt({ id, on, onClick }: { id: string; on: boolean; onClick: () => void }) {
+  const ing = ING[id];
+  const name = (ing?.name ?? '').replace(/^Hummus especial de\s+|^Hummus especial\s+/i, '');
+  return (
+    <button onClick={onClick} style={{ display: 'grid', gap: 6, textAlign: 'center' }}>
+      <div style={{
+        position: 'relative', borderRadius: 16, overflow: 'hidden', aspectRatio: '1',
+        boxShadow: on ? `0 0 0 3px var(--cream), 0 0 0 5px var(--amber)` : 'var(--sh-sm), var(--edge)',
+        transition: 'box-shadow .18s var(--ease), transform .12s var(--ease)', transform: on ? 'scale(1.02)' : 'none',
+      }}>
+        <img src={ingImg(id)} alt={ing?.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', background: 'var(--cream-2)' }} />
+        {on && <span style={{ position: 'absolute', top: 6, right: 6, width: 22, height: 22, borderRadius: 999, background: 'var(--amber)', display: 'grid', placeItems: 'center' }}>
+          <Check size={13} strokeWidth={3.2} color="var(--forest)" />
+        </span>}
+      </div>
+      <span style={{ fontWeight: 700, fontSize: 11.5, lineHeight: 1.15, textTransform: 'capitalize' }}>{name}</span>
     </button>
   );
 }
