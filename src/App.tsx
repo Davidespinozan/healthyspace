@@ -5,6 +5,7 @@ import { money } from './components/ui';
 import { TabBar } from './components/TabBar';
 import { BrandStage } from './components/BrandStage';
 import { Toast } from './components/Toast';
+import { SocialFabs } from './components/SocialFabs';
 import Home from './screens/Home';
 import Menu from './screens/Menu';
 import Pedidos from './screens/Pedidos';
@@ -66,6 +67,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {onTab && <SocialFabs raised={showBar} />}
       {onTab && <TabBar />}
       <Toast />
       </div>
