@@ -160,17 +160,17 @@ export interface Bowl {
 export const SIGNATURE_BOWLS: Bowl[] = [
   {
     id: 'fuego', name: 'Fuego', tagline: 'Pollo a las brasas, chipotle ahumado y elote rostizado.',
-    ingredients: ['pollo-lento', 'arroz-blanco', 'elote', 'pico', 'aguacate', 's-chipotle'],
+    ingredients: ['pollo-lento', 'arroz-blanco', 'elote', 'pico', 'aguacate', 'hummus-elote', 's-chipotle'],
     price: 149, img: bowlImg('fuego-bowl.webp'), accent: '#C75B3A',
   },
   {
     id: 'brasa', name: 'Brasa', tagline: 'Chamberete braseado, quinoa y frescura de pepino.',
-    ingredients: ['chamberete', 'quinoa', 'pepino', 'cebolla', 'aguacate', 's-cilantro'],
+    ingredients: ['chamberete', 'quinoa', 'pepino', 'cebolla', 'aguacate', 'hummus-chiles', 's-cilantro'],
     price: 179, img: bowlImg('brasa-bowl.webp'), accent: '#8A5A2B',
   },
   {
     id: 'humo', name: 'Humo', tagline: 'Res deshebrada braseada, ahumada y jugosa.',
-    ingredients: ['chamberete', 'arroz-integral', 'aguacate', 'cebolla', 'pico', 's-chipotle'],
+    ingredients: ['chamberete', 'arroz-integral', 'aguacate', 'cebolla', 'pico', 'hummus-chiles', 's-chipotle'],
     price: 175, img: bowlImg('humo-bowl.webp'), accent: '#7A4A2E',
   },
   {
@@ -180,7 +180,7 @@ export const SIGNATURE_BOWLS: Bowl[] = [
   },
   {
     id: 'verde', name: 'Verde', tagline: 'Pollo, brócoli y quinoa. Ligero, nunca poco.',
-    ingredients: ['pollo-lento', 'quinoa', 'brocoli', 'pepino', 'aguacate', 's-cilantro'],
+    ingredients: ['pollo-lento', 'quinoa', 'brocoli', 'pepino', 'aguacate', 'hummus-jalapeno', 's-cilantro'],
     price: 155, img: bowlImg('verde-bowl.webp'), accent: '#4E7A45',
   },
 ];

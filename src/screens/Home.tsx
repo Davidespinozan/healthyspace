@@ -25,12 +25,11 @@ export default function Home() {
 
   return (
     <div className="page has-tabs">
-      {/* Header: marca (flama + wordmark) centrada + campana */}
-      <header style={{ position: 'relative', padding: 'calc(16px + var(--safe-t)) 20px 10px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 13 }}>
-        <Logo size={60} />
-        <Wordmark height={36} />
-        <button className="iconbtn" aria-label="Notificaciones"
-          style={{ position: 'absolute', right: 20, top: 'calc(16px + var(--safe-t))' }}><Bell size={19} strokeWidth={2.1} /></button>
+      {/* Header: flama en la esquina · wordmark centrado · campana */}
+      <header style={{ padding: 'calc(16px + var(--safe-t)) 20px 10px', display: 'flex', alignItems: 'center', gap: 10 }}>
+        <Logo size={40} />
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}><Wordmark height={46} /></div>
+        <button className="iconbtn" aria-label="Notificaciones"><Bell size={19} strokeWidth={2.1} /></button>
       </header>
 
       <div style={{ padding: '10px 20px 8px', display: 'grid', gap: 26 }}>
@@ -176,6 +175,12 @@ export default function Home() {
 
         {/* Club HSC — solo si la ubicación es Culiacán */}
         <ClubConnectCard compact />
+
+        {/* Familia Healthy Space (la H = marca madre, compartida) */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9, padding: '10px 0 2px', opacity: .75 }}>
+          <Logo variant="h" size={22} />
+          <span className="muted" style={{ fontSize: 12, fontWeight: 600, letterSpacing: '.02em' }}>Parte de Healthy Space</span>
+        </div>
       </div>
     </div>
   );
