@@ -4,6 +4,7 @@ import { Check, Clock, ChefHat, PackageCheck, PartyPopper, Bike, MapPin, X, Mess
 import { useStore, flowFor, type OrderStatus } from '../state/store';
 import { Logo } from '../components/Logo';
 import { LocationCard } from '../components/LocationCard';
+import { branchById } from '../data/location';
 import { LeadCapture } from '../components/LeadCapture';
 import { openWhatsApp } from '../data/business';
 import { money } from '../components/ui';
@@ -104,7 +105,7 @@ export default function Order() {
       {/* Ubicación para recoger (pickup) */}
       {!isDelivery && (
         <div style={{ padding: '16px 20px 4px' }}>
-          <LocationCard title="Recoge aquí" />
+          <LocationCard branch={branchById(order.branch)} title="Recoge aquí" />
         </div>
       )}
 

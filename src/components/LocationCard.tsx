@@ -1,11 +1,12 @@
 import { Clock, Navigation, MapPin } from 'lucide-react';
-import { LOCATION, openDirections, openMap } from '../data/location';
+import { type Branch, openBranchDirections, openBranchMap, branchOpenNow } from '../data/location';
 
-/** Tarjeta de ubicación del food truck con mini-mapa + "Cómo llegar". */
-export function LocationCard({ title }: { title?: string }) {
+/** Tarjeta de una sucursal con mini-mapa + "Cómo llegar". */
+export function LocationCard({ branch, title }: { branch: Branch; title?: string }) {
+  const open = branchOpenNow(branch);
   return (
     <div className="card" style={{ overflow: 'hidden', boxShadow: 'var(--sh-sm), var(--edge)' }}>
-      <button onClick={openMap} aria-label="Abrir en el mapa" style={{ display: 'block', width: '100%' }}>
+      <button onClick={() => openBranchMap(branch)} aria-label="Abrir en el mapa" style={{ display: 'block', width: '100%' }}>
         <MiniMap />
       </button>
       <div style={{ padding: '14px 16px' }}>
@@ -13,14 +14,17 @@ export function LocationCard({ title }: { title?: string }) {
         <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
           <MapPin size={18} strokeWidth={2.2} color="var(--terra)" style={{ flex: '0 0 auto', marginTop: 1 }} />
           <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 800, fontSize: 15 }}>{LOCATION.name}</div>
-            <div className="muted" style={{ fontSize: 13, marginTop: 2, lineHeight: 1.4 }}>{LOCATION.address}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ fontWeight: 800, fontSize: 15 }}>Healthy Space · {branch.name}</div>
+              <span className="chip" style={{ background: open ? 'rgba(78,122,69,.14)' : 'rgba(199,91,58,.12)', color: open ? '#3F6B39' : 'var(--terra)', fontWeight: 700, fontSize: 11 }}>{open ? 'Abierto' : 'Cerrado'}</span>
+            </div>
+            <div className="muted" style={{ fontSize: 13, marginTop: 2, lineHeight: 1.4 }}>{branch.address}</div>
             <div className="muted" style={{ fontSize: 12.5, marginTop: 7, display: 'flex', gap: 6, alignItems: 'center' }}>
-              <Clock size={13} /> {LOCATION.hours}
+              <Clock size={13} /> {branch.hours}
             </div>
           </div>
         </div>
-        <button className="btn" style={{ marginTop: 14 }} onClick={openDirections}>
+        <button className="btn" style={{ marginTop: 14 }} onClick={() => openBranchDirections(branch)}>
           <Navigation size={17} strokeWidth={2.4} /> Cómo llegar
         </button>
       </div>
@@ -32,10 +36,8 @@ export function LocationCard({ title }: { title?: string }) {
 function MiniMap() {
   return (
     <svg viewBox="0 0 400 150" width="100%" style={{ display: 'block', background: 'var(--cream-2)' }} aria-hidden>
-      {/* manzana verde (parque) */}
       <rect x="26" y="86" width="96" height="46" rx="8" fill="rgba(78,122,69,.16)" />
       <rect x="292" y="18" width="86" height="42" rx="8" fill="rgba(20,48,41,.05)" />
-      {/* calles */}
       <g stroke="#E1DACB" strokeWidth="12" strokeLinecap="round">
         <line x1="-10" y1="58" x2="410" y2="58" />
         <line x1="150" y1="-10" x2="150" y2="160" />
@@ -45,7 +47,6 @@ function MiniMap() {
         <line x1="-10" y1="112" x2="410" y2="112" />
         <line x1="60" y1="-10" x2="60" y2="160" />
       </g>
-      {/* pin */}
       <g transform="translate(215 62)">
         <circle r="20" fill="rgba(191,160,101,.18)">
           <animate attributeName="r" values="12;26;12" dur="2.4s" repeatCount="indefinite" />

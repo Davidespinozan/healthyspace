@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { sumMacros, DELIVERY_FEE, type Macro } from '../data/menu';
 import { pushOrder, pushLead } from '../data/backend';
+import { BRANCHES } from '../data/location';
 
 // Pantallas raíz (tabs) + pantallas apiladas encima.
 export type ScreenName = 'home' | 'menu' | 'pedidos' | 'perfil' | 'bowl' | 'build' | 'cart' | 'checkout' | 'order' | 'paquetes';
@@ -34,6 +35,7 @@ export interface Order {
   fee: number;
   total: number;
   address?: string;
+  branch?: string;      // sucursal de recogida (pickup)
   etaMin: number;
   status: OrderStatus;
   createdAt: number;
@@ -59,6 +61,8 @@ interface State {
   // Pedido
   mode: OrderMode;
   setMode: (m: OrderMode) => void;
+  branch: string;                 // sucursal seleccionada (id) para pickup
+  setBranch: (id: string) => void;
   address: string;
   setAddress: (a: string) => void;
   customer: Customer;
@@ -128,6 +132,8 @@ export const useStore = create<State>()(
 
       mode: 'pickup',
       setMode: (m) => set({ mode: m }),
+      branch: BRANCHES[0].id,
+      setBranch: (id) => set({ branch: id }),
       address: '',
       setAddress: (a) => set({ address: a }),
       customer: { name: '', phone: '', notes: '' },
@@ -144,13 +150,14 @@ export const useStore = create<State>()(
       orders: [],
       order: null,
       placeOrder: () => {
-        const { cart, mode, address, customer } = get();
+        const { cart, mode, address, customer, branch } = get();
         if (!cart.length) return;
         const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
         const fee = mode === 'delivery' ? DELIVERY_FEE : 0;
         const order: Order = {
           code: orderCode(), items: cart, mode, subtotal, fee, total: subtotal + fee,
           address: mode === 'delivery' ? address : undefined,
+          branch: mode === 'pickup' ? branch : undefined,
           etaMin: mode === 'delivery' ? 32 : 12,
           status: 'recibido', createdAt: Date.now(),
         };
@@ -193,7 +200,7 @@ export const useStore = create<State>()(
     }),
     {
       name: 'hs-store',
-      partialize: (s) => ({ favorites: s.favorites, orders: s.orders, customer: s.customer, mode: s.mode, address: s.address, leads: s.leads, leadDone: s.leadDone, stamps: s.stamps, freeBowls: s.freeBowls }),
+      partialize: (s) => ({ favorites: s.favorites, orders: s.orders, customer: s.customer, mode: s.mode, branch: s.branch, address: s.address, leads: s.leads, leadDone: s.leadDone, stamps: s.stamps, freeBowls: s.freeBowls }),
     },
   ),
 );

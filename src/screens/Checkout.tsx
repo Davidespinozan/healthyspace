@@ -3,12 +3,15 @@ import { useStore, type OrderMode } from '../state/store';
 import { DELIVERY_FEE } from '../data/menu';
 import { money } from '../components/ui';
 import { LocationCard } from '../components/LocationCard';
+import { BRANCHES, branchById, branchOpenNow, type Branch } from '../data/location';
 
 export default function Checkout() {
   const pop = useStore((s) => s.pop);
   const cart = useStore((s) => s.cart);
   const mode = useStore((s) => s.mode);
   const setMode = useStore((s) => s.setMode);
+  const branch = useStore((s) => s.branch);
+  const setBranch = useStore((s) => s.setBranch);
   const address = useStore((s) => s.address);
   const setAddress = useStore((s) => s.setAddress);
   const customer = useStore((s) => s.customer);
@@ -41,11 +44,16 @@ export default function Checkout() {
           </div>
         </section>
 
-        {/* Ubicación (solo pickup) */}
+        {/* Sucursal (solo pickup) */}
         {mode === 'pickup' && (
-          <section style={{ display: 'grid', gap: 10 }}>
-            <div className="section-label">Recoges aquí</div>
-            <LocationCard />
+          <section style={{ display: 'grid', gap: 11 }}>
+            <div className="section-label">Elige tu sucursal</div>
+            {BRANCHES.length > 1 && (
+              <div style={{ display: 'grid', gap: 9 }}>
+                {BRANCHES.map((b) => <BranchOpt key={b.id} b={b} on={branch === b.id} onClick={() => setBranch(b.id)} />)}
+              </div>
+            )}
+            <LocationCard branch={branchById(branch)} />
           </section>
         )}
 
@@ -101,6 +109,29 @@ export default function Checkout() {
         </div>
       </div>
     </div>
+  );
+}
+
+function BranchOpt({ b, on, onClick }: { b: Branch; on: boolean; onClick: () => void }) {
+  const open = branchOpenNow(b);
+  return (
+    <button onClick={onClick} style={{
+      display: 'flex', alignItems: 'center', gap: 12, padding: '14px 15px', borderRadius: 16, textAlign: 'left',
+      background: on ? 'var(--forest)' : 'var(--surface)', color: on ? 'var(--on-dark)' : 'var(--ink)',
+      boxShadow: on ? 'var(--sh-md), var(--edge-dark)' : 'var(--sh-sm), var(--edge)', transition: 'background .2s, box-shadow .2s',
+    }}>
+      <span style={{ width: 20, height: 20, borderRadius: 999, flex: '0 0 auto', display: 'grid', placeItems: 'center',
+        background: on ? 'var(--amber)' : 'transparent', boxShadow: on ? 'none' : 'inset 0 0 0 1.5px var(--sand)' }}>
+        {on && <Check size={12} strokeWidth={3} color="var(--forest)" />}
+      </span>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontWeight: 800, fontSize: 15 }}>{b.name}</span>
+          <span className="chip" style={{ background: open ? 'rgba(78,122,69,.14)' : 'rgba(199,91,58,.12)', color: open ? '#3F6B39' : 'var(--terra)', fontWeight: 700, fontSize: 10.5 }}>{open ? 'Abierto' : 'Cerrado'}</span>
+        </div>
+        <div style={{ fontSize: 12, color: on ? 'var(--on-dark-2)' : 'var(--ink-2)', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{b.address}</div>
+      </div>
+    </button>
   );
 }
 

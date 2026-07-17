@@ -1,17 +1,37 @@
-// Ubicación del food truck. ⚠️ Reemplaza con la dirección y coordenadas REALES
-// (abre Google Maps, clic derecho sobre el pin → copia lat, lng).
-export const LOCATION = {
-  name: 'Healthy Space · Las Quintas',
-  address: 'Blvd. Pedro Infante 2500, Las Quintas, Culiacán, Sin.',
-  hours: 'Lun a Dom · 8:00 – 22:00',
-  lat: 24.8069,
-  lng: -107.4108,
-};
+// Sucursales del food truck (2-5). ⚠️ Reemplaza con las reales: nombre, dirección,
+// coordenadas (Google Maps → clic derecho sobre el pin → copia lat, lng) y horario.
+export interface Branch {
+  id: string;
+  name: string;
+  address: string;
+  hours: string;
+  openHour: number;   // 24h
+  closeHour: number;
+  lat: number;
+  lng: number;
+}
 
-/** Abre la ubicación en el mapa. */
-export const mapUrl = `https://www.google.com/maps/search/?api=1&query=${LOCATION.lat},${LOCATION.lng}`;
-/** Abre indicaciones para llegar al truck. */
-export const dirUrl = `https://www.google.com/maps/dir/?api=1&destination=${LOCATION.lat},${LOCATION.lng}`;
+export const BRANCHES: Branch[] = [
+  { id: 'las-quintas',  name: 'Las Quintas',  address: 'Blvd. Pedro Infante 2500, Las Quintas, Culiacán',  hours: 'Lun a Dom · 8:00 – 22:00', openHour: 8, closeHour: 22, lat: 24.8069, lng: -107.4108 },
+  { id: 'tres-rios',    name: 'Tres Ríos',    address: 'Av. Álvaro Obregón, Tres Ríos, Culiacán',           hours: 'Lun a Dom · 8:00 – 22:00', openHour: 8, closeHour: 22, lat: 24.8250, lng: -107.4200 },
+  { id: 'la-primavera', name: 'La Primavera', address: 'Blvd. El Dorado, La Primavera, Culiacán',            hours: 'Lun a Dom · 8:00 – 22:00', openHour: 8, closeHour: 22, lat: 24.7520, lng: -107.4640 },
+];
 
-export const openDirections = () => window.open(dirUrl, '_blank', 'noopener');
-export const openMap = () => window.open(mapUrl, '_blank', 'noopener');
+export const branchById = (id?: string): Branch => BRANCHES.find((b) => b.id === id) ?? BRANCHES[0];
+
+/** ¿Abierta ahora? (hora local del dispositivo). */
+export function branchOpenNow(b: Branch, d: Date = new Date()): boolean {
+  const h = d.getHours() + d.getMinutes() / 60;
+  return h >= b.openHour && h < b.closeHour;
+}
+export function branchOpensLabel(b: Branch, d: Date = new Date()): string {
+  const h = d.getHours() + d.getMinutes() / 60;
+  if (h >= b.closeHour) return `Abre mañana ${b.openHour}:00`;
+  if (h < b.openHour) return `Abre hoy ${b.openHour}:00`;
+  return '';
+}
+
+export const branchDirUrl = (b: Branch) => `https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}`;
+export const branchMapUrl = (b: Branch) => `https://www.google.com/maps/search/?api=1&query=${b.lat},${b.lng}`;
+export const openBranchDirections = (b: Branch) => window.open(branchDirUrl(b), '_blank', 'noopener');
+export const openBranchMap = (b: Branch) => window.open(branchMapUrl(b), '_blank', 'noopener');
