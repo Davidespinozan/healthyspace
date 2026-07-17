@@ -30,6 +30,10 @@ export const ING: Record<string, Ingredient> = mk({
   'camote':          ['Camote al horno', 90, 2, 21, 0],
   'feta':            ['Queso feta', 75, 4, 1, 6],
   'cherry':          ['Tomate cherry', 20, 1, 4, 0],
+  // Hummus especiales de la casa (dips premium)
+  'hummus-elote':    ['Hummus especial de elote', 75, 3, 9, 3],
+  'hummus-jalapeno': ['Hummus especial de jalapeño', 70, 3, 7, 4],
+  'hummus-chiles':   ['Hummus especial de chile árbol-guajillo', 75, 3, 8, 4],
   // Extras (con costo) — también en la tabla para sumar macros al personalizar
   'x-aguacate':      ['Extra aguacate', 120, 2, 6, 11],
   'x-proteina':      ['Proteína extra', 200, 35, 0, 6],
@@ -65,6 +69,9 @@ const ING_IMG_FILE: Record<string, string> = {
   'pico': 'pico-de-gallo.webp',
   'verduras': 'verduras-asadas.webp',
   'feta': 'queso-feta.webp',
+  'hummus-elote': 'hummus-especial-de-elote.webp',
+  'hummus-jalapeno': 'hummus-especial-jalapeNo.webp',
+  'hummus-chiles': 'hummus-especial-de-chiles-arbolguajillo.webp',
 };
 
 /** URL de la foto real del ingrediente, o '' si aún no hay (usa placeholder). */
@@ -81,7 +88,7 @@ export function sumMacros(ids: string[]): Macro {
 // Pocas proteínas, pero inolvidables. Todas de cocción lenta.
 export const PROTEINS = ['pollo-lento', 'chamberete', 'cerdo-lento'];
 export const BASES = ['arroz-blanco', 'arroz-integral', 'quinoa', 'mix-greens'];
-export const COMPLEMENTS = ['elote', 'aguacate', 'pico', 'cebolla', 'verduras', 'brocoli', 'betabel', 'camote', 'feta', 'frijoles', 'pepino', 'cherry'];
+export const COMPLEMENTS = ['elote', 'aguacate', 'pico', 'cebolla', 'verduras', 'brocoli', 'betabel', 'camote', 'feta', 'frijoles', 'pepino', 'cherry', 'hummus-elote', 'hummus-jalapeno', 'hummus-chiles'];
 export const SALSAS = ['s-chipotle', 's-verde', 's-ranch', 's-avocado', 's-garlic', 's-cilantro'];
 export const MAX_COMPLEMENTS = 5;
 
