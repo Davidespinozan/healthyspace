@@ -1,0 +1,10 @@
+# Config de deploy en Netlify (Vite SPA).
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# La app es SPA (navegación por estado): cualquier ruta cae al index.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
