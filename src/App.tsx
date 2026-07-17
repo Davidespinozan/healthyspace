@@ -34,7 +34,9 @@ export default function App() {
   const onTab = ROOT_TABS.includes(top.name);
   const count = cart.reduce((n, c) => n + c.qty, 0);
   const total = cartTotals(cart, 'pickup').total; // preview con descuento de paquete (sin envío)
-  const showBar = count > 0 && !['cart', 'checkout', 'order'].includes(top.name);
+  // Oculta la barra "Ver pedido" donde ya hay una barra de acción propia abajo
+  // (detalle, armar bowl, paquetes) para que no se encimen.
+  const showBar = count > 0 && !['cart', 'checkout', 'order', 'bowl', 'build', 'paquetes'].includes(top.name);
 
   return (
     <>
