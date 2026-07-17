@@ -6,6 +6,7 @@ import { Logo } from '../components/Logo';
 import { Reveal } from '../components/Reveal';
 import { LeadCapture } from '../components/LeadCapture';
 import { CraftRail } from '../components/CraftCard';
+import { Pillars, SocialProof } from '../components/MarketingSections';
 import { openDirections } from '../data/location';
 import { openNow, opensInLabel } from '../data/business';
 
@@ -94,6 +95,9 @@ export default function Home() {
           <CraftRail />
         </Section>
 
+        {/* Filosofía: rico primero, sano siempre */}
+        <Pillars />
+
         {/* Recomendado */}
         <Section title="Recomendado para ti">
           <button className="card pressable" onClick={() => push({ name: 'bowl', param: rec.id })} style={{ textAlign: 'left', width: '100%' }}>
@@ -130,6 +134,9 @@ export default function Home() {
             {SIGNATURE_BOWLS.slice(0, 3).map((b) => <MenuRow key={b.id} id={b.id} />)}
           </div>
         </Section>
+
+        {/* Prueba social */}
+        <SocialProof />
 
         {/* Captación de leads (promos) */}
         <LeadCapture />
