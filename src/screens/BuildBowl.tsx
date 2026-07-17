@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ChevronLeft, Check } from 'lucide-react';
 import { useStore } from '../state/store';
-import { PROTEINS, BASES, COMPLEMENTS, SALSAS, SALSA_META, MAX_COMPLEMENTS, PROTEIN_PRICE, PROTEIN_CRAFT, EXTRA_IDS, EXTRA_PRICE, ING, sumMacros, bowlById } from '../data/menu';
+import { PROTEINS, BASES, COMPLEMENTS, SALSAS, SALSA_META, MAX_COMPLEMENTS, PROTEIN_PRICE, PROTEIN_CRAFT, EXTRA_IDS, EXTRA_PRICE, ING, sumMacros, bowlById, ingImg } from '../data/menu';
 import { MacroRow, money } from '../components/ui';
 
 export default function BuildBowl({ param }: { param?: string }) {
@@ -142,6 +142,9 @@ function Opt({ id, on, onClick, priced, extra, dim }: { id: string; on: boolean;
       onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(.97)')}
       onMouseUp={(e) => (e.currentTarget.style.transform = '')}
       onMouseLeave={(e) => (e.currentTarget.style.transform = '')}>
+      {ingImg(id) && (
+        <img src={ingImg(id)} alt="" style={{ width: 40, height: 40, borderRadius: 11, objectFit: 'cover', flex: '0 0 auto', background: 'var(--cream-2)' }} />
+      )}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontWeight: 600, fontSize: 14, lineHeight: 1.2 }}>{ing?.name}</div>
         {extra && (

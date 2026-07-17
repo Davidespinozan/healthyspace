@@ -1,6 +1,6 @@
 import { ArrowRight, Heart, Plus, Star, Bell, MapPin } from 'lucide-react';
 import { useStore } from '../state/store';
-import { SIGNATURE_BOWLS, bowlById, sumMacros } from '../data/menu';
+import { SIGNATURE_BOWLS, bowlById, sumMacros, ingImg } from '../data/menu';
 import { BowlPhoto, MacroRow, money } from '../components/ui';
 import { Logo } from '../components/Logo';
 import { Reveal } from '../components/Reveal';
@@ -63,7 +63,7 @@ export default function Home() {
         <Reveal delay={0.08}>
           <div className="card dark-depth" style={{ position: 'relative', background: 'var(--forest)', minHeight: 300, boxShadow: 'var(--sh-lg), var(--edge-dark)' }}>
             <div style={{ position: 'absolute', inset: 0 }}>
-              <BowlPhoto src="/hero.jpg" accent="#C79A5A" alt="" radius={0} ratio="auto" />
+              <BowlPhoto src={ingImg('chamberete')} accent="#C79A5A" alt="" radius={0} ratio="auto" />
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(8,26,22,.30) 0%, rgba(8,26,22,.35) 45%, rgba(8,26,22,.92) 100%)' }} />
             </div>
             <div style={{ position: 'relative', padding: '26px 22px 24px', minHeight: 300, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>

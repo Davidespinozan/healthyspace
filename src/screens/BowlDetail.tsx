@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ChevronLeft, Heart, Minus, Plus, Check, Pencil } from 'lucide-react';
 import { useStore } from '../state/store';
-import { bowlById, sumMacros, ING, proteinOf } from '../data/menu';
+import { bowlById, sumMacros, ING, proteinOf, ingImg } from '../data/menu';
 import { BowlPhoto, MacroRow, money } from '../components/ui';
 import { Reveal } from '../components/Reveal';
 import { CraftCard } from '../components/CraftCard';
@@ -69,9 +69,16 @@ export default function BowlDetail({ param }: { param?: string }) {
             <div style={{ display: 'grid', gap: 11 }}>
               {b.ingredients.map((id) => {
                 const ing = ING[id]; if (!ing) return null;
+                const img = ingImg(id);
                 return (
                   <div key={id} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <span style={{ width: 7, height: 7, borderRadius: 999, background: b.accent, flex: '0 0 auto', boxShadow: `0 0 0 4px ${b.accent}22` }} />
+                    {img ? (
+                      <img src={img} alt="" style={{ width: 38, height: 38, borderRadius: 11, objectFit: 'cover', flex: '0 0 auto', background: 'var(--cream-2)' }} />
+                    ) : (
+                      <span style={{ width: 38, height: 38, borderRadius: 11, background: `${b.accent}1E`, display: 'grid', placeItems: 'center', flex: '0 0 auto' }}>
+                        <span style={{ width: 7, height: 7, borderRadius: 999, background: b.accent }} />
+                      </span>
+                    )}
                     <span style={{ fontSize: 14.5, fontWeight: 500 }}>{ing.name}</span>
                   </div>
                 );

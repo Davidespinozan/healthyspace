@@ -1,5 +1,5 @@
 import { Flame } from 'lucide-react';
-import { ING, PROTEIN_CRAFT, PROTEINS } from '../data/menu';
+import { ING, PROTEIN_CRAFT, PROTEINS, ingImg } from '../data/menu';
 
 /** Cuenta el oficio detrás de la proteína — la razón por la que la textura no se
  *  replica en casa. Es el argumento de venta de la casa, así que se muestra grande. */
@@ -34,19 +34,20 @@ export function CraftRail() {
         if (!ing || !craft) return null;
         return (
           <div key={id} className="dark-depth" style={{
-            flex: '0 0 auto', width: 224, scrollSnapAlign: 'start', borderRadius: 'var(--r-xl)',
-            background: 'var(--forest)', color: 'var(--on-dark)', padding: '17px 17px',
+            flex: '0 0 auto', width: 224, scrollSnapAlign: 'start', borderRadius: 'var(--r-xl)', overflow: 'hidden',
+            background: 'var(--forest)', color: 'var(--on-dark)',
             boxShadow: 'var(--sh-md), var(--edge-dark)',
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 999, background: 'rgba(191,160,101,.16)', color: 'var(--amber-l)', display: 'grid', placeItems: 'center' }}>
-                <Flame size={17} strokeWidth={2.3} />
-              </div>
-              <HoursBadge hours={craft.hours} />
+            <div style={{ position: 'relative', height: 116 }}>
+              {ingImg(id) && <img src={ingImg(id)} alt={ing.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 40%, var(--forest))' }} />
+              <span style={{ position: 'absolute', top: 11, right: 11 }}><HoursBadge hours={craft.hours} /></span>
             </div>
+            <div style={{ padding: '4px 17px 17px' }}>
             <div style={{ fontWeight: 800, fontSize: 15.5, lineHeight: 1.15 }}>{ing.name}</div>
             <div style={{ fontSize: 12, color: 'var(--amber-l)', fontWeight: 700, margin: '3px 0 9px' }}>{craft.method}</div>
             <p style={{ fontSize: 12.5, lineHeight: 1.45, color: 'var(--on-dark-2)', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{craft.story}</p>
+            </div>
           </div>
         );
       })}
