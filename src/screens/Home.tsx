@@ -7,6 +7,7 @@ import { Reveal } from '../components/Reveal';
 import { LeadCapture } from '../components/LeadCapture';
 import { CraftRail } from '../components/CraftCard';
 import { openDirections } from '../data/location';
+import { openNow, opensInLabel } from '../data/business';
 
 export default function Home() {
   const push = useStore((s) => s.push);
@@ -16,6 +17,7 @@ export default function Home() {
   const rec = SIGNATURE_BOWLS[0];
   const favBowls = favorites.map(bowlById).filter(Boolean).slice(0, 6);
   const lastOrder = orders[0];
+  const open = openNow();
 
   return (
     <div className="page has-tabs">
@@ -39,11 +41,17 @@ export default function Home() {
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: 700, fontSize: 14 }}>Healthy Space · Las Quintas</div>
-              <div className="muted" style={{ fontSize: 12.5 }}>Toca para ver cómo llegar</div>
+              <div className="muted" style={{ fontSize: 12.5 }}>{open ? 'Toca para ver cómo llegar' : opensInLabel()}</div>
             </div>
-            <span className="chip" style={{ background: 'rgba(78,122,69,.14)', color: '#3F6B39', fontWeight: 700 }}>
-              <span style={{ width: 7, height: 7, borderRadius: 999, background: '#4E7A45' }} /> Abierto
-            </span>
+            {open ? (
+              <span className="chip" style={{ background: 'rgba(78,122,69,.14)', color: '#3F6B39', fontWeight: 700 }}>
+                <span style={{ width: 7, height: 7, borderRadius: 999, background: '#4E7A45' }} /> Abierto
+              </span>
+            ) : (
+              <span className="chip" style={{ background: 'rgba(199,91,58,.12)', color: 'var(--terra)', fontWeight: 700 }}>
+                <span style={{ width: 7, height: 7, borderRadius: 999, background: 'var(--terra)' }} /> Cerrado
+              </span>
+            )}
           </button>
         </Reveal>
 

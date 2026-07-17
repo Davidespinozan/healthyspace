@@ -1,0 +1,17 @@
+{
+  "name": "Healthy Space",
+  "short_name": "Healthy Space",
+  "description": "Mexican Grill & Bowls — cocción lenta, Culiacán.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0E2521",
+  "theme_color": "#0E2521",
+  "icons": [
+    {
+      "src": "https://ltveorvqvvlyivjwxjlc.supabase.co/storage/v1/object/public/healthyspaceclub/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

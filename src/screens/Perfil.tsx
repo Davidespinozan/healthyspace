@@ -1,5 +1,6 @@
-import { Sparkles, Store, Bike, Bell, HelpCircle, FileText, ChevronRight, LogIn } from 'lucide-react';
+import { Sparkles, Store, Bike, Bell, FileText, ChevronRight, LogIn, Instagram, MessageCircle, Clock, Star } from 'lucide-react';
 import { useStore } from '../state/store';
+import { BUSINESS, openNow, opensInLabel, openInstagram, openWhatsApp } from '../data/business';
 
 export default function Perfil() {
   const customer = useStore((s) => s.customer);
@@ -49,13 +50,39 @@ export default function Perfil() {
           </div>
         </section>
 
+        {/* Negocio: horario + contacto */}
+        <section style={{ display: 'grid', gap: 2 }}>
+          <div className="section-label" style={{ marginBottom: 8 }}>Healthy Space</div>
+          <div className="card" style={{ overflow: 'hidden', boxShadow: 'var(--sh-sm), var(--edge)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 13, padding: '15px 16px' }}>
+              <Clock size={19} strokeWidth={2} color="var(--ink-2)" />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 600, fontSize: 14.5 }}>Horario</div>
+                <div className="muted" style={{ fontSize: 12.5 }}>{BUSINESS.hoursLabel}</div>
+              </div>
+              <span className="chip" style={{
+                background: openNow() ? 'rgba(78,122,69,.14)' : 'rgba(199,91,58,.12)',
+                color: openNow() ? '#3F6B39' : 'var(--terra)', fontWeight: 700,
+              }}>{openNow() ? 'Abierto' : opensInLabel() || 'Cerrado'}</span>
+            </div>
+            <hr className="hair" />
+            <SettingRow Icon={Instagram} label={`@${BUSINESS.instagram}`} sub="Síguenos" onClick={openInstagram} />
+            <hr className="hair" />
+            <SettingRow Icon={MessageCircle} label="Ayuda por WhatsApp" onClick={() => openWhatsApp()} />
+            {BUSINESS.googleReviewUrl && (
+              <>
+                <hr className="hair" />
+                <SettingRow Icon={Star} label="Déjanos una reseña" onClick={() => window.open(BUSINESS.googleReviewUrl, '_blank', 'noopener')} />
+              </>
+            )}
+          </div>
+        </section>
+
         {/* Ajustes */}
         <section style={{ display: 'grid', gap: 2 }}>
           <div className="section-label" style={{ marginBottom: 8 }}>Ajustes</div>
           <div className="card" style={{ overflow: 'hidden', boxShadow: 'var(--sh-sm), var(--edge)' }}>
             <SettingRow Icon={Bell} label="Notificaciones" />
-            <hr className="hair" />
-            <SettingRow Icon={HelpCircle} label="Ayuda y soporte" />
             <hr className="hair" />
             <SettingRow Icon={FileText} label="Términos y privacidad" />
           </div>
@@ -80,11 +107,14 @@ function PrefCard({ on, onClick, Icon, label }: { on: boolean; onClick: () => vo
   );
 }
 
-function SettingRow({ Icon, label }: { Icon: typeof Bell; label: string }) {
+function SettingRow({ Icon, label, sub, onClick }: { Icon: typeof Bell; label: string; sub?: string; onClick?: () => void }) {
   return (
-    <button style={{ display: 'flex', alignItems: 'center', gap: 13, padding: '15px 16px', width: '100%', textAlign: 'left' }}>
+    <button onClick={onClick} style={{ display: 'flex', alignItems: 'center', gap: 13, padding: '15px 16px', width: '100%', textAlign: 'left' }}>
       <Icon size={19} strokeWidth={2} color="var(--ink-2)" />
-      <span style={{ flex: 1, fontWeight: 600, fontSize: 14.5 }}>{label}</span>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontWeight: 600, fontSize: 14.5 }}>{label}</div>
+        {sub && <div className="muted" style={{ fontSize: 12.5 }}>{sub}</div>}
+      </div>
       <ChevronRight size={18} color="var(--ink-3)" />
     </button>
   );

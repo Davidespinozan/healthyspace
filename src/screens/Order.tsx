@@ -5,6 +5,7 @@ import { useStore, flowFor, type OrderStatus } from '../state/store';
 import { Logo } from '../components/Logo';
 import { LocationCard } from '../components/LocationCard';
 import { LeadCapture } from '../components/LeadCapture';
+import { openWhatsApp } from '../data/business';
 import { money } from '../components/ui';
 
 const LABELS: Record<OrderStatus, { label: string; sub: string; Icon: typeof Check }> = {
@@ -138,7 +139,8 @@ export default function Order() {
       </div>
 
       <div style={{ padding: '0 20px calc(28px + var(--safe-b))', display: 'grid', gap: 10 }}>
-        <button className="btn btn--ghost" style={{ background: 'rgba(255,255,255,.08)', color: 'var(--on-dark)', boxShadow: 'none' }}>
+        <button className="btn btn--ghost" style={{ background: 'rgba(255,255,255,.08)', color: 'var(--on-dark)', boxShadow: 'none' }}
+          onClick={() => openWhatsApp(`Hola, tengo una duda sobre mi pedido ${order.code} 🌿`)}>
           <MessageCircle size={17} strokeWidth={2.2} /> ¿Necesitas ayuda? Escríbenos
         </button>
         <button className="btn btn--ghost" style={{ background: 'transparent', color: 'var(--on-dark-2)', boxShadow: 'none' }}
