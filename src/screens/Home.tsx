@@ -202,8 +202,8 @@ function MenuRow({ id }: { id: string }) {
   const m = sumMacros(b.ingredients);
   return (
     <div className="card pressable" style={{ display: 'flex', gap: 13, padding: 11, alignItems: 'center' }}>
-      <button onClick={() => push({ name: 'bowl', param: id })} className="zoomwrap" style={{ width: 76, height: 76, flex: '0 0 auto', borderRadius: 15 }}>
-        <BowlPhoto src={b.img} accent={b.accent} alt={b.name} radius={15} />
+      <button onClick={() => push({ name: 'bowl', param: id })} className="zoomwrap" style={{ width: 104, height: 104, flex: '0 0 auto', borderRadius: 16 }}>
+        <BowlPhoto src={b.img} accent={b.accent} alt={b.name} radius={16} />
       </button>
       <button onClick={() => push({ name: 'bowl', param: id })} style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
