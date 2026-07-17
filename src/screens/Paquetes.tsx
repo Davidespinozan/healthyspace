@@ -1,7 +1,6 @@
 import { ChevronLeft, Users, Snowflake, Store, Bike, ArrowRight, Check } from 'lucide-react';
 import { useStore } from '../state/store';
-import { PACKAGES, perBowl, type WeeklyPackage } from '../data/menu';
-import { money } from '../components/ui';
+import { PACKAGES, type WeeklyPackage } from '../data/menu';
 
 export default function Paquetes() {
   const pop = useStore((s) => s.pop);
@@ -64,10 +63,10 @@ function Tier({ p }: { p: WeeklyPackage }) {
       <div style={{ width: 44, height: 44, borderRadius: 999, background: 'var(--forest)', color: 'var(--amber-l)', display: 'grid', placeItems: 'center', flex: '0 0 auto', fontWeight: 900, fontSize: 16 }}>{p.size}</div>
       <div style={{ flex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontWeight: 800, fontSize: 16 }}>{p.size} bowls</span>
+          <span style={{ fontWeight: 800, fontSize: 16 }}>{p.size} bowls o más</span>
           <span className="chip" style={{ background: 'rgba(78,122,69,.14)', color: '#3F6B39', fontWeight: 800, fontSize: 11 }}><Check size={12} strokeWidth={3} /> −{p.off}%</span>
         </div>
-        <div className="muted" style={{ fontSize: 12.5, marginTop: 2 }}>{money(perBowl(p))} por bowl · ahorras {money(p.base - p.price)}</div>
+        <div className="muted" style={{ fontSize: 12.5, marginTop: 2 }}>Descuento sobre el total de tus bowls</div>
       </div>
     </div>
   );

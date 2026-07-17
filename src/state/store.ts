@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import { sumMacros, DELIVERY_FEE, type Macro } from '../data/menu';
 import { pushOrder, pushLead } from '../data/backend';
 import { BRANCHES } from '../data/location';
+import { PACKAGES } from '../data/menu';
 
 // Pantallas raíz (tabs) + pantallas apiladas encima.
 export type ScreenName = 'home' | 'menu' | 'pedidos' | 'perfil' | 'bowl' | 'build' | 'cart' | 'checkout' | 'order' | 'paquetes';
@@ -101,9 +102,9 @@ interface State {
 export const LOYALTY_GOAL = 10;
 
 // ── Paquetes: descuento por cantidad de BOWLS (para compartir o meal prep) ──
-/** % de descuento según cuántos bowls lleva el pedido. */
+/** % de descuento según cuántos bowls lleva el pedido (derivado de PACKAGES). */
 export function packagePct(bowls: number): number {
-  return bowls >= 10 ? 0.19 : bowls >= 5 ? 0.12 : 0;
+  return PACKAGES.filter((p) => bowls >= p.size).reduce((m, p) => Math.max(m, p.off), 0) / 100;
 }
 export interface CartTotals { subtotal: number; bowls: number; pct: number; discount: number; fee: number; total: number }
 /** Totales del carrito con el descuento de paquete aplicado (solo a los bowls). */

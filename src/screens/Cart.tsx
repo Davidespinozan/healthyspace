@@ -1,6 +1,6 @@
 import { ChevronLeft, Minus, Plus, Trash2, Tag, ArrowRight } from 'lucide-react';
 import { useStore, cartTotals } from '../state/store';
-import { ING, DRINKS, EXTRAS } from '../data/menu';
+import { ING, DRINKS, EXTRAS, PACKAGES } from '../data/menu';
 import { BowlPhoto, money } from '../components/ui';
 import { ProductRail } from '../components/ProductRail';
 
@@ -91,8 +91,9 @@ export default function Cart() {
         padding: '18px 20px calc(16px + var(--safe-b))', background: 'var(--surface)', boxShadow: '0 -10px 34px -14px rgba(14,37,33,.24), var(--edge)',
         borderRadius: '28px 28px 0 0', display: 'grid', gap: 9, zIndex: 20 }}>
         {(() => {
-          const need = t.bowls > 0 && t.bowls < 5 ? 5 - t.bowls : t.bowls >= 5 && t.bowls < 10 ? 10 - t.bowls : 0;
-          const nextPct = t.bowls < 5 ? 12 : 19;
+          const t5 = PACKAGES[0], t10 = PACKAGES[1];
+          const need = t.bowls > 0 && t.bowls < t5.size ? t5.size - t.bowls : t.bowls >= t5.size && t.bowls < t10.size ? t10.size - t.bowls : 0;
+          const nextPct = t.bowls < t5.size ? t5.off : t10.off;
           return need > 0 ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: 7, background: 'rgba(191,160,101,.14)', color: 'var(--amber-deep)', padding: '9px 12px', borderRadius: 11, fontSize: 12.5, fontWeight: 700, marginBottom: 2 }}>
               🌿 Agrega {need} bowl{need > 1 ? 's' : ''} más y ahorra {nextPct}%
