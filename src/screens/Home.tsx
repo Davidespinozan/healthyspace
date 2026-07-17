@@ -7,6 +7,7 @@ import { Reveal } from '../components/Reveal';
 import { LeadCapture } from '../components/LeadCapture';
 import { CraftRail } from '../components/CraftCard';
 import { Pillars, SocialProof } from '../components/MarketingSections';
+import { LoyaltyCard } from '../components/LoyaltyCard';
 import { openDirections } from '../data/location';
 import { openNow, opensInLabel } from '../data/business';
 
@@ -71,6 +72,11 @@ export default function Home() {
               </button>
             </div>
           </div>
+        </Reveal>
+
+        {/* Lealtad (teaser) */}
+        <Reveal delay={0.12}>
+          <LoyaltyCard compact />
         </Reveal>
 
         {/* Último pedido */}

@@ -1,6 +1,7 @@
 import { Sparkles, Store, Bike, Bell, FileText, ChevronRight, LogIn, Instagram, MessageCircle, Clock, Star } from 'lucide-react';
 import { useStore } from '../state/store';
 import { BUSINESS, openNow, opensInLabel, openInstagram, openWhatsApp } from '../data/business';
+import { LoyaltyCard } from '../components/LoyaltyCard';
 
 export default function Perfil() {
   const customer = useStore((s) => s.customer);
@@ -26,6 +27,9 @@ export default function Perfil() {
             <div className="muted" style={{ fontSize: 13 }}>{orders.length} pedido(s) · Culiacán</div>
           </div>
         </div>
+
+        {/* Lealtad */}
+        <LoyaltyCard />
 
         {/* Conecta tu plan HSC */}
         <div className="card dark-depth" style={{ background: 'var(--forest)', color: 'var(--on-dark)', padding: '20px 18px', boxShadow: 'var(--sh-lg), var(--edge-dark)' }}>

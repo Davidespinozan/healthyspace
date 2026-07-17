@@ -48,6 +48,16 @@ function BowlGlyph({ color }: { color: string }) {
   );
 }
 
+/** Glifo mini de bowl (para sellos de lealtad, etc.). */
+export function BowlGlyphMini({ size = 14, color = 'currentColor' }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" aria-hidden>
+      <path d="M6 21h36c0 9.5-7.4 17-18 17S6 30.5 6 21Z" fill={color} />
+      <path d="M14 21c0-5 4-9 10-9s10 4 10 9" stroke={color} strokeWidth="2.4" strokeLinecap="round" opacity=".5" fill="none" />
+    </svg>
+  );
+}
+
 /** Fila de macros (cal · P · C · G) con separadores hairline. */
 export function MacroRow({ m, dark }: { m: Macro; dark?: boolean }) {
   const c = dark ? 'var(--on-dark)' : 'var(--ink)';

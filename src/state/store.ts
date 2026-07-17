@@ -79,10 +79,18 @@ interface State {
   leadDone: boolean;        // ya se registró en este dispositivo
   addLead: (l: Omit<Lead, 'at'>) => void;
 
+  // Lealtad (tarjeta de sellos)
+  stamps: number;           // sellos en el ciclo actual (0..LOYALTY_GOAL)
+  freeBowls: number;        // recompensas ganadas sin canjear
+  redeemFreeBowl: () => void;
+
   // Toast global
   toast: { id: number; msg: string } | null;
   showToast: (msg: string) => void;
 }
+
+/** Sellos para un bowl gratis. */
+export const LOYALTY_GOAL = 10;
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 const orderCode = () => 'HS-' + Math.floor(1000 + Math.random() * 9000);
@@ -146,7 +154,15 @@ export const useStore = create<State>()(
           etaMin: mode === 'delivery' ? 32 : 12,
           status: 'recibido', createdAt: Date.now(),
         };
-        set((st) => ({ order, orders: [order, ...st.orders], cart: [], stack: [{ name: 'order' }] }));
+        const st0 = get();
+        const next = st0.stamps + 1;
+        const won = next >= LOYALTY_GOAL;
+        set({
+          order, orders: [order, ...st0.orders], cart: [], stack: [{ name: 'order' }],
+          stamps: won ? next - LOYALTY_GOAL : next,
+          freeBowls: won ? st0.freeBowls + 1 : st0.freeBowls,
+          toast: won ? { id: Date.now(), msg: '🎉 ¡Ganaste un bowl gratis!' } : { id: Date.now(), msg: `Sello ${next}/${LOYALTY_GOAL} 🌿` },
+        });
         void pushOrder(order, customer); // backend (no bloqueante)
       },
       advanceOrder: () =>
@@ -168,12 +184,16 @@ export const useStore = create<State>()(
         void pushLead(lead); // backend (no bloqueante)
       },
 
+      stamps: 0,
+      freeBowls: 0,
+      redeemFreeBowl: () => set((st) => ({ freeBowls: Math.max(0, st.freeBowls - 1) })),
+
       toast: null,
       showToast: (msg) => set({ toast: { id: Date.now(), msg } }),
     }),
     {
       name: 'hs-store',
-      partialize: (s) => ({ favorites: s.favorites, orders: s.orders, customer: s.customer, mode: s.mode, address: s.address, leads: s.leads, leadDone: s.leadDone }),
+      partialize: (s) => ({ favorites: s.favorites, orders: s.orders, customer: s.customer, mode: s.mode, address: s.address, leads: s.leads, leadDone: s.leadDone, stamps: s.stamps, freeBowls: s.freeBowls }),
     },
   ),
 );
