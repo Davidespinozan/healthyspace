@@ -9,6 +9,7 @@ import { CraftRail } from '../components/CraftCard';
 import { Pillars, SocialProof } from '../components/MarketingSections';
 import { LoyaltyCard } from '../components/LoyaltyCard';
 import { ClubConnectCard } from '../components/ClubConnectCard';
+import { PromosSection } from '../components/PromosSection';
 import { openDirections } from '../data/location';
 import { openNow, opensInLabel } from '../data/business';
 
@@ -79,6 +80,9 @@ export default function Home() {
         <Reveal delay={0.12}>
           <LoyaltyCard compact />
         </Reveal>
+
+        {/* Promos locales (solo Culiacán) */}
+        <PromosSection />
 
         {/* Último pedido */}
         {lastOrder && (
