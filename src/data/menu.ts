@@ -134,7 +134,7 @@ export const PACKAGES: WeeklyPackage[] = [
 /** Precio según proteína (MXN). El chamberete braseado es el premium (8 h de cocción).
  *  Base, complementos y salsa incluidos. */
 export const PROTEIN_PRICE: Record<string, number> = {
-  'pollo-lento': 149, 'cerdo-lento': 159, 'chamberete': 179,
+  'pollo-lento': 169, 'cerdo-lento': 169, 'chamberete': 179,
 };
 
 /** El oficio detrás de cada proteína — es LA diferencia de la casa, así que se muestra
@@ -175,7 +175,7 @@ export const SIGNATURE_BOWLS: Bowl[] = [
   {
     id: 'fuego', name: 'Fuego', tagline: 'Pollo a las brasas, chipotle ahumado y elote rostizado.',
     ingredients: ['pollo-lento', 'arroz-blanco', 'elote', 'pico', 'aguacate', 'hummus-elote', 's-chipotle'],
-    price: 149, img: bowlImg('fuego-bowl.webp'), accent: '#C75B3A',
+    price: 169, img: bowlImg('fuego-bowl.webp'), accent: '#C75B3A',
   },
   {
     id: 'brasa', name: 'Brasa', tagline: 'Chamberete braseado, quinoa y frescura de pepino.',
@@ -195,7 +195,7 @@ export const SIGNATURE_BOWLS: Bowl[] = [
   {
     id: 'verde', name: 'Verde', tagline: 'Pollo, brócoli y quinoa. Ligero, nunca poco.',
     ingredients: ['pollo-lento', 'quinoa', 'brocoli', 'pepino', 'aguacate', 'hummus-jalapeno', 's-cilantro'],
-    price: 155, img: bowlImg('verde-bowl.webp'), accent: '#4E7A45',
+    price: 169, img: bowlImg('verde-bowl.webp'), accent: '#4E7A45',
   },
 ];
 
