@@ -180,7 +180,7 @@ export const useStore = create<State>()(
         const order: Order = {
           code: orderCode(), items: cart, mode, subtotal: t.subtotal, discount: t.discount, fee: t.fee, total: t.total,
           address: mode === 'delivery' ? address : undefined,
-          branch: mode === 'pickup' ? branch : undefined,
+          branch,   // sucursal que surte el pedido (recoge o domicilio)
           sealed,
           etaMin: mode === 'delivery' ? 32 : 12,
           status: 'recibido', createdAt: Date.now(),
