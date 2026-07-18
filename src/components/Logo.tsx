@@ -1,9 +1,11 @@
 // Marca. La FLAMA es el logo propio del food truck (diferenciación). La H (isotipo
 // compartido con Healthy Space Club) se reserva para el bloque promocional del Club.
 const FLAME_URL = 'https://ltveorvqvvlyivjwxjlc.supabase.co/storage/v1/object/public/healthyspaceclub/logofuegohsc.webp';
-const H_URL = 'https://ltveorvqvvlyivjwxjlc.supabase.co/storage/v1/object/public/healthyspaceclub/icon-512.png';
+// La H es del Club (archivos `hsc*`); aquí se usa solo en el bloque promocional.
+const H_URL = 'https://ltveorvqvvlyivjwxjlc.supabase.co/storage/v1/object/public/healthyspaceclub/logohscisotipo.webp';
 // Wordmark "Healthy Space" — letras VERDES (transparente). Solo sobre fondo claro/dorado.
-const WORDMARK_URL = 'https://ltveorvqvvlyivjwxjlc.supabase.co/storage/v1/object/public/healthyspaceclub/logoletrashsc.png';
+// Archivo `healthy*` = food truck (los `hsc*` son del Club).
+const WORDMARK_URL = 'https://ltveorvqvvlyivjwxjlc.supabase.co/storage/v1/object/public/healthyspaceclub/logohealthyletras.webp';
 
 /** Wordmark de letras. `height` en px; el ancho se ajusta. Va sobre crema/blanco/dorado. */
 export function Wordmark({ height = 24, className }: { height?: number; className?: string }) {
