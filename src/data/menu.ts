@@ -34,9 +34,11 @@ export const ING: Record<string, Ingredient> = mk({
   'hummus-jalapeno': ['Hummus especial de jalapeño', 70, 3, 7, 4],
   'hummus-chiles':   ['Hummus especial de chile árbol-guajillo', 75, 3, 8, 4],
   // Extras (con costo) — también en la tabla para sumar macros al personalizar
+  // Los extras de proteína son POR proteína (el cliente elige cuál), no genéricos.
   'x-aguacate':      ['Extra aguacate', 120, 2, 6, 11],
-  'x-proteina':      ['Proteína extra', 200, 35, 0, 6],
-  'x-totopos':       ['Totopos horneados', 150, 3, 22, 6],
+  'x-pollo':         ['Extra pollo de cocción lenta', 240, 42, 0, 8],
+  'x-chamberete':    ['Extra chamberete braseado', 285, 38, 1, 14],
+  'x-cerdo':         ['Extra cerdo de cocción lenta', 300, 34, 1, 18],
   // Salsas — servidas en recipiente de acero
   's-chipotle':      ['Chipotle cremoso', 50, 1, 3, 4],
   's-garlic':        ['Garlic herb', 60, 0, 2, 6],
@@ -213,11 +215,14 @@ export const DRINKS: Product[] = [
   { id: 'te-verde',   name: 'Té verde frío',      desc: 'Antioxidante',          price: 42, kcal: 30,  accent: '#6FA03A', img: '/drinks/te-verde.jpg' },
 ];
 
-/** Extras que se suman al bowl. */
+/** Extras que se suman al bowl. La proteína extra se elige POR proteína (cada una
+ *  tiene su precio y su foto real), no como un "extra de proteína" genérico.
+ *  ⚠️ David: confirma los precios de las porciones extra contra tu costo real. */
 export const EXTRAS: Product[] = [
-  { id: 'x-aguacate', name: 'Extra aguacate',     desc: '+120 kcal',  price: 25, kcal: 120, accent: '#6B8E23', img: '' },
-  { id: 'x-proteina', name: 'Proteína extra',     desc: '+200 kcal',  price: 45, kcal: 200, accent: '#C75B3A', img: '' },
-  { id: 'x-totopos',  name: 'Totopos horneados',  desc: '+150 kcal',  price: 30, kcal: 150, accent: '#D9A441', img: '' },
+  { id: 'x-aguacate',   name: 'Extra aguacate',      desc: '+120 kcal', price: 25, kcal: 120, accent: '#6B8E23', img: ingImg('aguacate') },
+  { id: 'x-pollo',      name: 'Extra pollo',         desc: 'Cocción lenta · +240 kcal', price: 45, kcal: 240, accent: '#C75B3A', img: ingImg('pollo-lento') },
+  { id: 'x-cerdo',      name: 'Extra cerdo',         desc: 'Cocción lenta · +300 kcal', price: 50, kcal: 300, accent: '#8A5A2B', img: ingImg('cerdo-lento') },
+  { id: 'x-chamberete', name: 'Extra chamberete',    desc: 'Braseado 8 h · +285 kcal',  price: 60, kcal: 285, accent: '#7A4A2E', img: ingImg('chamberete') },
 ];
 
 export const productById = (id: string): Product | undefined =>
