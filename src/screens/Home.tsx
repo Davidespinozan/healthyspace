@@ -1,6 +1,6 @@
 import { ArrowRight, Heart, Plus, Star, Bell, CalendarCheck } from 'lucide-react';
 import { useStore, useBowls, useBowl } from '../state/store';
-import { sumMacros } from '../data/menu';
+import { sumMacros, HERO_IMAGES } from '../data/menu';
 import { BowlPhoto, MacroRow, money } from '../components/ui';
 import { Logo, Wordmark } from '../components/Logo';
 import { Reveal } from '../components/Reveal';
@@ -39,7 +39,7 @@ export default function Home() {
         {/* HERO card con profundidad */}
         <Reveal delay={0.08}>
           <div className="card dark-depth" style={{ position: 'relative', background: 'var(--forest)', minHeight: 300, boxShadow: 'var(--sh-lg), var(--edge-dark)' }}>
-            <HeroCarousel images={bowls.map((b) => b.img)} />
+            <HeroCarousel images={HERO_IMAGES} />
             <div style={{ position: 'relative', padding: '26px 22px 24px', minHeight: 300, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
               <div className="eyebrow" style={{ color: 'var(--amber-l)', marginBottom: 12 }}>Culiacán</div>
               <h1 className="h-hero" style={{ color: 'var(--on-dark)', fontSize: 'clamp(22px,6.2vw,29px)' }}>Proteínas de<br />cocción lenta.<br />Ingredientes frescos.</h1>

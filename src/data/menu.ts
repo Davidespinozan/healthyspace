@@ -27,6 +27,7 @@ export const ING: Record<string, Ingredient> = mk({
   'pepino':          ['Pepino', 12, 1, 3, 0],
   'cebolla':         ['Cebolla morada', 15, 0, 4, 0],
   'camote':          ['Camote al horno', 90, 2, 21, 0],
+  'papa':            ['Papa cambray asada', 110, 2, 20, 3],
   'feta':            ['Queso feta', 75, 4, 1, 6],
   // Hummus especiales de la casa (dips premium)
   'hummus-elote':    ['Hummus especial de elote', 75, 3, 9, 3],
@@ -64,11 +65,17 @@ const ING_IMG_FILE: Record<string, string> = {
   'pico': 'pico-de-gallo.webp',
   'verduras': 'verduras-asadas.webp',
   'feta': 'queso-feta.webp',
+  'aguacate': 'aguacate.webp',
+  'arroz-integral': 'arroz-integral.webp',
+  'camote': 'camote-horneado.webp',
+  'papa': 'papa.webp',
+  'frijoles': 'frijoles-negros.webp',
   'hummus-elote': 'hummus-especial-de-elote.webp',
   'hummus-jalapeno': 'hummus-especial-jalapeNo.webp',
   'hummus-chiles': 'hummus-especial-de-chiles-arbolguajillo.webp',
   // Salsas con foto real
   's-chipotle': 'chipotle.webp',
+  's-garlic': 'garlic-herb.webp',
   's-cilantro': 'cilantro.webp',
 };
 
@@ -77,6 +84,11 @@ export const ingImg = (id: string): string => (ING_IMG_FILE[id] ? ING_IMG_BASE +
 
 /** Foto compuesta de un bowl armado (carpeta BOWLS/). */
 const bowlImg = (file: string): string => ING_IMG_BASE + 'BOWLS/' + file;
+
+/** Tomas de hero (escena de mesa, 16:9) para el carrusel de la portada. */
+export const HERO_IMAGES: string[] = [1, 2, 3, 4, 5].map(
+  (n) => ING_IMG_BASE + 'HEROS%20BOWLS/hero' + n + '.webp',
+);
 
 export function sumMacros(ids: string[]): Macro {
   return ids.reduce<Macro>((m, id) => {
@@ -89,7 +101,7 @@ export function sumMacros(ids: string[]): Macro {
 // Pocas proteínas, pero inolvidables. Todas de cocción lenta.
 export const PROTEINS = ['pollo-lento', 'chamberete', 'cerdo-lento'];
 export const BASES = ['arroz-blanco', 'arroz-integral', 'quinoa', 'mix-greens'];
-export const COMPLEMENTS = ['elote', 'aguacate', 'pico', 'cebolla', 'verduras', 'brocoli', 'camote', 'feta', 'frijoles', 'pepino'];
+export const COMPLEMENTS = ['elote', 'aguacate', 'pico', 'cebolla', 'verduras', 'brocoli', 'camote', 'papa', 'feta', 'frijoles', 'pepino'];
 export const SALSAS = ['s-chipotle', 's-garlic', 's-cilantro'];
 /** Hummus especiales de la casa — su propio segmento (dips premium con foto real). */
 export const HUMMUS = ['hummus-elote', 'hummus-jalapeno', 'hummus-chiles'];
