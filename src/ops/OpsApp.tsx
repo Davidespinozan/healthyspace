@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { LogOut, Boxes } from 'lucide-react';
 import { useOpsAuth } from './auth';
 import { Login } from './Login';
 import { Logo } from '../components/Logo';
 import { PosOrders } from './pos/PosOrders';
+import { MenuAdmin } from './admin/MenuAdmin';
 import type { Staff } from './supabase';
 
 const ROLE_LABEL = { pos: 'Punto de venta', admin: 'Administración', almacen: 'Almacén' } as const;
@@ -32,8 +34,10 @@ export default function OpsApp() {
 }
 
 function RoleView({ staff }: { staff: Staff }) {
-  // POS y Admin ven pedidos en vivo (admin: todas las sucursales). Almacén: pendiente.
-  if (staff.role === 'pos' || staff.role === 'admin') return <PosOrders staff={staff} />;
+  // Admin: pedidos en vivo (todas las sucursales) + administración del menú.
+  if (staff.role === 'admin') return <AdminView staff={staff} />;
+  // POS: solo los pedidos de su sucursal.
+  if (staff.role === 'pos') return <PosOrders staff={staff} />;
   return (
     <div style={{ display: 'grid', placeItems: 'center', padding: '18vh 24px', textAlign: 'center', gap: 8 }}>
       <div style={{ width: 60, height: 60, borderRadius: 999, background: 'var(--cream-2)', display: 'grid', placeItems: 'center', marginBottom: 6 }}>
@@ -41,6 +45,28 @@ function RoleView({ staff }: { staff: Staff }) {
       </div>
       <h2 className="h-2">Almacén</h2>
       <p className="muted" style={{ fontSize: 13.5, maxWidth: 260 }}>Solicitudes de producción y traslados — próximamente en la siguiente fase.</p>
+    </div>
+  );
+}
+
+/** Administración: pedidos en vivo y menú, en pestañas. */
+function AdminView({ staff }: { staff: Staff }) {
+  const [tab, setTab] = useState<'pedidos' | 'menu'>('pedidos');
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: 8, padding: '12px 16px 0', borderBottom: '1px solid var(--line)' }}>
+        {(['pedidos', 'menu'] as const).map((t) => (
+          <button key={t} onClick={() => setTab(t)}
+            style={{
+              padding: '9px 14px', fontSize: 14, fontWeight: 700, textTransform: 'capitalize',
+              color: tab === t ? 'var(--forest)' : 'var(--ink-3)',
+              borderBottom: `2.5px solid ${tab === t ? 'var(--forest)' : 'transparent'}`, marginBottom: -1,
+            }}>
+            {t === 'menu' ? 'Menú' : 'Pedidos'}
+          </button>
+        ))}
+      </div>
+      {tab === 'pedidos' ? <PosOrders staff={staff} /> : <MenuAdmin />}
     </div>
   );
 }

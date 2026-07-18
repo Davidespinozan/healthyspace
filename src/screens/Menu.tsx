@@ -1,6 +1,6 @@
 import { Heart, Plus, ArrowRight } from 'lucide-react';
-import { useStore } from '../state/store';
-import { SIGNATURE_BOWLS, DRINKS, EXTRAS, sumMacros } from '../data/menu';
+import { useStore, useBowls } from '../state/store';
+import { DRINKS, EXTRAS, sumMacros } from '../data/menu';
 import { BowlPhoto, MacroRow, money } from '../components/ui';
 import { RevealGroup, RevealItem } from '../components/Reveal';
 import { ProductRail } from '../components/ProductRail';
@@ -9,6 +9,7 @@ export default function Menu() {
   const push = useStore((s) => s.push);
   const favorites = useStore((s) => s.favorites);
   const toggleFavorite = useStore((s) => s.toggleFavorite);
+  const bowls = useBowls();
 
   return (
     <div className="page has-tabs">
@@ -37,15 +38,16 @@ export default function Menu() {
         </div>
 
         <RevealGroup style={{ display: 'grid', gap: 16 }}>
-          {SIGNATURE_BOWLS.map((b) => {
+          {bowls.map((b) => {
             const m = sumMacros(b.ingredients);
             const fav = favorites.includes(b.id);
             return (
               <RevealItem key={b.id}>
-                <div className="card pressable">
+                <div className="card pressable" style={b.soldOut ? { opacity: .62 } : undefined}>
                   <button onClick={() => push({ name: 'bowl', param: b.id })} style={{ display: 'block', width: '100%', textAlign: 'left' }}>
                     <div className="zoomwrap" style={{ position: 'relative' }}>
                       <BowlPhoto src={b.img} accent={b.accent} alt={b.name} ratio="16/10" />
+                      {b.soldOut && <SoldOutTag />}
                       <button className="iconbtn" onClick={(e) => { e.stopPropagation(); toggleFavorite(b.id); }}
                         style={{ position: 'absolute', top: 12, right: 12 }} aria-label="favorito">
                         <Heart size={18} strokeWidth={2.2} fill={fav ? 'var(--terra)' : 'none'} color={fav ? 'var(--terra)' : 'var(--ink-3)'} />
@@ -83,6 +85,18 @@ export default function Menu() {
         </div>
         <ProductRail products={EXTRAS} />
       </div>
+    </div>
+  );
+}
+
+/** Sello de "agotado del día" — lo marca administración desde el panel. */
+export function SoldOutTag() {
+  return (
+    <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', background: 'rgba(20,28,22,.42)' }}>
+      <span style={{ padding: '7px 14px', borderRadius: 999, background: 'var(--cream)', color: 'var(--ink)',
+        fontSize: 12, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', boxShadow: 'var(--sh-md)' }}>
+        Agotado hoy
+      </span>
     </div>
   );
 }

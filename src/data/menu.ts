@@ -152,6 +152,7 @@ export interface Bowl {
   price: number;
   img: string;             // /bowls/<id>.jpg (foto premium, la subes)
   accent: string;          // color de acento del bowl (para el hero/detalle)
+  soldOut?: boolean;       // agotado del día (se marca desde administración)
 }
 
 // ⚠️ Los 5 bowls de la casa (fotografía real). Composición inferida de las fotos —

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ShoppingBag } from 'lucide-react';
 import { useStore, ROOT_TABS, cartTotals } from './state/store';
@@ -27,6 +28,9 @@ export default function App() {
   const stack = useStore((s) => s.stack);
   const cart = useStore((s) => s.cart);
   const push = useStore((s) => s.push);
+  const loadMenu = useStore((s) => s.loadMenu);
+  // Precios y agotados vienen de administración; si falla, queda el menú estático.
+  useEffect(() => { loadMenu(); }, [loadMenu]);
   const top = stack[stack.length - 1];
   const Screen = SCREENS[top.name];
   const depth = stack.length;

@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import type { Order, Lead } from '../state/store';
+import type { Bowl } from './menu';
 
 // Capa de backend. TODO no bloqueante: si la red o las tablas fallan, la app
 // sigue funcionando con su estado local (nunca rompe el flujo del cliente).
@@ -37,6 +38,38 @@ export async function pushLead(l: Lead): Promise<void> {
     if (error) console.warn('[backend] pushLead:', error.message);
   } catch (e) {
     console.warn('[backend] pushLead fallo (se guardó local):', e);
+  }
+}
+
+/**
+ * Trae los bowls del menú (truck_bowls) para que precios y "agotado" se manejen
+ * desde administración sin redeploy. Devuelve null si falla: la app se queda con
+ * el menú estático (nunca se ve vacía).
+ */
+export async function fetchBowls(): Promise<Bowl[] | null> {
+  try {
+    const { data, error } = await supabase
+      .from('truck_bowls')
+      .select('id,name,tagline,price,img,accent,ingredients,sold_out,sort')
+      .eq('active', true)
+      .order('sort');
+    if (error || !data?.length) {
+      if (error) console.warn('[backend] fetchBowls:', error.message);
+      return null;
+    }
+    return data.map((b) => ({
+      id: b.id,
+      name: b.name,
+      tagline: b.tagline ?? '',
+      price: Number(b.price),
+      img: b.img ?? '',
+      accent: b.accent ?? '#C75B3A',
+      ingredients: Array.isArray(b.ingredients) ? (b.ingredients as string[]) : [],
+      soldOut: !!b.sold_out,
+    }));
+  } catch (e) {
+    console.warn('[backend] fetchBowls fallo (menú estático):', e);
+    return null;
   }
 }
 

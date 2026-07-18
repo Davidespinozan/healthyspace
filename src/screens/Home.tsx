@@ -1,6 +1,6 @@
 import { ArrowRight, Heart, Plus, Star, Bell, CalendarCheck } from 'lucide-react';
-import { useStore } from '../state/store';
-import { SIGNATURE_BOWLS, bowlById, sumMacros } from '../data/menu';
+import { useStore, useBowls, useBowl } from '../state/store';
+import { sumMacros } from '../data/menu';
 import { BowlPhoto, MacroRow, money } from '../components/ui';
 import { Logo, Wordmark } from '../components/Logo';
 import { Reveal } from '../components/Reveal';
@@ -17,8 +17,9 @@ export default function Home() {
   const goTab = useStore((s) => s.goTab);
   const favorites = useStore((s) => s.favorites);
   const orders = useStore((s) => s.orders);
-  const rec = SIGNATURE_BOWLS[0];
-  const favBowls = favorites.map(bowlById).filter(Boolean).slice(0, 6);
+  const bowls = useBowls();
+  const rec = bowls[0];
+  const favBowls = bowls.filter((b) => favorites.includes(b.id)).slice(0, 6);
   const lastOrder = orders[0];
 
   return (
@@ -38,7 +39,7 @@ export default function Home() {
         {/* HERO card con profundidad */}
         <Reveal delay={0.08}>
           <div className="card dark-depth" style={{ position: 'relative', background: 'var(--forest)', minHeight: 300, boxShadow: 'var(--sh-lg), var(--edge-dark)' }}>
-            <HeroCarousel images={SIGNATURE_BOWLS.map((b) => b.img)} />
+            <HeroCarousel images={bowls.map((b) => b.img)} />
             <div style={{ position: 'relative', padding: '26px 22px 24px', minHeight: 300, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
               <div className="eyebrow" style={{ color: 'var(--amber-l)', marginBottom: 12 }}>Culiacán</div>
               <h1 className="h-hero" style={{ color: 'var(--on-dark)', fontSize: 'clamp(22px,6.2vw,29px)' }}>Proteínas de<br />cocción lenta.<br />Ingredientes frescos.</h1>
@@ -99,7 +100,7 @@ export default function Home() {
         {/* Bowls de la casa */}
         <Section title="Bowls de la casa" onAll={() => goTab('menu')} allLabel="Ver todo">
           <div style={{ display: 'grid', gap: 12 }}>
-            {SIGNATURE_BOWLS.slice(0, 3).map((b) => <MenuRow key={b.id} id={b.id} />)}
+            {bowls.slice(0, 3).map((b) => <MenuRow key={b.id} id={b.id} />)}
           </div>
         </Section>
 
@@ -185,7 +186,8 @@ function Section({ title, children, onAll, allLabel }: { title: string; children
 
 function FavCard({ id }: { id: string }) {
   const push = useStore((s) => s.push);
-  const b = bowlById(id)!;
+  const b = useBowl(id);
+  if (!b) return null;
   return (
     <button onClick={() => push({ name: 'bowl', param: id })}
       style={{ flex: '0 0 auto', width: 156, scrollSnapAlign: 'start', textAlign: 'left' }}>
@@ -202,7 +204,8 @@ function MenuRow({ id }: { id: string }) {
   const push = useStore((s) => s.push);
   const fav = useStore((s) => s.favorites.includes(id));
   const toggleFavorite = useStore((s) => s.toggleFavorite);
-  const b = bowlById(id)!;
+  const b = useBowl(id);
+  if (!b) return null;
   const m = sumMacros(b.ingredients);
   return (
     <div className="card pressable" style={{ display: 'flex', gap: 13, padding: 11, alignItems: 'center' }}>

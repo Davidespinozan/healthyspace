@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { sumMacros, DELIVERY_FEE, type Macro } from '../data/menu';
-import { pushOrder, pushLead } from '../data/backend';
+import { sumMacros, DELIVERY_FEE, SIGNATURE_BOWLS, type Macro, type Bowl } from '../data/menu';
+import { pushOrder, pushLead, fetchBowls } from '../data/backend';
 import { BRANCHES } from '../data/location';
 import { PACKAGES } from '../data/menu';
 
@@ -48,6 +48,10 @@ export interface Customer { name: string; phone: string; notes: string }
 export interface Lead { name: string; phone: string; email?: string; source?: string; at: number }
 
 interface State {
+  // Menú (precios y agotados los manda administración; el estático es el respaldo)
+  bowls: Bowl[];
+  loadMenu: () => void;
+
   // Navegación
   stack: Screen[];
   push: (s: Screen) => void;
@@ -130,6 +134,11 @@ export const flowFor = (mode: OrderMode): OrderStatus[] =>
 export const useStore = create<State>()(
   persist(
     (set, get) => ({
+      bowls: SIGNATURE_BOWLS,
+      loadMenu: () => {
+        void fetchBowls().then((bowls) => { if (bowls) set({ bowls }); });
+      },
+
       stack: [{ name: 'home' }],
       push: (s) => set((st) => ({ stack: [...st.stack, s] })),
       pop: () => set((st) => ({ stack: st.stack.length > 1 ? st.stack.slice(0, -1) : st.stack })),
@@ -228,6 +237,11 @@ export const useStore = create<State>()(
     },
   ),
 );
+
+/** Bowls vigentes (los de la BD si ya cargaron; si no, el menú estático). */
+export const useBowls = () => useStore((s) => s.bowls);
+/** Un bowl por id, ya con precio y "agotado" vigentes. */
+export const useBowl = (id?: string) => useStore((s) => (id ? s.bowls.find((b) => b.id === id) : undefined));
 
 /** Macros de una línea del carrito (o de cualquier composición). */
 export const itemMacros = (ingredients: string[]): Macro => sumMacros(ingredients);

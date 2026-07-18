@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ChevronLeft, Check } from 'lucide-react';
-import { useStore } from '../state/store';
-import { PROTEINS, BASES, COMPLEMENTS, SALSAS, HUMMUS, SALSA_META, MAX_COMPLEMENTS, PROTEIN_PRICE, PROTEIN_CRAFT, EXTRA_IDS, EXTRA_PRICE, ING, sumMacros, bowlById, ingImg } from '../data/menu';
+import { useStore, useBowl } from '../state/store';
+import { PROTEINS, BASES, COMPLEMENTS, SALSAS, HUMMUS, SALSA_META, MAX_COMPLEMENTS, PROTEIN_PRICE, PROTEIN_CRAFT, EXTRA_IDS, EXTRA_PRICE, ING, sumMacros, ingImg } from '../data/menu';
 import { MacroRow, money } from '../components/ui';
 
 export default function BuildBowl({ param }: { param?: string }) {
@@ -10,7 +10,7 @@ export default function BuildBowl({ param }: { param?: string }) {
   const showToast = useStore((s) => s.showToast);
 
   // Si viene un bowl (param), se PERSONALIZA: se siembran sus componentes.
-  const seed = param ? bowlById(param) : undefined;
+  const seed = useBowl(param);
   const seedIds = seed?.ingredients ?? [];
 
   const [protein, setProtein] = useState<string>(seedIds.find((i) => PROTEINS.includes(i)) ?? '');

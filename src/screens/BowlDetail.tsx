@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ChevronLeft, Heart, Minus, Plus, Check, Pencil } from 'lucide-react';
-import { useStore } from '../state/store';
-import { bowlById, sumMacros, ING, proteinOf, ingImg } from '../data/menu';
+import { useStore, useBowl } from '../state/store';
+import { sumMacros, ING, proteinOf, ingImg } from '../data/menu';
 import { BowlPhoto, MacroRow, money } from '../components/ui';
 import { Reveal } from '../components/Reveal';
 import { CraftCard } from '../components/CraftCard';
@@ -16,7 +16,7 @@ export default function BowlDetail({ param }: { param?: string }) {
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
 
-  const b = param ? bowlById(param) : undefined;
+  const b = useBowl(param);
   if (!b) return null;
   const m = sumMacros(b.ingredients);
   const prot = proteinOf(b.ingredients);
@@ -100,8 +100,8 @@ export default function BowlDetail({ param }: { param?: string }) {
         <button className="iconbtn" onClick={() => push({ name: 'build', param: b.id })} aria-label="Personalizar" style={{ width: 48, flex: '0 0 auto' }}>
           <Pencil size={18} strokeWidth={2.2} />
         </button>
-        <button className="btn" style={{ flex: 1 }} onClick={add} disabled={added}>
-          {added ? <><Check size={18} strokeWidth={2.6} /> Agregado</> : <>Agregar · {money(b.price * qty)}</>}
+        <button className="btn" style={{ flex: 1 }} onClick={add} disabled={added || !!b.soldOut}>
+          {b.soldOut ? 'Agotado hoy' : added ? <><Check size={18} strokeWidth={2.6} /> Agregado</> : <>Agregar · {money(b.price * qty)}</>}
         </button>
       </div>
     </div>
