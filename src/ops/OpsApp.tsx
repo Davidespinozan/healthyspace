@@ -4,6 +4,7 @@ import { useOpsAuth } from './auth';
 import { Login } from './Login';
 import { Logo } from '../components/Logo';
 import { PosOrders } from './pos/PosOrders';
+import { PosSale } from './pos/PosSale';
 import { MenuAdmin } from './admin/MenuAdmin';
 import type { Staff } from './supabase';
 
@@ -34,10 +35,20 @@ export default function OpsApp() {
 }
 
 function RoleView({ staff }: { staff: Staff }) {
-  // Admin: pedidos en vivo (todas las sucursales) + administración del menú.
-  if (staff.role === 'admin') return <AdminView staff={staff} />;
-  // POS: solo los pedidos de su sucursal.
-  if (staff.role === 'pos') return <PosOrders staff={staff} />;
+  // Cada rol entra por su puerta, con las pestañas que le tocan.
+  if (staff.role === 'pos') {
+    return <Tabs staff={staff} tabs={[
+      { id: 'vender', label: 'Vender', render: (s) => <PosSale staff={s} /> },
+      { id: 'pedidos', label: 'Pedidos', render: (s) => <PosOrders staff={s} /> },
+    ]} />;
+  }
+  if (staff.role === 'admin') {
+    return <Tabs staff={staff} tabs={[
+      { id: 'pedidos', label: 'Pedidos', render: (s) => <PosOrders staff={s} /> },
+      { id: 'vender', label: 'Vender', render: (s) => <PosSale staff={s} /> },
+      { id: 'menu', label: 'Menú', render: () => <MenuAdmin /> },
+    ]} />;
+  }
   return (
     <div style={{ display: 'grid', placeItems: 'center', padding: '18vh 24px', textAlign: 'center', gap: 8 }}>
       <div style={{ width: 60, height: 60, borderRadius: 999, background: 'var(--cream-2)', display: 'grid', placeItems: 'center', marginBottom: 6 }}>
@@ -49,24 +60,27 @@ function RoleView({ staff }: { staff: Staff }) {
   );
 }
 
-/** Administración: pedidos en vivo y menú, en pestañas. */
-function AdminView({ staff }: { staff: Staff }) {
-  const [tab, setTab] = useState<'pedidos' | 'menu'>('pedidos');
+interface Tab { id: string; label: string; render: (s: Staff) => React.ReactNode }
+
+/** Pestañas de la app operativa (qué ve cada rol lo decide RoleView). */
+function Tabs({ staff, tabs }: { staff: Staff; tabs: Tab[] }) {
+  const [active, setActive] = useState(tabs[0].id);
+  const current = tabs.find((t) => t.id === active) ?? tabs[0];
   return (
     <div>
       <div style={{ display: 'flex', gap: 8, padding: '12px 16px 0', borderBottom: '1px solid var(--line)' }}>
-        {(['pedidos', 'menu'] as const).map((t) => (
-          <button key={t} onClick={() => setTab(t)}
+        {tabs.map((t) => (
+          <button key={t.id} onClick={() => setActive(t.id)}
             style={{
-              padding: '9px 14px', fontSize: 14, fontWeight: 700, textTransform: 'capitalize',
-              color: tab === t ? 'var(--forest)' : 'var(--ink-3)',
-              borderBottom: `2.5px solid ${tab === t ? 'var(--forest)' : 'transparent'}`, marginBottom: -1,
+              padding: '9px 14px', fontSize: 14, fontWeight: 700,
+              color: active === t.id ? 'var(--forest)' : 'var(--ink-3)',
+              borderBottom: `2.5px solid ${active === t.id ? 'var(--forest)' : 'transparent'}`, marginBottom: -1,
             }}>
-            {t === 'menu' ? 'Menú' : 'Pedidos'}
+            {t.label}
           </button>
         ))}
       </div>
-      {tab === 'pedidos' ? <PosOrders staff={staff} /> : <MenuAdmin />}
+      {current.render(staff)}
     </div>
   );
 }
