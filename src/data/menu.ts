@@ -179,12 +179,12 @@ export const SIGNATURE_BOWLS: Bowl[] = [
   },
   {
     id: 'brasa', name: 'Brasa', tagline: 'Chamberete braseado, quinoa y frescura de pepino.',
-    ingredients: ['chamberete', 'quinoa', 'pepino', 'cebolla', 'aguacate', 'hummus-chiles', 's-cilantro'],
+    ingredients: ['chamberete', 'quinoa', 'papa', 'pepino', 'cebolla', 'aguacate', 'hummus-chiles', 's-cilantro'],
     price: 179, img: bowlImg('brasa-bowl.webp'), accent: '#8A5A2B',
   },
   {
     id: 'humo', name: 'Humo', tagline: 'Res deshebrada braseada, ahumada y jugosa.',
-    ingredients: ['chamberete', 'arroz-integral', 'aguacate', 'cebolla', 'pico', 'hummus-chiles', 's-chipotle'],
+    ingredients: ['chamberete', 'arroz-integral', 'papa', 'aguacate', 'cebolla', 'pico', 'hummus-chiles', 's-chipotle'],
     price: 175, img: bowlImg('humo-bowl.webp'), accent: '#7A4A2E',
   },
   {
