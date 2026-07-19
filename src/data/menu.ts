@@ -207,12 +207,15 @@ export interface Product {
 }
 
 /** Aguas frescas y bebidas naturales — el upsell principal. */
+/** Foto real del agua (carpeta AGUAS/, subida por Magaly). */
+const aguaImg = (file: string): string => ING_IMG_BASE + 'AGUAS/' + file;
+
 export const DRINKS: Product[] = [
-  { id: 'limonada',   name: 'Limonada natural',   desc: 'Recién exprimida',      price: 45, kcal: 90,  accent: '#C6D24E', img: '/drinks/limonada.jpg' },
-  { id: 'jamaica',    name: 'Agua de jamaica',    desc: 'Sin azúcar añadida',    price: 40, kcal: 55,  accent: '#9E2B4A', img: '/drinks/jamaica.jpg' },
-  { id: 'horchata',   name: 'Horchata de la casa',desc: 'Cremosa, natural',      price: 45, kcal: 150, accent: '#E4D6BC', img: '/drinks/horchata.jpg' },
-  { id: 'pepino',     name: 'Pepino · limón',     desc: 'Súper refrescante',     price: 40, kcal: 45,  accent: '#7FB77E', img: '/drinks/pepino.jpg' },
-  { id: 'te-verde',   name: 'Té verde frío',      desc: 'Antioxidante',          price: 42, kcal: 30,  accent: '#6FA03A', img: '/drinks/te-verde.jpg' },
+  { id: 'limonada',   name: 'Limonada natural',   desc: 'Recién exprimida',      price: 45, kcal: 90,  accent: '#C6D24E', img: aguaImg('agua-limonada.webp') },
+  { id: 'jamaica',    name: 'Agua de jamaica',    desc: 'Sin azúcar añadida',    price: 40, kcal: 55,  accent: '#9E2B4A', img: aguaImg('agua-jamaica.webp') },
+  { id: 'horchata',   name: 'Horchata de la casa',desc: 'Cremosa, natural',      price: 45, kcal: 150, accent: '#E4D6BC', img: aguaImg('agua-horchata.webp') },
+  { id: 'pepino',     name: 'Pepino · limón',     desc: 'Súper refrescante',     price: 40, kcal: 45,  accent: '#7FB77E', img: aguaImg('agua-de-pepino.webp') },
+  { id: 'te-verde',   name: 'Té verde frío',      desc: 'Antioxidante',          price: 42, kcal: 30,  accent: '#6FA03A', img: aguaImg('te-verde-frio.webp') },
 ];
 
 /** Extras que se suman al bowl. La proteína extra se elige POR proteína (cada una
