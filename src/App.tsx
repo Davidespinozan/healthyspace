@@ -29,8 +29,27 @@ export default function App() {
   const cart = useStore((s) => s.cart);
   const push = useStore((s) => s.push);
   const loadMenu = useStore((s) => s.loadMenu);
+  const bowls = useStore((s) => s.bowls);
+  const addToCart = useStore((s) => s.addToCart);
+  const showToast = useStore((s) => s.showToast);
   // Precios y agotados vienen de administración; si falla, queda el menú estático.
   useEffect(() => { loadMenu(); }, [loadMenu]);
+
+  // Llegada desde el Club (?bowl=verde&from=club): el bowl se mete SOLO al carrito.
+  // El socio ya lo eligió allá viendo cómo le cuadraba el día — hacerlo buscarlo otra
+  // vez aquí sería perder justo lo que hace útil la integración.
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    const id = p.get('bowl');
+    if (!id || !bowls.length) return;
+    const b = bowls.find((x) => x.id === id);
+    if (b && !b.soldOut) {
+      addToCart({ bowlId: b.id, name: b.name, ingredients: b.ingredients, price: b.price, img: b.img });
+      showToast(`${b.name} agregado — viene de tu plan 🌿`);
+    }
+    // Limpia el parámetro para que un refresh no lo agregue otra vez.
+    window.history.replaceState({}, '', window.location.pathname);
+  }, [bowls, addToCart, showToast]);
   const top = stack[stack.length - 1];
   const Screen = SCREENS[top.name];
   const depth = stack.length;
