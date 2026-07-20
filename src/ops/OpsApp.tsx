@@ -7,6 +7,7 @@ import { PosOrders } from './pos/PosOrders';
 import { PosSale } from './pos/PosSale';
 import { PosCaja } from './pos/PosCaja';
 import { MenuAdmin } from './admin/MenuAdmin';
+import { Tablero } from './admin/Tablero';
 import type { Staff } from './supabase';
 
 const ROLE_LABEL = { pos: 'Punto de venta', admin: 'Administración', almacen: 'Almacén' } as const;
@@ -46,6 +47,7 @@ function RoleView({ staff }: { staff: Staff }) {
   }
   if (staff.role === 'admin') {
     return <Tabs staff={staff} tabs={[
+      { id: 'tablero', label: 'Tablero', render: (s) => <Tablero staff={s} /> },
       { id: 'pedidos', label: 'Pedidos', render: (s) => <PosOrders staff={s} /> },
       { id: 'vender', label: 'Vender', render: (s) => <PosSale staff={s} /> },
       { id: 'caja', label: 'Caja', render: (s) => <PosCaja staff={s} /> },
