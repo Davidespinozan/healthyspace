@@ -32,6 +32,7 @@ export default function App() {
   const bowls = useStore((s) => s.bowls);
   const addToCart = useStore((s) => s.addToCart);
   const showToast = useStore((s) => s.showToast);
+  const goTab = useStore((s) => s.goTab);
   // Precios y agotados vienen de administración; si falla, queda el menú estático.
   useEffect(() => { loadMenu(); }, [loadMenu]);
 
@@ -41,15 +42,21 @@ export default function App() {
   useEffect(() => {
     const p = new URLSearchParams(window.location.search);
     const id = p.get('bowl');
-    if (!id || !bowls.length) return;
-    const b = bowls.find((x) => x.id === id);
-    if (b && !b.soldOut) {
-      addToCart({ bowlId: b.id, name: b.name, ingredients: b.ingredients, price: b.price, img: b.img });
-      showToast(`${b.name} agregado — viene de tu plan 🌿`);
+    const ir = p.get('ir');            // 'menu' | 'build' — venir a mirar, sin bowl elegido
+    if (!id && !ir) return;
+    if (ir === 'menu') goTab('menu');
+    else if (ir === 'build') { goTab('menu'); push({ name: 'build' }); }
+    else if (id) {
+      if (!bowls.length) return;       // espera a que cargue el menú
+      const b = bowls.find((x) => x.id === id);
+      if (b && !b.soldOut) {
+        addToCart({ bowlId: b.id, name: b.name, ingredients: b.ingredients, price: b.price, img: b.img });
+        showToast(`${b.name} agregado — viene de tu plan 🌿`);
+      }
     }
-    // Limpia el parámetro para que un refresh no lo agregue otra vez.
+    // Limpia el parámetro para que un refresh no lo repita.
     window.history.replaceState({}, '', window.location.pathname);
-  }, [bowls, addToCart, showToast]);
+  }, [bowls, addToCart, showToast, goTab, push]);
   const top = stack[stack.length - 1];
   const Screen = SCREENS[top.name];
   const depth = stack.length;
