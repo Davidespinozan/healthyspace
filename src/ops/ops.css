@@ -1,0 +1,174 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Sistema de diseño del panel operativo.
+
+   Antes cada pantalla escribía sus estilos EN LÍNEA. Eso no escala y se nota:
+   dos tarjetas del mismo sistema con radios distintos, espaciados que no
+   coinciden, tipografía que baila. El patrón viene de SALA (tokens canónicos +
+   clases semánticas, componentes como envoltura delgada).
+
+   Aquí el ancla es la paleta de Healthy Space: forest, dorado, crema.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.ops {
+  --line: rgba(21, 51, 48, .10);
+  --line-fuerte: rgba(21, 51, 48, .16);
+  --ink: #14201D;
+  --ink-2: #5B6B66;
+  --ink-3: #95A19C;
+  --bg: #F2F0E8;
+  --surface: #FFFFFF;
+  --forest: #0E2521;
+  --forest-2: #16302B;
+  --gold: #BFA065;
+  --gold-soft: rgba(191, 160, 101, .14);
+  --terra: #C75B3A;
+  --terra-soft: rgba(199, 91, 58, .11);
+  --ok: #4E7A45;
+  --ok-soft: rgba(78, 122, 69, .13);
+
+  --r-sm: 12px; --r-md: 16px; --r-lg: 20px;
+  --sh: 0 1px 2px rgba(14,37,33,.05), 0 8px 22px -10px rgba(14,37,33,.14);
+  --sh-lg: 0 2px 6px rgba(14,37,33,.07), 0 24px 50px -14px rgba(14,37,33,.2);
+
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* ── Shell: barra lateral + contenido ───────────────────────────────────── */
+.ops-shell { display: flex; min-height: 100vh; }
+
+.ops-side {
+  width: 232px; flex: 0 0 auto; position: sticky; top: 0; align-self: flex-start;
+  height: 100vh; display: flex; flex-direction: column; gap: 4px;
+  padding: 18px 12px calc(18px + env(safe-area-inset-bottom));
+  background: linear-gradient(170deg, var(--forest-2), var(--forest));
+  color: #F6F2EA;
+}
+.ops-side-brand { display: flex; align-items: center; gap: 10px; padding: 6px 10px 18px; }
+.ops-side-brand img { width: 30px; height: 30px; object-fit: contain; }
+.ops-side-brand b { font-size: 14px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; }
+.ops-side-brand span { display: block; font-size: 10.5px; color: rgba(246,242,234,.55); font-weight: 600; }
+
+.ops-nav { display: grid; gap: 2px; }
+.ops-nav-item {
+  display: flex; align-items: center; gap: 11px; width: 100%;
+  padding: 11px 12px; border-radius: var(--r-sm); border: 0; background: none;
+  color: rgba(246,242,234,.72); font: inherit; font-size: 13.5px; font-weight: 600;
+  text-align: left; cursor: pointer; transition: background .14s, color .14s;
+}
+.ops-nav-item:hover { background: rgba(255,255,255,.06); color: #F6F2EA; }
+.ops-nav-item.on { background: rgba(191,160,101,.18); color: #F6F2EA; font-weight: 800; }
+.ops-nav-item .badge {
+  margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px;
+  background: var(--terra); color: #fff; font-size: 11px; font-weight: 800;
+  display: grid; place-items: center;
+}
+.ops-side-foot { margin-top: auto; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.1); }
+.ops-side-user { font-size: 12px; color: rgba(246,242,234,.6); padding: 0 12px 10px; line-height: 1.4; }
+.ops-side-user b { display: block; color: #F6F2EA; font-size: 13px; }
+
+.ops-main { flex: 1; min-width: 0; padding: 26px 28px 60px; }
+.ops-wrap { max-width: 940px; margin: 0 auto; display: grid; gap: 18px; }
+
+/* Móvil: la barra pasa a ser una fila de pestañas arriba. */
+@media (max-width: 860px) {
+  .ops-shell { flex-direction: column; }
+  .ops-side {
+    width: auto; height: auto; position: sticky; top: 0; z-index: 30;
+    flex-direction: row; align-items: center; gap: 6px; overflow-x: auto;
+    padding: 10px 12px calc(10px + var(--safe-t, 0px));
+  }
+  .ops-side-brand, .ops-side-foot { display: none; }
+  .ops-nav { display: flex; gap: 6px; }
+  .ops-nav-item { padding: 9px 13px; white-space: nowrap; }
+  .ops-main { padding: 16px 14px 50px; }
+}
+
+/* ── Encabezado de página ───────────────────────────────────────────────── */
+.ops-head { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.ops-head-t { flex: 1; min-width: 0; }
+.ops-kicker {
+  font-size: 10px; font-weight: 800; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--gold);
+}
+.ops-h1 { font-size: 25px; font-weight: 900; letter-spacing: -.03em; margin-top: 3px; }
+.ops-sub { font-size: 13px; color: var(--ink-2); margin-top: 4px; }
+
+/* ── Superficies ────────────────────────────────────────────────────────── */
+.ops-card {
+  background: var(--surface); border: .5px solid var(--line);
+  border-radius: var(--r-md); padding: 17px; box-shadow: var(--sh);
+}
+.ops-card--plano { box-shadow: none; }
+.ops-card-t { font-size: 13px; font-weight: 800; display: flex; align-items: center; gap: 7px; margin-bottom: 12px; }
+.ops-card-t svg { color: var(--gold); }
+
+/* ── Estadísticas ───────────────────────────────────────────────────────── */
+.ops-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); gap: 12px; }
+.ops-stat { background: var(--surface); border: .5px solid var(--line); border-radius: var(--r-md); padding: 16px 17px; }
+.ops-stat-l { font-size: 10px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3); }
+.ops-stat-v { font-size: 29px; font-weight: 900; letter-spacing: -.04em; line-height: 1.05; margin-top: 9px; font-variant-numeric: tabular-nums; }
+.ops-stat-h { font-size: 12px; color: var(--ink-2); margin-top: 5px; }
+.ops-stat-h.up { color: var(--ok); font-weight: 700; }
+.ops-stat-h.down { color: var(--terra); font-weight: 700; }
+
+/* Hero oscuro (el dato principal) */
+.ops-hero {
+  background: linear-gradient(150deg, var(--forest-2), var(--forest));
+  border-radius: var(--r-lg); padding: 22px; color: #F6F2EA; box-shadow: var(--sh-lg);
+}
+.ops-hero .ops-kicker { color: var(--gold); }
+.ops-hero-v { font-size: 38px; font-weight: 900; letter-spacing: -.045em; line-height: 1; margin-top: 6px; font-variant-numeric: tabular-nums; }
+.ops-hero-row { display: flex; gap: 22px; margin-top: 14px; font-size: 12.5px; color: rgba(246,242,234,.62); flex-wrap: wrap; }
+.ops-hero-row b { color: #F6F2EA; }
+.ops-delta { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 800; }
+.ops-delta.up { color: #8FCB9B; } .ops-delta.down { color: #E39B84; }
+
+/* ── Centro de pendientes ───────────────────────────────────────────────── */
+.ops-pend { border: .5px solid rgba(199,91,58,.3); background: var(--surface);
+  border-radius: var(--r-md); padding: 16px; box-shadow: var(--sh); }
+.ops-pend-t { display: flex; align-items: center; gap: 8px; color: var(--terra); font-size: 13.5px; font-weight: 800; }
+.ops-pend-item { padding: 11px 0 0 26px; }
+.ops-pend-item + .ops-pend-item { margin-top: 9px; border-top: .5px solid var(--line); padding-top: 11px; }
+.ops-pend-item b { font-size: 13.5px; font-weight: 700; }
+.ops-pend-item p { font-size: 12px; color: var(--ink-2); margin-top: 2px; line-height: 1.45; }
+.ops-ok { background: var(--ok-soft); color: var(--ok); border-radius: var(--r-md);
+  padding: 14px 16px; font-size: 13.5px; font-weight: 600; }
+
+/* ── Barras de reparto ──────────────────────────────────────────────────── */
+.ops-bar + .ops-bar { margin-top: 11px; }
+.ops-bar-top { display: flex; align-items: baseline; gap: 8px; }
+.ops-bar-l { flex: 1; font-size: 13.5px; }
+.ops-bar-n { font-size: 11.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.ops-bar-v { font-size: 14px; font-weight: 800; min-width: 76px; text-align: right; font-variant-numeric: tabular-nums; }
+.ops-bar-track { height: 5px; border-radius: 3px; background: #E8E3D6; margin-top: 6px; overflow: hidden; }
+.ops-bar-fill { height: 100%; border-radius: 3px; background: var(--gold); }
+.ops-bar.alerta .ops-bar-l { color: var(--terra); font-weight: 800; }
+.ops-bar.alerta .ops-bar-fill { background: var(--terra); }
+
+/* ── Lista simple ───────────────────────────────────────────────────────── */
+.ops-row { display: flex; align-items: baseline; gap: 10px; padding: 7px 0; }
+.ops-row + .ops-row { border-top: .5px solid var(--line); }
+.ops-row-q { width: 32px; font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.ops-row-l { flex: 1; font-size: 13.5px; }
+.ops-row-v { font-size: 12.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+/* ── Gráfica de barras (tendencia) ──────────────────────────────────────── */
+.ops-chart { display: flex; align-items: flex-end; gap: 7px; height: 96px; padding-top: 6px; }
+.ops-chart-col { flex: 1; display: grid; gap: 6px; justify-items: center; }
+.ops-chart-bar { width: 100%; border-radius: 5px; background: var(--gold); min-height: 3px; }
+.ops-chart-bar.cero { background: #E8E3D6; }
+.ops-chart-d { font-size: 10px; color: var(--ink-3); font-weight: 600; }
+
+/* ── Segmentos / filtros ────────────────────────────────────────────────── */
+.ops-seg { display: flex; gap: 6px; }
+.ops-seg button {
+  padding: 7px 14px; border-radius: 999px; font: inherit; font-size: 13px; font-weight: 700;
+  border: .5px solid var(--line-fuerte); background: transparent; color: var(--ink-2); cursor: pointer;
+}
+.ops-seg button.on { background: var(--forest); border-color: var(--forest); color: #F6F2EA; }
+
+.ops-empty { font-size: 13px; color: var(--ink-2); padding: 6px 0; }
+.ops-center { display: grid; place-items: center; padding: 18vh 24px; text-align: center;
+  color: var(--ink-2); font-size: 14px; }
