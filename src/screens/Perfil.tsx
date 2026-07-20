@@ -3,13 +3,17 @@ import { useStore } from '../state/store';
 import { BUSINESS, openNow, opensInLabel, openInstagram, openWhatsApp } from '../data/business';
 import { LoyaltyCard } from '../components/LoyaltyCard';
 import { ClubConnectCard } from '../components/ClubConnectCard';
+import { useClubSession, primerNombre } from '../data/clubSession';
 
 export default function Perfil() {
   const customer = useStore((s) => s.customer);
   const mode = useStore((s) => s.mode);
   const setMode = useStore((s) => s.setMode);
   const orders = useStore((s) => s.orders);
-  const name = customer.name.trim() || 'Invitado';
+  // Si vinculó su cuenta del Club, esa es su identidad — no el nombre que teclea
+  // en el checkout. Antes decía "Invitado" con la sesión ya iniciada.
+  const club = useClubSession();
+  const name = club.nombre?.trim() || customer.name.trim() || (club.email ? primerNombre(null, club.email) : 'Invitado');
   const initial = name.charAt(0).toUpperCase();
 
   return (
@@ -20,11 +24,30 @@ export default function Perfil() {
       </div>
 
       <div style={{ padding: '4px 20px', display: 'grid', gap: 22 }}>
+        {/* Estado de la cuenta del Club: quién está conectado y cómo salirse. */}
+        {club.userId && (
+          <div className="card" style={{ padding: 14, display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 9, height: 9, borderRadius: 999, background: 'var(--forest)', flex: '0 0 auto' }} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 800, fontSize: 13.5 }}>Cuenta del Club conectada</div>
+              <div className="muted" style={{ fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {club.email} · tus pedidos se registran en tu plan
+              </div>
+            </div>
+            <button onClick={() => { void club.desvincular(); }}
+              style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--terra)', flex: '0 0 auto' }}>
+              Desvincular
+            </button>
+          </div>
+        )}
+
         {/* Identidad */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <div style={{ width: 60, height: 60, borderRadius: 999, background: 'var(--forest)', color: 'var(--amber-l)', display: 'grid', placeItems: 'center', fontWeight: 900, fontSize: 24, flex: '0 0 auto' }}>{initial}</div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 800, fontSize: 18 }}>{name}</div>
+            <div style={{ fontWeight: 800, fontSize: 18 }}>
+              {club.userId ? `Hola, ${primerNombre(club.nombre, club.email)}` : name}
+            </div>
             <div className="muted" style={{ fontSize: 13 }}>{orders.length} pedido(s) · Culiacán</div>
           </div>
         </div>

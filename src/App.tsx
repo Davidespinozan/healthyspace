@@ -9,6 +9,7 @@ import { Toast } from './components/Toast';
 import { SocialFabs } from './components/SocialFabs';
 import { PwaInstallBanner } from './components/PwaInstallBanner';
 import { VincularClub } from './components/VincularClub';
+import { useClubSession } from './data/clubSession';
 import Home from './screens/Home';
 import Menu from './screens/Menu';
 import Pedidos from './screens/Pedidos';
@@ -35,6 +36,12 @@ export default function App() {
   const showToast = useStore((s) => s.showToast);
   const goTab = useStore((s) => s.goTab);
   const [vincular, setVincular] = useState(false);
+  const club = useClubSession();
+  const [pedirVinculo, setPedirVinculo] = useState(false);
+  // Solo se ofrece si NO hay sesión. Antes salía aunque ya estuviera vinculado.
+  useEffect(() => {
+    if (pedirVinculo && !club.cargando) { setVincular(!club.userId); setPedirVinculo(false); }
+  }, [pedirVinculo, club.cargando, club.userId]);
   // Precios y agotados vienen de administración; si falla, queda el menú estático.
   useEffect(() => { loadMenu(); }, [loadMenu]);
 
@@ -58,7 +65,7 @@ export default function App() {
     }
     // Viene del Club: se le ofrece conectar su cuenta para que el pedido se
     // registre solo en su plan. Es opcional — pedir sin cuenta sigue siendo lo normal.
-    if (p.get('from') === 'club') setVincular(true);
+    if (p.get('from') === 'club') setPedirVinculo(true);
     // Limpia el parámetro para que un refresh no lo repita.
     window.history.replaceState({}, '', window.location.pathname);
   }, [bowls, addToCart, showToast, goTab, push]);
