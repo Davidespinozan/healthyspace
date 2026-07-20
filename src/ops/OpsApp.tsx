@@ -7,6 +7,7 @@ import { PosSale } from './pos/PosSale';
 import { PosCaja } from './pos/PosCaja';
 import { MenuAdmin } from './admin/MenuAdmin';
 import { Tablero } from './admin/Tablero';
+import { Inventario } from './inventario/Inventario';
 import './ops.css';
 
 export default function OpsApp() {
@@ -24,6 +25,7 @@ export default function OpsApp() {
           { id: 'pedidos', label: 'Pedidos', render: (s) => <PosOrders staff={s} /> },
           { id: 'vender', label: 'Vender', render: (s) => <PosSale staff={s} /> },
           { id: 'caja', label: 'Caja', render: (s) => <PosCaja staff={s} /> },
+          { id: 'inventario', label: 'Inventario', render: (s) => <Inventario staff={s} /> },
           { id: 'menu', label: 'Menú', render: () => <MenuAdmin /> },
         ]
       : staff.role === 'pos'
@@ -31,8 +33,12 @@ export default function OpsApp() {
             { id: 'vender', label: 'Vender', render: (s) => <PosSale staff={s} /> },
             { id: 'pedidos', label: 'Pedidos', render: (s) => <PosOrders staff={s} /> },
             { id: 'caja', label: 'Caja', render: (s) => <PosCaja staff={s} /> },
+            { id: 'inventario', label: 'Inventario', render: (s) => <Inventario staff={s} /> },
           ]
-        : [{ id: 'almacen', label: 'Almacén', render: () => <Almacen /> }];
+        : [
+            { id: 'inventario', label: 'Inventario', render: (s) => <Inventario staff={s} /> },
+            { id: 'almacen', label: 'Traslados', render: () => <Almacen /> },
+          ];
 
   return <OpsShell staff={staff} secciones={secciones} onSalir={signOut} />;
 }

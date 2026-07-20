@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LayoutDashboard, Receipt, ShoppingCart, Banknote, UtensilsCrossed, Boxes, LogOut } from 'lucide-react';
+import { LayoutDashboard, Receipt, ShoppingCart, Banknote, UtensilsCrossed, Boxes, Package, LogOut } from 'lucide-react';
 import type { Staff } from './supabase';
 import './ops.css';
 
@@ -15,7 +15,7 @@ import './ops.css';
  */
 export const ICONOS = {
   tablero: LayoutDashboard, pedidos: Receipt, vender: ShoppingCart,
-  caja: Banknote, menu: UtensilsCrossed, almacen: Boxes,
+  caja: Banknote, menu: UtensilsCrossed, almacen: Boxes, inventario: Package,
 } as const;
 
 export interface Seccion {
