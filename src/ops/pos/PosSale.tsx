@@ -22,7 +22,14 @@ interface Sellable { id: string; name: string; price: number; soldOut?: boolean 
 interface Line { id: string; name: string; price: number; qty: number }
 
 const money = (n: number) => '$' + n.toLocaleString('es-MX');
-const saleCode = () => 'HS-' + Math.floor(1000 + Math.random() * 9000);
+// Código de pedido. NO son 4 dígitos al azar: con 9000 posibles había ~50% de
+// probabilidad de repetición a los 112 pedidos (problema del cumpleaños), y el
+// descuento de inventario usa el código para no descontar dos veces — dos pedidos
+// con el mismo código descontaban UNA vez y el inventario quedaba largo en silencio.
+// Base 36 del reloj + azar: irrepetible en la práctica y sigue siendo corto y legible.
+const saleCode = () =>
+  'HS-' + Date.now().toString(36).toUpperCase().slice(-5) +
+  Math.random().toString(36).toUpperCase().slice(2, 5);
 
 export function PosSale({ staff }: { staff: Staff }) {
   const [bowls, setBowls] = useState<Sellable[]>([]);

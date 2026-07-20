@@ -14,6 +14,7 @@ interface Fila {
   ubicacion: string; ubicacion_nombre: string; insumo: string; insumo_nombre: string;
   categoria: 'comida' | 'empaque' | 'limpieza'; unidad: string;
   cantidad: number; min_alerta: number | null; bajo_minimo: boolean;
+  agotado: boolean; negativo: boolean;
 }
 interface Ubic { id: string; nombre: string; tipo: string; padre: string | null }
 
@@ -50,7 +51,12 @@ export function Inventario({ staff }: { staff: Staff }) {
   useEffect(() => { if (!sel && visibles.length) setSel(visibles[0].id); }, [visibles, sel]);
 
   const deUbic = filas.filter((f) => f.ubicacion === sel);
-  const bajos = filas.filter((f) => f.bajo_minimo);
+  // Se separan a propósito: "se acabó" y "el sistema dice menos que cero" son
+  // urgencias distintas. Un negativo significa que se vendió más de lo registrado
+  // — hay un movimiento que nunca se capturó.
+  const negativos = filas.filter((f) => f.negativo);
+  const agotados = filas.filter((f) => f.agotado && !f.negativo);
+  const bajos = filas.filter((f) => f.bajo_minimo && !f.agotado);
   const porCat = (c: string) => deUbic.filter((f) => f.categoria === c);
 
   if (cargando) return <div className="ops-center">Cargando inventario…</div>;
@@ -62,11 +68,23 @@ export function Inventario({ staff }: { staff: Staff }) {
         <button className="iconbtn" onClick={cargar} aria-label="Actualizar"><RefreshCw size={16} /></button>
       </OpsHead>
 
-      {bajos.length > 0 && staff.role !== 'pos' && (
+      {(negativos.length > 0 || agotados.length > 0 || bajos.length > 0) && staff.role !== 'pos' && (
         <div className="ops-pend">
-          <div className="ops-pend-t"><AlertTriangle size={16} /> Bajo mínimo</div>
-          {bajos.slice(0, 6).map((f) => (
-            <div key={f.ubicacion + f.insumo} className="ops-pend-item">
+          <div className="ops-pend-t"><AlertTriangle size={16} /> Requiere atención</div>
+          {negativos.slice(0, 4).map((f) => (
+            <div key={'n' + f.ubicacion + f.insumo} className="ops-pend-item">
+              <b style={{ color: 'var(--terra)' }}>{f.insumo_nombre} en NEGATIVO ({f.cantidad} {f.unidad})</b>
+              <p>{f.ubicacion_nombre} · se consumió más de lo registrado: falta capturar una entrada</p>
+            </div>
+          ))}
+          {agotados.slice(0, 5).map((f) => (
+            <div key={'a' + f.ubicacion + f.insumo} className="ops-pend-item">
+              <b>{f.insumo_nombre} — SE ACABÓ</b>
+              <p>{f.ubicacion_nombre}</p>
+            </div>
+          ))}
+          {bajos.slice(0, 5).map((f) => (
+            <div key={'b' + f.ubicacion + f.insumo} className="ops-pend-item">
               <b>{f.insumo_nombre} — {f.cantidad} {f.unidad}</b>
               <p>{f.ubicacion_nombre} · mínimo {f.min_alerta} {f.unidad}</p>
             </div>
@@ -94,7 +112,9 @@ export function Inventario({ staff }: { staff: Staff }) {
             <div key={f.insumo} className="ops-row">
               <span className="ops-row-l">
                 {f.insumo_nombre}
-                {f.bajo_minimo && <b style={{ color: 'var(--terra)', marginLeft: 7, fontSize: 11 }}>BAJO</b>}
+                {f.negativo ? <b style={{ color: 'var(--terra)', marginLeft: 7, fontSize: 11 }}>NEGATIVO</b>
+                  : f.agotado ? <b style={{ color: 'var(--terra)', marginLeft: 7, fontSize: 11 }}>AGOTADO</b>
+                  : f.bajo_minimo ? <b style={{ color: 'var(--gold)', marginLeft: 7, fontSize: 11 }}>BAJO</b> : null}
               </span>
               <b className="ops-row-q" style={{ width: 'auto', minWidth: 68, textAlign: 'right' }}>
                 {f.cantidad} <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink-3)' }}>{f.unidad}</span>

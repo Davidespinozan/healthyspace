@@ -123,7 +123,14 @@ export function cartTotals(cart: CartItem[], mode: OrderMode): CartTotals {
 }
 
 const uid = () => Math.random().toString(36).slice(2, 9);
-const orderCode = () => 'HS-' + Math.floor(1000 + Math.random() * 9000);
+// Código de pedido. NO son 4 dígitos al azar: con 9000 posibles había ~50% de
+// probabilidad de repetición a los 112 pedidos (problema del cumpleaños), y el
+// descuento de inventario usa el código para no descontar dos veces — dos pedidos
+// con el mismo código descontaban UNA vez y el inventario quedaba largo en silencio.
+// Base 36 del reloj + azar: irrepetible en la práctica y sigue siendo corto y legible.
+const orderCode = () =>
+  'HS-' + Date.now().toString(36).toUpperCase().slice(-5) +
+  Math.random().toString(36).toUpperCase().slice(2, 5);
 
 /** Flujo de estados según el modo. */
 export const flowFor = (mode: OrderMode): OrderStatus[] =>
