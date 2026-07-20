@@ -20,7 +20,20 @@ export const METODO_LABEL: Record<string, string> = {
   clip: 'Clip', rappi: 'Rappi', uber: 'Uber', didi: 'Didi', sin: 'Sin registrar',
 };
 
-const dia = (d: Date | string) => new Date(d).toISOString().slice(0, 10);
+/**
+ * El día *local*, no el día UTC.
+ *
+ * Antes era `toISOString().slice(0,10)`, que devuelve el día en UTC. Culiacán va
+ * en GMT-7, así que a las 5 de la tarde —en plena hora de cena— el día de UTC ya
+ * cambió: las ventas de "hoy" se caían a cero, la noche entera se archivaba en
+ * mañana, y la comparación contra ayer confrontaba dos ventanas de 5pm a 5pm.
+ * El corte del día tiene que caer de madrugada, cuando el remolque está cerrado.
+ */
+export const dia = (d: Date | string) => {
+  const x = new Date(d);
+  const p = (n: number) => String(n).padStart(2, '0');
+  return `${x.getFullYear()}-${p(x.getMonth() + 1)}-${p(x.getDate())}`;
+};
 export const esVenta = (o: OrderRow) => o.status !== 'cancelado';
 
 /** Resumen de un conjunto de pedidos. */

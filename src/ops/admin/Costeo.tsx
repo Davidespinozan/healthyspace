@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AlertTriangle, ChevronRight, RefreshCw, Scale } from 'lucide-react';
 import { opsSupabase } from '../supabase';
 import { OpsHead, Card } from '../OpsShell';
@@ -31,6 +31,7 @@ export function Costeo() {
   const [filas, setFilas] = useState<Fila[]>([]);
   const [abierto, setAbierto] = useState<string | null>(null);
   const [detalle, setDetalle] = useState<Detalle[]>([]);
+  const [errorDet, setErrorDet] = useState<string | null>(null);
   const [cargando, setCargando] = useState(true);
 
   const cargar = useCallback(async () => {
@@ -40,9 +41,17 @@ export function Costeo() {
   }, []);
   useEffect(() => { void cargar(); }, [cargar]);
 
+  // Picar el platillo A y luego el B: si A resolvía al final, se cerraba B y se
+  // abría A. El contador descarta las respuestas que ya no corresponden.
+  const peticion = useRef(0);
+
   async function abrir(id: string) {
     if (abierto === id) { setAbierto(null); return; }
-    const { data } = await opsSupabase.rpc('costeo_detalle', { p_producto: id });
+    const mia = ++peticion.current;
+    const { data, error } = await opsSupabase.rpc('costeo_detalle', { p_producto: id });
+    if (mia !== peticion.current) return;
+    if (error) { setErrorDet(error.message); setDetalle([]); setAbierto(id); return; }
+    setErrorDet(null);
     setDetalle((data as Detalle[]) ?? []);
     setAbierto(id);
   }
@@ -92,6 +101,11 @@ export function Costeo() {
 
             {abierto === f.producto && (
               <div style={{ padding: '4px 0 14px 25px' }}>
+                {/* Sin esto, un detalle que falla se veía como un platillo sin
+                    ingredientes, que es justo lo contrario de lo que pasó. */}
+                {errorDet && <p style={{ fontSize: 12.5, color: 'var(--terra)', padding: '6px 0' }}>
+                  No se pudo cargar el desglose: {errorDet}</p>}
+                {!errorDet && detalle.length === 0 && <p className="ops-empty">Este platillo no tiene receta cargada.</p>}
                 <div style={{ display: 'flex', gap: 8, fontSize: 10.5, fontWeight: 800,
                   letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--ink-3)', paddingBottom: 6 }}>
                   <span style={{ flex: 1 }}>Insumo</span>

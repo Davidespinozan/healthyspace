@@ -5,7 +5,7 @@ import { opsSupabase, type Staff } from '../supabase';
 import {
   resumen, porMetodo, porRemolque, porCanal, topPlatillos, porDia, variacionVsAyer,
   pedidosAtorados, ventasSinMetodo, cajasSinCerrar, arqueosConDiferencia,
-  METODO_LABEL, money, type OrderRow, type CierreRow,
+  METODO_LABEL, money, dia, type OrderRow, type CierreRow,
 } from '../metrics';
 
 /**
@@ -18,7 +18,7 @@ import {
  *
  * Solo lectura y agregando de lo que ya existe: no inventa datos nuevos.
  */
-const hoyISO = () => new Date().toISOString().slice(0, 10);
+const hoyISO = () => dia(new Date());
 
 export function Tablero({ staff }: { staff: Staff }) {
   const [orders, setOrders] = useState<OrderRow[]>([]);
@@ -26,29 +26,49 @@ export function Tablero({ staff }: { staff: Staff }) {
   const [branches, setBranches] = useState<{ id: string; name: string }[]>([]);
   const [rango, setRango] = useState<'hoy' | '7d'>('hoy');
   const [cargando, setCargando] = useState(true);
+  // Si la carga falla, este tablero NO puede quedarse callado: sin esto, las tres
+  // consultas caían a [] y la pantalla remataba con "Todo al corriente: sin
+  // pedidos atorados, cajas cerradas y arqueos cuadrados" sobre $0 de ventas.
+  // Afirmaba exactamente lo contrario de lo que sabía.
+  const [error, setError] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
     const desde = new Date(); desde.setDate(desde.getDate() - 8);
     let q = opsSupabase.from('truck_orders').select('*').gte('created_at', desde.toISOString());
     if (staff.role !== 'admin' && staff.branch_id) q = q.eq('branch', staff.branch_id);
-    const [{ data: o }, { data: c }, { data: b }] = await Promise.all([
+    const [ro, rc, rb] = await Promise.all([
       q,
       opsSupabase.from('truck_cash_closings').select('branch,cerrado_en,diferencia,motivo')
         .gte('cerrado_en', desde.toISOString()),
       opsSupabase.from('truck_branches').select('id,name').eq('active', true),
     ]);
-    setOrders((o as OrderRow[]) ?? []);
-    setCierres((c as CierreRow[]) ?? []);
-    setBranches((b as { id: string; name: string }[]) ?? []);
+    const fallo = ro.error ?? rc.error ?? rb.error;
+    setError(fallo ? fallo.message : null);
+    setOrders((ro.data as OrderRow[]) ?? []);
+    setCierres((rc.data as CierreRow[]) ?? []);
+    setBranches((rb.data as { id: string; name: string }[]) ?? []);
     setCargando(false);
   }, [staff.role, staff.branch_id]);
 
   useEffect(() => { void cargar(); }, [cargar]);
 
   if (cargando) return <Pad>Cargando…</Pad>;
+  if (error) {
+    return (
+      <Pad>
+        No se pudieron cargar los datos del tablero.<br />
+        <span style={{ fontSize: 12.5, color: 'var(--ink-3)' }}>{error}</span><br />
+        <button className="btn" style={{ marginTop: 16 }} onClick={() => { setCargando(true); void cargar(); }}>
+          Reintentar
+        </button>
+      </Pad>
+    );
+  }
 
+  // `created_at` viene en UTC; hay que traerlo al día local antes de comparar.
+  // Comparar el texto crudo volvería a meter el corte del día a media tarde.
   const delRango = rango === 'hoy'
-    ? orders.filter((o) => o.created_at.slice(0, 10) === hoyISO())
+    ? orders.filter((o) => dia(o.created_at) === hoyISO())
     : orders;
 
   const r = resumen(delRango);
@@ -144,7 +164,7 @@ export function Tablero({ staff }: { staff: Staff }) {
           <>
             <Barra label="Mostrador" valor={money(c.mostrador.total)} nota={`${c.mostrador.pedidos} ped.`} pct={r.total ? (c.mostrador.total / r.total) * 100 : 0} />
             <Barra label="App del cliente" valor={money(c.app.total)} nota={`${c.app.pedidos} ped.`} pct={r.total ? (c.app.total / r.total) * 100 : 0} />
-            {c.kiosko.pedidos > 0 && <Barra label="Kiosko" valor={money(c.kiosko.total)} nota={`${c.kiosko.pedidos} ped.`} pct={(c.kiosko.total / r.total) * 100} />}
+            {c.kiosko.pedidos > 0 && <Barra label="Kiosko" valor={money(c.kiosko.total)} nota={`${c.kiosko.pedidos} ped.`} pct={r.total ? (c.kiosko.total / r.total) * 100 : 0} />}
           </>
         ); })()}
       </Card>

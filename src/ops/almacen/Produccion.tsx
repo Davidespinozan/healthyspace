@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ChefHat, Plus, X, Check, RefreshCw, TrendingDown, TrendingUp } from 'lucide-react';
-import { opsSupabase, type Staff } from '../supabase';
+import { opsSupabase, primerError, type Staff } from '../supabase';
 import { OpsHead, Card } from '../OpsShell';
 
 /**
@@ -35,17 +35,18 @@ export function Produccion({ staff }: { staff: Staff }) {
   const [error, setError] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
-    const [{ data: t }, { data: rp }, { data: u }, { data: m }] = await Promise.all([
+    const [rt, rrp, ru, rm] = await Promise.all([
       opsSupabase.from('truck_produccion').select('*').order('created_at', { ascending: false }).limit(30),
       opsSupabase.from('truck_recetas_produccion').select('producto'),
       opsSupabase.from('truck_ubicaciones').select('id,nombre,tipo').eq('activa', true).order('orden'),
       opsSupabase.rpc('rendimiento_medido'),
     ]);
-    setTandas((t as Tanda[]) ?? []);
-    setUbic((u as Ubic[]) ?? []);
-    setMedido((m as Medido[]) ?? []);
+    setError(primerError(rt, rrp, ru, rm));
+    setTandas((rt.data as Tanda[]) ?? []);
+    setUbic((ru.data as Ubic[]) ?? []);
+    setMedido((rm.data as Medido[]) ?? []);
     // Solo se puede producir lo que tiene receta de producción.
-    const ids = [...new Set(((rp as { producto: string }[]) ?? []).map((r) => r.producto))];
+    const ids = [...new Set(((rrp.data as { producto: string }[]) ?? []).map((r) => r.producto))];
     if (ids.length) {
       const { data: i } = await opsSupabase.from('truck_insumos').select('id,nombre,unidad').in('id', ids);
       setProductos((i as Insumo[]) ?? []);
@@ -162,8 +163,12 @@ function SheetNueva({ staff, productos, ubic, onCerrar, onListo }: {
 }) {
   const [producto, setProducto] = useState(productos[0]?.id ?? '');
   const [cant, setCant] = useState('');
-  const [origen, setOrigen] = useState('almacen');
-  const [destino, setDestino] = useState('congelador-1');
+  // El valor por omisión sale de la lista real de ubicaciones, no de un id escrito
+  // a mano. Si ese id no existe (se renombró, se desactivó), el <select> no
+  // encuentra su <option> y el navegador pinta la PRIMERA mientras el estado
+  // sigue guardando el id fantasma: se ve una ubicación y se guarda otra.
+  const [origen, setOrigen] = useState(() => ubic.find((u) => u.tipo === 'almacen')?.id ?? ubic[0]?.id ?? '');
+  const [destino, setDestino] = useState(() => ubic.find((u) => u.tipo === 'congelador')?.id ?? ubic[0]?.id ?? '');
   const [caduca, setCaduca] = useState('');
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState<string | null>(null);

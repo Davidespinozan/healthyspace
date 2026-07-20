@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Truck, Check, Plus, X, AlertTriangle, RefreshCw } from 'lucide-react';
-import { opsSupabase, type Staff } from '../supabase';
+import { opsSupabase, primerError, type Staff } from '../supabase';
 import { OpsHead, Card } from '../OpsShell';
 
 /**
@@ -36,14 +36,15 @@ export function Traslados({ staff }: { staff: Staff }) {
   const [error, setError] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
-    const [{ data: t }, { data: u }, { data: i }] = await Promise.all([
+    const [rt, ru, ri] = await Promise.all([
       opsSupabase.from('truck_traslados').select('*').order('created_at', { ascending: false }).limit(40),
       opsSupabase.from('truck_ubicaciones').select('id,nombre,tipo').eq('activa', true).order('orden'),
       opsSupabase.from('truck_insumos').select('id,nombre,unidad,categoria').eq('activo', true).order('nombre'),
     ]);
-    setLista((t as Traslado[]) ?? []);
-    setUbic((u as Ubic[]) ?? []);
-    setInsumos((i as Insumo[]) ?? []);
+    setError(primerError(rt, ru, ri));
+    setLista((rt.data as Traslado[]) ?? []);
+    setUbic((ru.data as Ubic[]) ?? []);
+    setInsumos((ri.data as Insumo[]) ?? []);
     setCargando(false);
   }, []);
   useEffect(() => { void cargar(); }, [cargar]);
@@ -51,9 +52,17 @@ export function Traslados({ staff }: { staff: Staff }) {
   const nom = Object.fromEntries(ubic.map((u) => [u.id, u.nombre]));
   const nomIns = Object.fromEntries(insumos.map((i) => [i.id, i]));
 
+  // `ocupado` guarda el traslado que se está procesando. Sin esto, un doble toque
+  // en "Recibí todo" —normal en una tablet, y más con guantes— disparaba la RPC
+  // dos veces y la mercancía entraba dos veces al destino.
+  const [ocupado, setOcupado] = useState<string | null>(null);
+
   async function accion(t: Traslado, fn: 'enviar_traslado' | 'recibir_traslado', args?: object) {
+    if (ocupado) return;
     setError(null);
+    setOcupado(t.id);
     const { error } = await opsSupabase.rpc(fn, { p_id: t.id, ...args });
+    setOcupado(null);
     if (error) { setError(error.message); return; }
     void cargar();
   }
@@ -81,7 +90,9 @@ export function Traslados({ staff }: { staff: Staff }) {
           {enCamino.map((t) => (
             <Renglon key={t.id} t={t} nom={nom} nomIns={nomIns}
               accion={<button className="btn" style={{ padding: '8px 14px', fontSize: 12.5 }}
-                onClick={() => accion(t, 'recibir_traslado')}>Recibí todo</button>} />
+                disabled={ocupado === t.id}
+                onClick={() => accion(t, 'recibir_traslado')}>
+                {ocupado === t.id ? 'Recibiendo…' : 'Recibí todo'}</button>} />
           ))}
         </Card>
       )}
@@ -92,7 +103,9 @@ export function Traslados({ staff }: { staff: Staff }) {
             <Renglon key={t.id} t={t} nom={nom} nomIns={nomIns}
               accion={(staff.role === 'admin' || staff.role === 'almacen') ? (
                 <button className="btn" style={{ padding: '8px 14px', fontSize: 12.5 }}
-                  onClick={() => accion(t, 'enviar_traslado')}>Enviar</button>
+                  disabled={ocupado === t.id}
+                  onClick={() => accion(t, 'enviar_traslado')}>
+                  {ocupado === t.id ? 'Enviando…' : 'Enviar'}</button>
               ) : <span className="ops-bar-n">Esperando almacén</span>} />
           ))}
         </Card>
@@ -146,7 +159,11 @@ function Renglon({ t, nom, nomIns, accion }: {
 function SheetNuevo({ staff, ubic, insumos, onCerrar, onListo }: {
   staff: Staff; ubic: Ubic[]; insumos: Insumo[]; onCerrar: () => void; onListo: () => void;
 }) {
-  const [origen, setOrigen] = useState('almacen');
+  // El valor por omisión sale de la lista real de ubicaciones, no de un id escrito
+  // a mano. Si ese id no existe (se renombró, se desactivó), el <select> no
+  // encuentra su <option> y el navegador pinta la PRIMERA mientras el estado
+  // sigue guardando el id fantasma: se ve una ubicación y se guarda otra.
+  const [origen, setOrigen] = useState(() => ubic.find((u) => u.tipo === 'almacen')?.id ?? ubic[0]?.id ?? '');
   const [destino, setDestino] = useState(staff.branch_id ?? '');
   const [items, setItems] = useState<Item[]>([]);
   const [guardando, setGuardando] = useState(false);

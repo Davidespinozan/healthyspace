@@ -172,3 +172,52 @@
 .ops-empty { font-size: 13px; color: var(--ink-2); padding: 6px 0; }
 .ops-center { display: grid; place-items: center; padding: 18vh 24px; text-align: center;
   color: var(--ink-2); font-size: 14px; }
+
+/* ── Hojas modales ──────────────────────────────────────────────────────────
+   Las seis hojas del panel (movimiento de inventario, traslado, tanda de
+   producción, compra, gasto) usaban .bw-sheet / .bw-sheet-bg, que son clases del
+   widget de bowls del Club: nunca existieron en este repo. Sin backdrop, sin
+   posición y sin fondo, cada hoja se renderizaba como contenido suelto tirado en
+   medio de la página. Se definen aquí, en el sistema del panel.               */
+.bw-sheet-bg {
+  position: fixed; inset: 0; z-index: 60;
+  display: grid; place-items: center; padding: 20px;
+  background: rgba(12, 21, 20, .5);
+  overflow-y: auto;
+  animation: fadeIn .16s ease-out;
+}
+.bw-sheet {
+  width: 100%; max-width: 460px;
+  background: var(--surface);
+  border: .5px solid var(--line);
+  border-radius: var(--r-lg, 18px);
+  box-shadow: 0 18px 50px rgba(12, 21, 20, .22);
+  padding: 20px 20px 18px;
+  animation: sheetUp .2s cubic-bezier(.2, .8, .3, 1);
+}
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+@keyframes sheetUp { from { opacity: 0; transform: translateY(12px) } to { opacity: 1; transform: none } }
+
+/* En celular la hoja sube desde abajo: es donde alcanza el pulgar. */
+@media (max-width: 560px) {
+  .bw-sheet-bg { place-items: end center; padding: 0; }
+  .bw-sheet {
+    max-width: none; border-radius: 20px 20px 0 0;
+    padding-bottom: calc(18px + env(safe-area-inset-bottom));
+    animation-name: sheetSlide;
+  }
+  @keyframes sheetSlide { from { transform: translateY(100%) } to { transform: none } }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bw-sheet-bg, .bw-sheet { animation: none; }
+}
+
+/* .iconbtn perdía su forma dentro de .ops-seg: el selector `.ops-seg button`
+   (0,1,1) le ganaba a `.iconbtn` (0,1,0), así que los botones de actualizar se
+   veían como una opción de filtro sin seleccionar junto a "Hoy" / "7 días". */
+.ops-seg .iconbtn, .ops-head .iconbtn {
+  padding: 0; width: 34px; height: 34px; border-radius: 999px;
+  background: var(--surface); border: .5px solid var(--line); color: var(--ink-2);
+  display: grid; place-items: center; flex: 0 0 auto;
+}

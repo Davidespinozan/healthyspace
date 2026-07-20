@@ -40,10 +40,25 @@ export function PosSale({ staff }: { staff: Staff }) {
   const [doneCode, setDoneCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // El admin no tiene remolque asignado. Antes la venta se guardaba con
+  // `branch: null`: aparecía como "sin" en el desglose por remolque y, peor,
+  // `cajasSinCerrar` no la veía — el efectivo que cobró un admin nunca disparaba
+  // el recordatorio de cerrar caja. Ahora tiene que decir en qué remolque cobró.
+  const [branches, setBranches] = useState<{ id: string; name: string }[]>([]);
+  const [branchSel, setBranchSel] = useState<string>(staff.branch_id ?? '');
+
   useEffect(() => {
     void opsSupabase.from('truck_bowls').select('id,name,price,sold_out').eq('active', true).order('sort')
       .then(({ data }) => setBowls((data ?? []).map((b) => ({ id: b.id, name: b.name, price: Number(b.price), soldOut: b.sold_out }))));
-  }, []);
+    if (!staff.branch_id) {
+      void opsSupabase.from('truck_branches').select('id,name').eq('active', true).order('name')
+        .then(({ data }) => {
+          const bs = (data as { id: string; name: string }[]) ?? [];
+          setBranches(bs);
+          setBranchSel((s) => s || bs[0]?.id || '');
+        });
+    }
+  }, [staff.branch_id]);
 
   const total = useMemo(() => lines.reduce((s, l) => s + l.price * l.qty, 0), [lines]);
   const change = method === 'efectivo' && cash ? Number(cash) - total : null;
@@ -60,9 +75,9 @@ export function PosSale({ staff }: { staff: Staff }) {
 
   const reset = () => { setLines([]); setMethod(null); setCash(''); };
 
-  /** Registra la venta. La sucursal es la del que cobra (admin usa la primera). */
+  /** Registra la venta. La sucursal es la del que cobra; el admin la elige. */
   async function charge() {
-    if (!lines.length || !method || saving) return;
+    if (!lines.length || !method || saving || !branchSel) return;
     setError(null);
     setSaving(true);
     const code = saleCode();
@@ -72,7 +87,7 @@ export function PosSale({ staff }: { staff: Staff }) {
       channel: 'mostrador',
       items: lines.map((l) => ({ name: l.name, qty: l.qty, price: l.price })),
       subtotal: total, fee: 0, discount: 0, total,
-      branch: staff.branch_id,
+      branch: branchSel,
       payment_method: method,
       paid: true,
       cash_received: method === 'efectivo' && cash ? Number(cash) : null,
@@ -166,8 +181,19 @@ export function PosSale({ staff }: { staff: Staff }) {
           </div>
         )}
 
-        <button className="btn" onClick={charge} disabled={!lines.length || !method || saving}
-          style={{ padding: '14px 18px', opacity: !lines.length || !method ? .5 : 1 }}>
+        {!staff.branch_id && branches.length > 0 && (
+          <div>
+            <div className="section-label" style={{ marginBottom: 7 }}>En qué remolque</div>
+            <select value={branchSel} onChange={(e) => setBranchSel(e.target.value)}
+              style={{ width: '100%', padding: '10px 12px', borderRadius: 10, border: '1px solid var(--line)',
+                background: 'var(--cream)', fontSize: 13.5, fontFamily: 'inherit', fontWeight: 700 }}>
+              {branches.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
+            </select>
+          </div>
+        )}
+
+        <button className="btn" onClick={charge} disabled={!lines.length || !method || !branchSel || saving}
+          style={{ padding: '14px 18px', opacity: !lines.length || !method || !branchSel ? .5 : 1 }}>
           {saving ? <><Loader2 size={17} className="spin" /> Registrando…</> : <>Cobrar {money(total)}</>}
         </button>
         {lines.length > 0 && (

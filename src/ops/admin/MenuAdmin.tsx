@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Check, Loader2 } from 'lucide-react';
 import { opsSupabase } from '../supabase';
 
@@ -31,8 +31,13 @@ export function MenuAdmin() {
       });
   }, []);
 
+  // El aviso de "guardado" se apaga solo; si el usuario cambia de sección antes,
+  // el temporizador tiene que morir con el componente.
+  const avisoRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (avisoRef.current) clearTimeout(avisoRef.current); }, []);
+
   /** Guarda un cambio puntual y refleja el estado real que quedó en la BD. */
-  async function patch(id: string, values: Partial<Row>) {
+  async function patch(id: string, values: Partial<Row>): Promise<boolean> {
     setError(null);
     setSaving(id);
     const { error } = await opsSupabase
@@ -40,10 +45,12 @@ export function MenuAdmin() {
       .update({ ...values, updated_at: new Date().toISOString() })
       .eq('id', id);
     setSaving(null);
-    if (error) { setError(error.message); return; }
+    if (error) { setError(error.message); return false; }
     setRows((rs) => rs?.map((r) => (r.id === id ? { ...r, ...values } : r)) ?? rs);
     setSaved(id);
-    setTimeout(() => setSaved((s) => (s === id ? null : s)), 1600);
+    if (avisoRef.current) clearTimeout(avisoRef.current);
+    avisoRef.current = setTimeout(() => setSaved((s) => (s === id ? null : s)), 1600);
+    return true;
   }
 
   if (!rows) return <Pad>Cargando menú…</Pad>;
@@ -79,9 +86,15 @@ export function MenuAdmin() {
                 <span style={{ color: 'var(--ink-3)' }}>$</span>
                 <input
                   type="number" inputMode="numeric" min={0} defaultValue={r.price}
-                  onBlur={(e) => {
-                    const price = Number(e.target.value);
-                    if (Number.isFinite(price) && price >= 0 && price !== r.price) void patch(r.id, { price });
+                  onBlur={async (e) => {
+                    const campo = e.target;
+                    const price = Number(campo.value);
+                    if (!Number.isFinite(price) || price < 0 || price === r.price) return;
+                    // Si la base lo rechaza hay que regresar el campo al precio
+                    // real: si no, la pantalla muestra el precio nuevo, el menú
+                    // sigue con el viejo, y el operador se va creyendo que cambió.
+                    const ok = await patch(r.id, { price });
+                    if (!ok) campo.value = String(r.price);
                   }}
                   style={{ width: 78, padding: '8px 10px', borderRadius: 10, border: '1px solid var(--line)', background: 'var(--cream)', fontWeight: 700, fontSize: 14 }}
                 />

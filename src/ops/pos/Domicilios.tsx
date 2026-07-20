@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Bike, Clock, MapPin, Phone, RefreshCw, Check, AlertTriangle } from 'lucide-react';
-import { opsSupabase, type Staff } from '../supabase';
+import { opsSupabase, primerError, type Staff } from '../supabase';
 import { OpsHead, Card } from '../OpsShell';
 
 /**
@@ -34,14 +34,15 @@ export function Domicilios({ staff }: { staff: Staff }) {
       .eq('mode', 'delivery').not('status', 'in', '("entregado","cancelado")')
       .order('created_at');
     if (staff.role === 'pos' && staff.branch_id) q = q.eq('branch', staff.branch_id);
-    const [{ data: p }, { data: r }, { data: d }] = await Promise.all([
+    const [rp, rr, rd] = await Promise.all([
       q,
       opsSupabase.from('truck_staff').select('id,name').eq('role', 'repartidor').eq('active', true),
       opsSupabase.rpc('reparto_desempeno'),
     ]);
-    setPedidos((p as Pedido[]) ?? []);
-    setReps((r as Rep[]) ?? []);
-    setDesemp((d as Desempeno[]) ?? []);
+    setError(primerError(rp, rr, rd));
+    setPedidos((rp.data as Pedido[]) ?? []);
+    setReps((rr.data as Rep[]) ?? []);
+    setDesemp((rd.data as Desempeno[]) ?? []);
     setCargando(false);
   }, [staff.role, staff.branch_id]);
 
@@ -53,10 +54,18 @@ export function Domicilios({ staff }: { staff: Staff }) {
     return () => { opsSupabase.removeChannel(ch); };
   }, [cargar]);
 
+  // Un doble toque en "Salió" reescribe `salio_en`, que es de donde sale la
+  // separación entre tiempo de cocina y tiempo de camino — justo lo que esta
+  // pantalla existe para medir.
+  const [ocupado, setOcupado] = useState<string | null>(null);
+
   async function llamar(fn: 'despachar_pedido' | 'entregar_pedido', id: string, rep?: string) {
+    if (ocupado) return;
     setError(null);
+    setOcupado(id);
     const args = fn === 'despachar_pedido' ? { p_id: id, p_repartidor: rep ?? null } : { p_id: id };
     const { error } = await opsSupabase.rpc(fn, args);
+    setOcupado(null);
     if (error) { setError(error.message); return; }
     void cargar();
   }
@@ -79,7 +88,8 @@ export function Domicilios({ staff }: { staff: Staff }) {
         {enCocina.length === 0 && <p className="ops-empty">Nada preparándose.</p>}
         {enCocina.map((p) => (
           <Fila key={p.id} p={p} reps={reps}
-            accion={(rep) => llamar('despachar_pedido', p.id, rep)} etiqueta="Salió" />
+            accion={(rep) => llamar('despachar_pedido', p.id, rep)} etiqueta="Salió"
+            ocupado={ocupado === p.id} />
         ))}
       </Card>
 
@@ -87,7 +97,8 @@ export function Domicilios({ staff }: { staff: Staff }) {
         {enCamino.length === 0 && <p className="ops-empty">Nadie en la calle.</p>}
         {enCamino.map((p) => (
           <Fila key={p.id} p={p} reps={reps}
-            accion={() => llamar('entregar_pedido', p.id)} etiqueta="Entregado" />
+            accion={() => llamar('entregar_pedido', p.id)} etiqueta="Entregado"
+            ocupado={ocupado === p.id} />
         ))}
       </Card>
 
@@ -117,8 +128,8 @@ export function Domicilios({ staff }: { staff: Staff }) {
   );
 }
 
-function Fila({ p, reps, accion, etiqueta }: {
-  p: Pedido; reps: Rep[]; accion: (rep?: string) => void; etiqueta: string;
+function Fila({ p, reps, accion, etiqueta, ocupado }: {
+  p: Pedido; reps: Rep[]; accion: (rep?: string) => void; etiqueta: string; ocupado: boolean;
 }) {
   const [rep, setRep] = useState(p.repartidor_id ?? reps[0]?.id ?? '');
   const espera = minutos(p.salio_en ?? p.created_at);
@@ -162,8 +173,9 @@ function Fila({ p, reps, accion, etiqueta }: {
           </select>
         )}
         <button className="btn" style={{ padding: '8px 14px', fontSize: 12.5 }}
-          onClick={() => accion(rep || undefined)}>
-          {etiqueta === 'Entregado' ? <><Check size={14} /> Entregado</> : <><Bike size={14} /> Salió</>}
+          disabled={ocupado} onClick={() => accion(rep || undefined)}>
+          {ocupado ? 'Un momento…'
+            : etiqueta === 'Entregado' ? <><Check size={14} /> Entregado</> : <><Bike size={14} /> Salió</>}
         </button>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AlertTriangle, Package, Plus, Minus, RefreshCw, Snowflake, Truck, Warehouse } from 'lucide-react';
-import { opsSupabase, type Staff } from '../supabase';
+import { opsSupabase, primerError, type Staff } from '../supabase';
 import { OpsHead, Card } from '../OpsShell';
 
 /**
@@ -29,14 +29,16 @@ export function Inventario({ staff }: { staff: Staff }) {
   const [sel, setSel] = useState<string>(staff.branch_id ?? '');
   const [cargando, setCargando] = useState(true);
   const [mov, setMov] = useState<Fila | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
-    const [{ data: u }, { data: inv }] = await Promise.all([
+    const [ru, rinv] = await Promise.all([
       opsSupabase.from('truck_ubicaciones').select('id,nombre,tipo,padre').eq('activa', true).order('orden'),
       opsSupabase.rpc('inventario'),
     ]);
-    setUbicaciones((u as Ubic[]) ?? []);
-    setFilas((inv as Fila[]) ?? []);
+    setError(primerError(ru, rinv));
+    setUbicaciones((ru.data as Ubic[]) ?? []);
+    setFilas((rinv.data as Fila[]) ?? []);
     setCargando(false);
   }, []);
   useEffect(() => { void cargar(); }, [cargar]);
@@ -63,6 +65,8 @@ export function Inventario({ staff }: { staff: Staff }) {
 
   return (
     <>
+      {error && <div className="ops-pend"><div className="ops-pend-t"><AlertTriangle size={15} /> No se pudo cargar el inventario: {error}</div></div>}
+
       <OpsHead kicker="Existencias" titulo="Inventario"
         sub="El stock se deriva de los movimientos: nunca se edita a mano.">
         <button className="iconbtn" onClick={cargar} aria-label="Actualizar"><RefreshCw size={16} /></button>

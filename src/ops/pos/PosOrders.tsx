@@ -25,6 +25,7 @@ const NEXT_LABEL: Record<string, string> = {
 export function PosOrders({ staff }: { staff: Staff }) {
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchOrders = useCallback(async () => {
     let q = opsSupabase.from('truck_orders').select('*').order('created_at', { ascending: false }).limit(60);
@@ -42,11 +43,21 @@ export function PosOrders({ staff }: { staff: Staff }) {
     return () => { opsSupabase.removeChannel(ch); };
   }, [fetchOrders]);
 
+  // Se avanza optimista para que la cocina no espere al servidor, PERO si la
+  // escritura falla hay que revertir: no cambió nada en la base, así que tampoco
+  // llega evento de realtime que corrija la pantalla. El pedido se quedaría en
+  // "Listo" para la cocina y en "preparando" para el cliente, sin que nadie lo note.
   const advance = async (o: OrderRow) => {
     const flow = FLOW[o.mode];
+    const previo = o.status;
     const next = flow[Math.min(flow.indexOf(o.status) + 1, flow.length - 1)];
+    if (next === previo) return;
     setOrders((os) => os.map((x) => (x.id === o.id ? { ...x, status: next } : x))); // optimista
-    await opsSupabase.from('truck_orders').update({ status: next }).eq('id', o.id);
+    const { error } = await opsSupabase.from('truck_orders').update({ status: next }).eq('id', o.id);
+    if (error) {
+      setOrders((os) => os.map((x) => (x.id === o.id ? { ...x, status: previo } : x)));
+      setError(`No se pudo mover ${o.code}: ${error.message}`);
+    }
   };
 
   const done = (s: string) => s === 'recogido' || s === 'entregado';
@@ -62,6 +73,11 @@ export function PosOrders({ staff }: { staff: Staff }) {
         </div>
         <button className="iconbtn" onClick={fetchOrders} aria-label="Actualizar"><RefreshCw size={18} /></button>
       </div>
+
+      {error && (
+        <div style={{ padding: '10px 12px', borderRadius: 12, background: '#FBE9E4',
+          color: '#8A2F16', fontSize: 13, marginBottom: 14 }}>{error}</div>
+      )}
 
       {loading ? (
         <div className="muted" style={{ padding: 40, textAlign: 'center' }}>Cargando…</div>

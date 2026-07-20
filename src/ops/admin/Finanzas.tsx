@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Plus, RefreshCw, X, Check } from 'lucide-react';
-import { opsSupabase, type Staff } from '../supabase';
+import { opsSupabase, primerError, type Staff } from '../supabase';
 import { OpsHead, Card } from '../OpsShell';
+import { dia } from '../metrics';
 
 /**
  * Estado de resultados y gastos.
@@ -22,28 +23,40 @@ const CAT_LABEL: Record<string, string> = {
   mantenimiento: 'Mantenimiento', marketing: 'Marketing', comisiones: 'Comisiones',
   impuestos: 'Impuestos', otros: 'Otros',
 };
-const primerDia = () => { const d = new Date(); d.setDate(1); return d.toISOString().slice(0, 10); };
+const primerDia = () => { const d = new Date(); d.setDate(1); return dia(d); };
 
 export function Finanzas({ staff }: { staff: Staff }) {
   const [pl, setPl] = useState<Linea[]>([]);
   const [gastos, setGastos] = useState<Gasto[]>([]);
   const [desde, setDesde] = useState(primerDia());
-  const [hasta, setHasta] = useState(new Date().toISOString().slice(0, 10));
+  const [hasta, setHasta] = useState(dia(new Date()));
   const [nuevo, setNuevo] = useState(false);
   const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
-    const [{ data: p }, { data: g }] = await Promise.all([
+    setCargando(true);
+    const [rp, rg] = await Promise.all([
       opsSupabase.rpc('estado_resultados', { p_desde: desde, p_hasta: hasta }),
       opsSupabase.rpc('gastos_por_categoria', { p_desde: desde, p_hasta: hasta }),
     ]);
-    setPl((p as Linea[]) ?? []);
-    setGastos((g as Gasto[]) ?? []);
+    setError(primerError(rp, rg));
+    setPl((rp.data as Linea[]) ?? []);
+    setGastos((rg.data as Gasto[]) ?? []);
     setCargando(false);
   }, [desde, hasta]);
   useEffect(() => { void cargar(); }, [cargar]);
 
   if (cargando) return <div className="ops-center">Calculando…</div>;
+  // Sin esto, un estado de resultados que falla se veía como un negocio sin
+  // movimiento: tarjeta vacía, sin utilidad, sin una sola palabra de por qué.
+  if (error) return (
+    <div className="ops-center">
+      No se pudo calcular el estado de resultados.<br />
+      <span style={{ fontSize: 12.5, color: 'var(--ink-3)' }}>{error}</span><br />
+      <button className="btn" style={{ marginTop: 16 }} onClick={() => void cargar()}>Reintentar</button>
+    </div>
+  );
 
   const util = pl.find((l) => l.concepto === 'Utilidad operativa');
   const totalGastos = gastos.reduce((s, g) => s + Number(g.monto), 0);
@@ -129,7 +142,7 @@ function SheetGasto({ staff, onCerrar, onListo }: { staff: Staff; onCerrar: () =
   const [categoria, setCategoria] = useState<string>('nomina');
   const [concepto, setConcepto] = useState('');
   const [monto, setMonto] = useState('');
-  const [fecha, setFecha] = useState(new Date().toISOString().slice(0, 10));
+  const [fecha, setFecha] = useState(dia(new Date()));
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

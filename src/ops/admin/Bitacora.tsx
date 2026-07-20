@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { History, RefreshCw } from 'lucide-react';
 import { opsSupabase } from '../supabase';
 import { OpsHead, Card } from '../OpsShell';
@@ -34,9 +34,19 @@ export function Bitacora() {
   const [filas, setFilas] = useState<Fila[]>([]);
   const [tabla, setTabla] = useState<string>('');
   const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // `peticion` secuencia las respuestas. Sin esto, al picar "Gastos" y luego
+  // "Compras" rápido, si Gastos resolvía al final quedaban los renglones de
+  // Gastos bajo el filtro "Compras" resaltado, sin nada que delatara el desfase.
+  const peticion = useRef(0);
 
   const cargar = useCallback(async () => {
-    const { data } = await opsSupabase.rpc('bitacora', { p_tabla: tabla || null, p_limite: 120 });
+    const mia = ++peticion.current;
+    setCargando(true);
+    const { data, error } = await opsSupabase.rpc('bitacora', { p_tabla: tabla || null, p_limite: 120 });
+    if (mia !== peticion.current) return;   // llegó tarde: ya hay otro filtro
+    setError(error ? error.message : null);
     setFilas((data as Fila[]) ?? []);
     setCargando(false);
   }, [tabla]);
@@ -48,6 +58,8 @@ export function Bitacora() {
         sub="Se llena sola desde la base: ni el admin puede editarla.">
         <button className="iconbtn" onClick={cargar} aria-label="Actualizar"><RefreshCw size={16} /></button>
       </OpsHead>
+
+      {error && <div className="ops-pend"><div className="ops-pend-t">No se pudo cargar la bitácora: {error}</div></div>}
 
       <div className="ops-seg" style={{ flexWrap: 'wrap' }}>
         <button className={tabla === '' ? 'on' : ''} onClick={() => setTabla('')}>Todo</button>

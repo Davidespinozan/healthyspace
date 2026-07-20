@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Banknote, Check, Loader2, AlertTriangle } from 'lucide-react';
 import { opsSupabase, type Staff } from '../supabase';
 
@@ -13,7 +13,7 @@ import { opsSupabase, type Staff } from '../supabase';
  */
 const money = (n: number) => '$' + Math.round(n).toLocaleString('es-MX');
 
-interface Estado { desde: string; ventas_efectivo: number; n_pedidos: number; ultimo_cierre: string | null }
+interface Estado { desde: string | null; ventas_efectivo: number; n_pedidos: number; ultimo_cierre: string | null }
 interface Cierre { id: string; cerrado_en: string; esperado: number; contado: number; diferencia: number; motivo: string | null }
 
 export function PosCaja({ staff }: { staff: Staff }) {
@@ -27,21 +27,43 @@ export function PosCaja({ staff }: { staff: Staff }) {
   const [listo, setListo] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Un turno recién abierto no tiene ventas todavía, así que `caja_estado` puede
+  // regresar vacío legítimamente. Antes eso dejaba `estado` en null y la pantalla
+  // se quedaba en "Cargando caja…" para siempre: el cajero no podía cerrar turno
+  // y nada en pantalla explicaba por qué. Ahora el vacío se trata como turno en
+  // ceros, y solo un error de verdad interrumpe.
+  const [fallo, setFallo] = useState<string | null>(null);
+
+  // El aviso de "turno cerrado" no debe sobrevivir al componente.
+  const avisoRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (avisoRef.current) clearTimeout(avisoRef.current); }, []);
+
   const cargar = useCallback(async () => {
     if (!branch) return;
-    const [{ data: e }, { data: h }] = await Promise.all([
+    const [re, rh] = await Promise.all([
       opsSupabase.rpc('caja_estado', { p_branch: branch }),
       opsSupabase.from('truck_cash_closings')
         .select('id,cerrado_en,esperado,contado,diferencia,motivo')
         .eq('branch', branch).order('cerrado_en', { ascending: false }).limit(5),
     ]);
-    setEstado(Array.isArray(e) ? (e[0] as Estado) : (e as Estado));
-    setHistorial((h as Cierre[]) ?? []);
+    if (re.error) { setFallo(re.error.message); return; }
+    setFallo(null);
+    const e = re.data;
+    const fila = (Array.isArray(e) ? e[0] : e) as Estado | undefined;
+    setEstado(fila ?? { desde: null, ventas_efectivo: 0, n_pedidos: 0, ultimo_cierre: null });
+    setHistorial((rh.data as Cierre[]) ?? []);
   }, [branch]);
 
   useEffect(() => { void cargar(); }, [cargar]);
 
   if (!branch) return <Pad>Tu cuenta no tiene remolque asignado.</Pad>;
+  if (fallo) return (
+    <Pad>
+      No se pudo consultar la caja.<br />
+      <span style={{ fontSize: 12.5, color: 'var(--ink-3)' }}>{fallo}</span><br />
+      <button className="btn" style={{ marginTop: 16 }} onClick={() => void cargar()}>Reintentar</button>
+    </Pad>
+  );
   if (!estado) return <Pad>Cargando caja…</Pad>;
 
   const fondoN = Number(fondo) || 0;
@@ -69,7 +91,8 @@ export function PosCaja({ staff }: { staff: Staff }) {
     setListo(true);
     setFondo(''); setContado(''); setMotivo('');
     void cargar();
-    setTimeout(() => setListo(false), 2600);
+    if (avisoRef.current) clearTimeout(avisoRef.current);
+    avisoRef.current = setTimeout(() => setListo(false), 2600);
   }
 
   return (
@@ -93,7 +116,9 @@ export function PosCaja({ staff }: { staff: Staff }) {
       {/* Lo que debería haber */}
       <div className="card" style={{ padding: 16, display: 'grid', gap: 12 }}>
         <Fila label="Ventas en efectivo del turno" valor={money(estado.ventas_efectivo)}
-          nota={`${estado.n_pedidos} pedido${estado.n_pedidos === 1 ? '' : 's'} · desde ${new Date(estado.desde).toLocaleString('es-MX', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}`} />
+          nota={`${estado.n_pedidos} pedido${estado.n_pedidos === 1 ? '' : 's'}${estado.desde
+            ? ` · desde ${new Date(estado.desde).toLocaleString('es-MX', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}`
+            : ' · sin ventas todavía en este turno'}`} />
         <label style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ flex: 1, fontSize: 13.5 }}>Fondo con el que abriste</span>
           <Input value={fondo} onChange={setFondo} />

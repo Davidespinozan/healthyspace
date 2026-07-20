@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Truck, Plus, X, Check, RefreshCw } from 'lucide-react';
-import { opsSupabase, type Staff } from '../supabase';
+import { opsSupabase, primerError, type Staff } from '../supabase';
 import { OpsHead, Card } from '../OpsShell';
 
 /**
@@ -23,7 +23,7 @@ interface Compra {
 }
 interface Insumo { id: string; nombre: string; unidad: string; costo_unitario: number | null }
 interface Prov { id: string; nombre: string }
-interface Ubic { id: string; nombre: string }
+interface Ubic { id: string; nombre: string; tipo: string }
 
 export function Compras({ staff }: { staff: Staff }) {
   const [compras, setCompras] = useState<Compra[]>([]);
@@ -35,16 +35,17 @@ export function Compras({ staff }: { staff: Staff }) {
   const [error, setError] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
-    const [{ data: c }, { data: i }, { data: p }, { data: u }] = await Promise.all([
+    const [rc, ri, rp, ru] = await Promise.all([
       opsSupabase.from('truck_compras').select('*').order('created_at', { ascending: false }).limit(25),
       opsSupabase.from('truck_insumos').select('id,nombre,unidad,costo_unitario').eq('activo', true).order('nombre'),
       opsSupabase.from('truck_proveedores').select('id,nombre').eq('activo', true),
-      opsSupabase.from('truck_ubicaciones').select('id,nombre').eq('activa', true).order('orden'),
+      opsSupabase.from('truck_ubicaciones').select('id,nombre,tipo').eq('activa', true).order('orden'),
     ]);
-    setCompras((c as Compra[]) ?? []);
-    setInsumos((i as Insumo[]) ?? []);
-    setProvs((p as Prov[]) ?? []);
-    setUbic((u as Ubic[]) ?? []);
+    setError(primerError(rc, ri, rp, ru));
+    setCompras((rc.data as Compra[]) ?? []);
+    setInsumos((ri.data as Insumo[]) ?? []);
+    setProvs((rp.data as Prov[]) ?? []);
+    setUbic((ru.data as Ubic[]) ?? []);
     setCargando(false);
   }, []);
   useEffect(() => { void cargar(); }, [cargar]);
@@ -53,9 +54,18 @@ export function Compras({ staff }: { staff: Staff }) {
   const nomU = Object.fromEntries(ubic.map((u) => [u.id, u.nombre]));
   const nomP = Object.fromEntries(provs.map((p) => [p.id, p.nombre]));
 
+  // Recibir recalcula el costo promedio ponderado del insumo, así que un doble
+  // toque no solo mete la mercancía dos veces: contamina el costo, y con él el
+  // food cost de todos los platillos que lo llevan. Casi imposible de rastrear
+  // después, porque nada se ve mal a simple vista.
+  const [recibiendo, setRecibiendo] = useState<string | null>(null);
+
   async function recibir(c: Compra) {
+    if (recibiendo) return;
     setError(null);
+    setRecibiendo(c.id);
     const { error } = await opsSupabase.rpc('recibir_compra', { p_id: c.id });
+    setRecibiendo(null);
     if (error) { setError(error.message); return; }
     void cargar();
   }
@@ -90,7 +100,8 @@ export function Compras({ staff }: { staff: Staff }) {
             </div>
             <b style={{ fontSize: 13.5, minWidth: 76, textAlign: 'right' }}>{money(c.total)}</b>
             <button className="btn" style={{ padding: '8px 14px', fontSize: 12.5 }}
-              onClick={() => recibir(c)}>Recibir</button>
+              disabled={recibiendo === c.id}
+              onClick={() => recibir(c)}>{recibiendo === c.id ? 'Recibiendo…' : 'Recibir'}</button>
           </div>
         ))}
       </Card>
@@ -125,7 +136,11 @@ function SheetNueva({ staff, insumos, provs, ubic, onCerrar, onListo }: {
   onCerrar: () => void; onListo: () => void;
 }) {
   const [proveedor, setProveedor] = useState(provs[0]?.id ?? '');
-  const [ubicacion, setUbicacion] = useState('almacen');
+  // El valor por omisión sale de la lista real de ubicaciones, no de un id escrito
+  // a mano. Si ese id no existe (se renombró, se desactivó), el <select> no
+  // encuentra su <option> y el navegador pinta la PRIMERA mientras el estado
+  // sigue guardando el id fantasma: se ve una ubicación y se guarda otra.
+  const [ubicacion, setUbicacion] = useState(() => ubic.find((u) => u.tipo === 'almacen')?.id ?? ubic[0]?.id ?? '');
   const [items, setItems] = useState<Record<string, { cantidad: string; costo: string }>>({});
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState<string | null>(null);

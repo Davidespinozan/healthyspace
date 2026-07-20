@@ -12,3 +12,15 @@ export const opsSupabase = createClient(URL, ANON, {
 
 export type Role = 'pos' | 'admin' | 'almacen' | 'repartidor';
 export interface Staff { id: string; name: string | null; role: Role; branch_id: string | null; active: boolean }
+
+/**
+ * El primer error de un grupo de consultas, o null si todas salieron bien.
+ *
+ * Las pantallas cargaban en paralelo y descartaban el `error` de cada consulta,
+ * así que un permiso denegado o una caída de red se veía igual que "no hay nada
+ * que mostrar": una pantalla vacía y tranquila. Peor en el tablero, que remataba
+ * con "Todo al corriente" sobre datos que nunca cargaron. Una pantalla puede no
+ * saber algo; lo que no puede es afirmar lo contrario.
+ */
+export const primerError = (...rs: { error: { message: string } | null }[]): string | null =>
+  rs.find((r) => r.error)?.error?.message ?? null;

@@ -17,9 +17,18 @@ import { Bitacora } from './admin/Bitacora';
 import './ops.css';
 
 export default function OpsApp() {
-  const { loading, staff, signIn, signOut } = useOpsAuth();
+  const { loading, staff, error, signIn, signOut, recargar } = useOpsAuth();
 
   if (loading) return <Centro>Cargando…</Centro>;
+  // Un error de red o de permisos no debe disfrazarse de "no eres del personal":
+  // rebotar a la pantalla de login sin explicación se siente como una expulsión.
+  if (error) return (
+    <Centro>
+      No se pudo verificar tu cuenta.<br />
+      <span style={{ fontSize: 12.5, opacity: .7 }}>{error}</span><br />
+      <button className="btn" style={{ marginTop: 16 }} onClick={() => void recargar()}>Reintentar</button>
+    </Centro>
+  );
   if (!staff) return <Login onSignIn={signIn} />;
   if (!staff.active) return <Centro>Tu cuenta está inactiva. Contacta a administración.</Centro>;
 

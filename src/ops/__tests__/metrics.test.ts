@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   resumen, porMetodo, porRemolque, topPlatillos, variacionVsAyer,
-  pedidosAtorados, ventasSinMetodo, cajasSinCerrar, arqueosConDiferencia,
+  pedidosAtorados, ventasSinMetodo, cajasSinCerrar, arqueosConDiferencia, dia,
   type OrderRow, type CierreRow,
 } from '../metrics';
 
@@ -92,5 +92,27 @@ describe('métricas del food truck', () => {
       { branch: 'c', cerrado_en: '', diferencia: 30, motivo: 'x' },
     ];
     expect(arqueosConDiferencia(c).map((x) => x.branch)).toEqual(['b', 'c']);
+  });
+});
+
+describe('el corte del día', () => {
+  // Este fue un bug real: `dia()` usaba toISOString(), que devuelve el día en UTC.
+  // Culiacán va en GMT-7, así que a las 5 de la tarde —en plena hora de cena— las
+  // ventas de "hoy" se caían a cero y la noche entera se archivaba en mañana.
+  it('las 7 de la noche siguen siendo hoy, no mañana', () => {
+    const tarde = new Date(2026, 6, 20, 19, 30);   // 20 de julio, 7:30 pm local
+    expect(dia(tarde)).toBe('2026-07-20');
+  });
+
+  it('el día no cambia entre la comida y el cierre del remolque', () => {
+    const comida = new Date(2026, 6, 20, 14, 0);
+    const cierre = new Date(2026, 6, 20, 22, 0);
+    expect(dia(comida)).toBe(dia(cierre));
+  });
+
+  it('sí cambia al pasar la medianoche', () => {
+    const antes = new Date(2026, 6, 20, 23, 59);
+    const despues = new Date(2026, 6, 21, 0, 1);
+    expect(dia(antes)).not.toBe(dia(despues));
   });
 });
