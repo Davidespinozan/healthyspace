@@ -9,7 +9,11 @@ import type { Bowl } from './menu';
 /** Guarda el pedido en truck_orders. Fire-and-forget. */
 export async function pushOrder(o: Order, customer?: { name: string; phone: string; notes: string }): Promise<void> {
   try {
+    // Si vinculó su cuenta del Club, el pedido queda ligado a ella y el plan lo
+    // registra solo. Si no, va anónimo — que es lo normal.
+    const { data: auth } = await supabase.auth.getUser();
     const { error } = await supabase.from('truck_orders').insert({
+      user_id: auth?.user?.id ?? null,
       code: o.code,
       mode: o.mode,
       items: o.items,

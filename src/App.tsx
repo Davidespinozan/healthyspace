@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ShoppingBag } from 'lucide-react';
 import { useStore, ROOT_TABS, cartTotals } from './state/store';
@@ -8,6 +8,7 @@ import { BrandStage } from './components/BrandStage';
 import { Toast } from './components/Toast';
 import { SocialFabs } from './components/SocialFabs';
 import { PwaInstallBanner } from './components/PwaInstallBanner';
+import { VincularClub } from './components/VincularClub';
 import Home from './screens/Home';
 import Menu from './screens/Menu';
 import Pedidos from './screens/Pedidos';
@@ -33,6 +34,7 @@ export default function App() {
   const addToCart = useStore((s) => s.addToCart);
   const showToast = useStore((s) => s.showToast);
   const goTab = useStore((s) => s.goTab);
+  const [vincular, setVincular] = useState(false);
   // Precios y agotados vienen de administración; si falla, queda el menú estático.
   useEffect(() => { loadMenu(); }, [loadMenu]);
 
@@ -54,6 +56,9 @@ export default function App() {
         showToast(`${b.name} agregado — viene de tu plan 🌿`);
       }
     }
+    // Viene del Club: se le ofrece conectar su cuenta para que el pedido se
+    // registre solo en su plan. Es opcional — pedir sin cuenta sigue siendo lo normal.
+    if (p.get('from') === 'club') setVincular(true);
     // Limpia el parámetro para que un refresh no lo repita.
     window.history.replaceState({}, '', window.location.pathname);
   }, [bowls, addToCart, showToast, goTab, push]);
@@ -104,6 +109,12 @@ export default function App() {
       {onTab && <SocialFabs raised={showBar} />}
       {onTab && <TabBar />}
       <PwaInstallBanner />
+      {vincular && (
+        <VincularClub
+          onCerrar={() => setVincular(false)}
+          onVinculado={() => setVincular(false)}
+        />
+      )}
       <Toast />
       </div>
     </>

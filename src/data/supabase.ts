@@ -9,5 +9,8 @@ const ANON = import.meta.env.VITE_SUPABASE_ANON_KEY ??
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0dmVvcnZxdnZseWl2and4amxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzODEzNTAsImV4cCI6MjA4Nzk1NzM1MH0.BpBc3lM6VpDyL5299H1MwQK0VBOBjKWQQconfpcCsfU';
 
 export const supabase = createClient(URL, ANON, {
-  auth: { persistSession: false },
+  // La sesión SÍ persiste (con llave propia, aparte de la del staff en /staff) para
+  // que el socio del Club que vincula su cuenta no tenga que entrar en cada pedido.
+  // El cliente sin cuenta no se ve afectado: simplemente no hay sesión.
+  auth: { persistSession: true, autoRefreshToken: true, storageKey: 'hs-member-auth' },
 });
