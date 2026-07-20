@@ -1,4 +1,3 @@
-import { Boxes } from 'lucide-react';
 import { useOpsAuth } from './auth';
 import { Login } from './Login';
 import { OpsShell, type Seccion } from './OpsShell';
@@ -8,6 +7,7 @@ import { PosCaja } from './pos/PosCaja';
 import { MenuAdmin } from './admin/MenuAdmin';
 import { Tablero } from './admin/Tablero';
 import { Inventario } from './inventario/Inventario';
+import { Traslados } from './inventario/Traslados';
 import './ops.css';
 
 export default function OpsApp() {
@@ -26,6 +26,7 @@ export default function OpsApp() {
           { id: 'vender', label: 'Vender', render: (s) => <PosSale staff={s} /> },
           { id: 'caja', label: 'Caja', render: (s) => <PosCaja staff={s} /> },
           { id: 'inventario', label: 'Inventario', render: (s) => <Inventario staff={s} /> },
+          { id: 'almacen', label: 'Traslados', render: (s) => <Traslados staff={s} /> },
           { id: 'menu', label: 'Menú', render: () => <MenuAdmin /> },
         ]
       : staff.role === 'pos'
@@ -34,28 +35,16 @@ export default function OpsApp() {
             { id: 'pedidos', label: 'Pedidos', render: (s) => <PosOrders staff={s} /> },
             { id: 'caja', label: 'Caja', render: (s) => <PosCaja staff={s} /> },
             { id: 'inventario', label: 'Inventario', render: (s) => <Inventario staff={s} /> },
+            { id: 'almacen', label: 'Traslados', render: (s) => <Traslados staff={s} /> },
           ]
         : [
             { id: 'inventario', label: 'Inventario', render: (s) => <Inventario staff={s} /> },
-            { id: 'almacen', label: 'Traslados', render: () => <Almacen /> },
+            { id: 'almacen', label: 'Traslados', render: (s) => <Traslados staff={s} /> },
           ];
 
   return <OpsShell staff={staff} secciones={secciones} onSalir={signOut} />;
 }
 
-function Almacen() {
-  return (
-    <div className="ops-center">
-      <Boxes size={30} strokeWidth={1.6} style={{ opacity: .35, marginBottom: 10 }} />
-      <div>
-        <b style={{ display: 'block', fontSize: 16, color: 'var(--ink)' }}>Almacén</b>
-        <p style={{ maxWidth: 280, marginTop: 6 }}>
-          Solicitudes de producción y traslados entre remolques — siguiente fase.
-        </p>
-      </div>
-    </div>
-  );
-}
 
 const Centro = ({ children }: { children: React.ReactNode }) =>
   <div className="ops"><div className="ops-center">{children}</div></div>;
