@@ -37,6 +37,18 @@ Club, que sí lo está, contra la misma base. Por eso no se usa `db push`.
 La cuenta de lo aplicado vive en la tabla `truck_migraciones` (ver `0024`), no en
 el historial del CLI, que le pertenece al repo del Club.
 
+### Verificar la salud de los datos
+
+```bash
+./scripts/verificar.sh    # sale con 1 si encuentra algo
+```
+
+Revisa los invariantes que no se ven a simple vista: insumos sin costo, recetas
+que piden el crudo de algo que se produce, existencias negativas, códigos de
+pedido repetidos, arqueos con diferencia sin explicar, rendimientos fuera de
+rango y platillos activos sin receta. Vale la pena correrlo después de cargar
+datos o de tocar recetas y costos.
+
 Si el repo del Club vive en otro lado: `HSC_REPO=/ruta/al/club ./scripts/migrar.sh`.
 
 ## Principios del sistema operativo
