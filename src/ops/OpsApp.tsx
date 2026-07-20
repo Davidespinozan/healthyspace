@@ -8,6 +8,8 @@ import { MenuAdmin } from './admin/MenuAdmin';
 import { Tablero } from './admin/Tablero';
 import { Inventario } from './inventario/Inventario';
 import { Traslados } from './inventario/Traslados';
+import { Costeo } from './admin/Costeo';
+import { Finanzas } from './admin/Finanzas';
 import './ops.css';
 
 export default function OpsApp() {
@@ -27,6 +29,8 @@ export default function OpsApp() {
           { id: 'caja', label: 'Caja', render: (s) => <PosCaja staff={s} /> },
           { id: 'inventario', label: 'Inventario', render: (s) => <Inventario staff={s} /> },
           { id: 'almacen', label: 'Traslados', render: (s) => <Traslados staff={s} /> },
+          { id: 'costeo', label: 'Costeo', render: () => <Costeo /> },
+          { id: 'finanzas', label: 'Finanzas', render: (s) => <Finanzas staff={s} /> },
           { id: 'menu', label: 'Menú', render: () => <MenuAdmin /> },
         ]
       : staff.role === 'pos'
