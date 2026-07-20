@@ -10,6 +10,8 @@ import { Inventario } from './inventario/Inventario';
 import { Traslados } from './inventario/Traslados';
 import { Costeo } from './admin/Costeo';
 import { Finanzas } from './admin/Finanzas';
+import { Produccion } from './almacen/Produccion';
+import { Compras } from './almacen/Compras';
 import './ops.css';
 
 export default function OpsApp() {
@@ -29,6 +31,8 @@ export default function OpsApp() {
           { id: 'caja', label: 'Caja', render: (s) => <PosCaja staff={s} /> },
           { id: 'inventario', label: 'Inventario', render: (s) => <Inventario staff={s} /> },
           { id: 'almacen', label: 'Traslados', render: (s) => <Traslados staff={s} /> },
+          { id: 'produccion', label: 'Producción', render: (s) => <Produccion staff={s} /> },
+          { id: 'compras', label: 'Compras', render: (s) => <Compras staff={s} /> },
           { id: 'costeo', label: 'Costeo', render: () => <Costeo /> },
           { id: 'finanzas', label: 'Finanzas', render: (s) => <Finanzas staff={s} /> },
           { id: 'menu', label: 'Menú', render: () => <MenuAdmin /> },
@@ -40,10 +44,14 @@ export default function OpsApp() {
             { id: 'caja', label: 'Caja', render: (s) => <PosCaja staff={s} /> },
             { id: 'inventario', label: 'Inventario', render: (s) => <Inventario staff={s} /> },
             { id: 'almacen', label: 'Traslados', render: (s) => <Traslados staff={s} /> },
+          { id: 'produccion', label: 'Producción', render: (s) => <Produccion staff={s} /> },
+          { id: 'compras', label: 'Compras', render: (s) => <Compras staff={s} /> },
           ]
         : [
             { id: 'inventario', label: 'Inventario', render: (s) => <Inventario staff={s} /> },
             { id: 'almacen', label: 'Traslados', render: (s) => <Traslados staff={s} /> },
+          { id: 'produccion', label: 'Producción', render: (s) => <Produccion staff={s} /> },
+          { id: 'compras', label: 'Compras', render: (s) => <Compras staff={s} /> },
           ];
 
   return <OpsShell staff={staff} secciones={secciones} onSalir={signOut} />;

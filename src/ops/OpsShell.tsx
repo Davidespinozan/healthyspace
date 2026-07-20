@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LayoutDashboard, Receipt, ShoppingCart, Banknote, UtensilsCrossed, Boxes, Package, Scale, PiggyBank, LogOut } from 'lucide-react';
+import { LayoutDashboard, Receipt, ShoppingCart, Banknote, UtensilsCrossed, Boxes, Package, Scale, PiggyBank, ChefHat, ShoppingBag, LogOut } from 'lucide-react';
 import type { Staff } from './supabase';
 import './ops.css';
 
@@ -16,7 +16,7 @@ import './ops.css';
 export const ICONOS = {
   tablero: LayoutDashboard, pedidos: Receipt, vender: ShoppingCart,
   caja: Banknote, menu: UtensilsCrossed, almacen: Boxes, inventario: Package,
-  costeo: Scale, finanzas: PiggyBank,
+  costeo: Scale, finanzas: PiggyBank, produccion: ChefHat, compras: ShoppingBag,
 } as const;
 
 export interface Seccion {
