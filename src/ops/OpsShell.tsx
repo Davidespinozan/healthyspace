@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LayoutDashboard, Receipt, ShoppingCart, Banknote, UtensilsCrossed, Boxes, Package, Scale, PiggyBank, ChefHat, ShoppingBag, LogOut } from 'lucide-react';
+import { LayoutDashboard, Receipt, ShoppingCart, Banknote, UtensilsCrossed, Boxes, Package, Scale, PiggyBank, ChefHat, ShoppingBag, Bike, History, LogOut } from 'lucide-react';
 import type { Staff } from './supabase';
 import './ops.css';
 
@@ -17,6 +17,7 @@ export const ICONOS = {
   tablero: LayoutDashboard, pedidos: Receipt, vender: ShoppingCart,
   caja: Banknote, menu: UtensilsCrossed, almacen: Boxes, inventario: Package,
   costeo: Scale, finanzas: PiggyBank, produccion: ChefHat, compras: ShoppingBag,
+  domicilios: Bike, bitacora: History,
 } as const;
 
 export interface Seccion {
@@ -27,7 +28,7 @@ export interface Seccion {
   badge?: number;
 }
 
-const ROL = { pos: 'Punto de venta', admin: 'Administración', almacen: 'Almacén' } as const;
+const ROL = { pos: 'Punto de venta', admin: 'Administración', almacen: 'Almacén', repartidor: 'Reparto' } as const;
 const FLAMA = 'https://ltveorvqvvlyivjwxjlc.supabase.co/storage/v1/object/public/healthyspaceclub/logofuegohsc.webp';
 
 export function OpsShell({ staff, secciones, onSalir }: {

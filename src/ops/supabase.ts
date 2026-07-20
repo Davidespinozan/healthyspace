@@ -10,5 +10,5 @@ export const opsSupabase = createClient(URL, ANON, {
   auth: { persistSession: true, autoRefreshToken: true, storageKey: 'hs-ops-auth' },
 });
 
-export type Role = 'pos' | 'admin' | 'almacen';
+export type Role = 'pos' | 'admin' | 'almacen' | 'repartidor';
 export interface Staff { id: string; name: string | null; role: Role; branch_id: string | null; active: boolean }

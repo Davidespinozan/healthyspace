@@ -12,6 +12,8 @@ import { Costeo } from './admin/Costeo';
 import { Finanzas } from './admin/Finanzas';
 import { Produccion } from './almacen/Produccion';
 import { Compras } from './almacen/Compras';
+import { Domicilios } from './pos/Domicilios';
+import { Bitacora } from './admin/Bitacora';
 import './ops.css';
 
 export default function OpsApp() {
@@ -28,6 +30,7 @@ export default function OpsApp() {
           { id: 'tablero', label: 'Tablero', render: (s) => <Tablero staff={s} /> },
           { id: 'pedidos', label: 'Pedidos', render: (s) => <PosOrders staff={s} /> },
           { id: 'vender', label: 'Vender', render: (s) => <PosSale staff={s} /> },
+          { id: 'domicilios', label: 'Domicilios', render: (s) => <Domicilios staff={s} /> },
           { id: 'caja', label: 'Caja', render: (s) => <PosCaja staff={s} /> },
           { id: 'inventario', label: 'Inventario', render: (s) => <Inventario staff={s} /> },
           { id: 'almacen', label: 'Traslados', render: (s) => <Traslados staff={s} /> },
@@ -36,11 +39,13 @@ export default function OpsApp() {
           { id: 'costeo', label: 'Costeo', render: () => <Costeo /> },
           { id: 'finanzas', label: 'Finanzas', render: (s) => <Finanzas staff={s} /> },
           { id: 'menu', label: 'Menú', render: () => <MenuAdmin /> },
+          { id: 'bitacora', label: 'Bitácora', render: () => <Bitacora /> },
         ]
       : staff.role === 'pos'
         ? [
             { id: 'vender', label: 'Vender', render: (s) => <PosSale staff={s} /> },
             { id: 'pedidos', label: 'Pedidos', render: (s) => <PosOrders staff={s} /> },
+            { id: 'domicilios', label: 'Domicilios', render: (s) => <Domicilios staff={s} /> },
             { id: 'caja', label: 'Caja', render: (s) => <PosCaja staff={s} /> },
             { id: 'inventario', label: 'Inventario', render: (s) => <Inventario staff={s} /> },
             { id: 'almacen', label: 'Traslados', render: (s) => <Traslados staff={s} /> },
